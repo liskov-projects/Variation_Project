@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const HomePage = () => {
+const Home = () => {
+  // Navigation and scroll handlers remain the same
   const navigate = useNavigate();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -11,26 +26,35 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Navigation Bar - Transparent initially */}
-      <nav className="navbar navbar-expand-lg navbar-dark position-absolute w-100" style={{ zIndex: 1000 }}>
+      {/* Navigation Bar remains the same */}
+      <nav className={`navbar navbar-expand-lg fixed-top transition-all duration-300 ${
+        isScrolled ? 'py-2' : 'py-3'
+      }`} style={{ 
+        backgroundColor: isScrolled ? '#2C3E50' : 'rgba(44, 62, 80, 0.9)',
+        backdropFilter: 'blur(8px)',
+        borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.1)' : 'none'
+      }}>
         <div className="container">
-          <a className="navbar-brand fw-bold" href="/">CompanyName</a>
+          <a className="navbar-brand fw-bold text-white" href="/">CompanyName</a>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <a className="nav-link" href="#about">About</a>
+                <a className="nav-link text-white" href="#about">About</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#contact">Contact</a>
+                <a className="nav-link text-white" href="#contact">Contact</a>
               </li>
               <li className="nav-item">
                 <button 
                   className="btn btn-outline-light ms-2" 
                   onClick={() => handleNavigation('/contact')}
-                  style={{ borderRadius: '25px' }}
+                  style={{ 
+                    borderRadius: '25px',
+                    backgroundColor: isScrolled ? 'transparent' : 'rgba(255, 255, 255, 0.1)'
+                  }}
                 >
                   Get Started
                 </button>
@@ -40,7 +64,7 @@ const HomePage = () => {
         </div>
       </nav>
 
-      {/* Full-screen Hero Section with Overlay */}
+      {/* Hero Section remains the same */}
       <section className="position-relative vh-100 d-flex align-items-center" style={{ backgroundColor: '#2C3E50' }}>
         <div className="position-absolute w-100 h-100" style={{ 
           background: 'linear-gradient(45deg, rgba(22, 160, 133, 0.8), rgba(44, 62, 80, 0.9))',
@@ -54,7 +78,8 @@ const HomePage = () => {
               <div className="d-flex gap-4">
                 <button 
                   className="btn btn-lg px-5"
-                  onClick={() => handleNavigation('/services')}
+                //   onClick={() => handleNavigation('/services')}
+                onClick={() => handleNavigation('/start')}
                   style={{ 
                     backgroundColor: '#16A085', 
                     color: 'white',
@@ -76,33 +101,15 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* About Section with Diagonal Design */}
+      {/* Restructured About Section */}
       <section id="about" className="py-6 position-relative" style={{ 
         backgroundColor: '#E8F6EF',
-        clipPath: 'polygon(0 0, 100% 10%, 100% 100%, 0 90%)',
         padding: '150px 0'
       }}>
         <div className="container">
-          <div className="row align-items-center">
-            <div className="col-lg-6 order-lg-2">
-              <div className="position-relative">
-                <div style={{ 
-                  position: 'absolute',
-                  width: '100%',
-                  height: '100%',
-                  backgroundColor: '#16A085',
-                  transform: 'rotate(-3deg)',
-                  zIndex: 1
-                }}></div>
-                <img 
-                  src="/api/placeholder/600/400" 
-                  alt="About Us" 
-                  className="img-fluid rounded-3 shadow position-relative"
-                  style={{ zIndex: 2 }}
-                />
-              </div>
-            </div>
-            <div className="col-lg-6 order-lg-1 pe-lg-5">
+          <div className="row g-5">
+            {/* Who We Are - Left Column */}
+            <div className="col-lg-6">
               <h2 className="display-4 fw-bold mb-4" style={{ color: '#2C3E50' }}>Who We Are</h2>
               <p className="lead mb-4" style={{ color: '#34495E', fontSize: '1.2rem' }}>
                 We're not just another company - we're your partner in digital transformation. 
@@ -128,6 +135,23 @@ const HomePage = () => {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* About Us - Right Column */}
+            <div className="col-lg-6">
+              <h2 className="display-4 fw-bold mb-4" style={{ color: '#2C3E50' }}>About Us</h2>
+              <p className="lead mb-4" style={{ color: '#34495E', fontSize: '1.2rem' }}>
+                Our company is dedicated to providing top-notch services and solutions to our clients. 
+                We believe in the power of innovation and strive to stay ahead of the curve in the ever-evolving tech landscape.
+              </p>
+              <p className="lead mb-4" style={{ color: '#34495E', fontSize: '1.2rem' }}>
+                Our team of experts is passionate about delivering excellence and ensuring customer satisfaction. 
+                We work closely with our clients to understand their unique needs and tailor our services to meet their specific requirements.
+              </p>
+              <p className="lead" style={{ color: '#34495E', fontSize: '1.2rem' }}>
+                Join us on our journey to transform the digital world and make a lasting impact. 
+                Together, we can achieve great things and drive success for your business.
+              </p>
             </div>
           </div>
         </div>
@@ -189,8 +213,7 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
-
+export default Home;
 
 
 
