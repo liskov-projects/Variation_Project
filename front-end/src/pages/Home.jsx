@@ -79,7 +79,7 @@ const Home = () => {
                 <button 
                   className="btn btn-lg px-5"
                 //   onClick={() => handleNavigation('/services')}
-                onClick={() => handleNavigation('/start')}
+                onClick={() => handleNavigation('/step1')}
                   style={{ 
                     backgroundColor: '#16A085', 
                     color: 'white',
