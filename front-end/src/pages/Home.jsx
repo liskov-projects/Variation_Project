@@ -50,7 +50,7 @@ const Home = () => {
               <li className="nav-item">
                 <button 
                   className="btn btn-outline-light ms-2" 
-                  onClick={() => handleNavigation('/contact')}
+                  onClick={() => handleNavigation('/step1')}
                   style={{ 
                     borderRadius: '25px',
                     backgroundColor: isScrolled ? 'transparent' : 'rgba(255, 255, 255, 0.1)'
