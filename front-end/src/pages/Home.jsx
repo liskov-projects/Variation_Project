@@ -50,7 +50,7 @@ const Home = () => {
               <li className="nav-item">
                 <button 
                   className="btn btn-outline-light ms-2" 
-                  onClick={() => handleNavigation('/step1')}
+                  onClick={() => handleNavigation('/welcome')}
                   style={{ 
                     borderRadius: '25px',
                     backgroundColor: isScrolled ? 'transparent' : 'rgba(255, 255, 255, 0.1)'
@@ -79,7 +79,7 @@ const Home = () => {
                 <button 
                   className="btn btn-lg px-5"
                 //   onClick={() => handleNavigation('/services')}
-                onClick={() => handleNavigation('/step1')}
+                onClick={() => handleNavigation('/welcome')}
                   style={{ 
                     backgroundColor: '#16A085', 
                     color: 'white',
@@ -101,7 +101,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Restructured About Section */}
       <section id="about" className="py-6 position-relative" style={{ 
         backgroundColor: '#E8F6EF',
         padding: '150px 0'
@@ -174,7 +173,7 @@ const Home = () => {
                   <div className="col-lg-6 text-center text-lg-end">
                     <button 
                       className="btn btn-lg px-5"
-                      onClick={() => handleNavigation('/contact')}
+                      onClick={() => handleNavigation('/welcome')}
                       style={{ 
                         backgroundColor: '#16A085', 
                         color: 'white',
