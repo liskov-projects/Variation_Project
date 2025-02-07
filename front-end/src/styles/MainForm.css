@@ -1,0 +1,14 @@
+.disabled-link {
+pointer-events: none;
+opacity: 0.6;
+}
+
+.sidebar {
+position: sticky;
+top: 0;
+height: 100vh;
+}
+
+.step-number {
+border: 2px solid currentColor;
+}
