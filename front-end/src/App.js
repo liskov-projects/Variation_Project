@@ -7,7 +7,7 @@ import FormWrapper from './components/FormWrapper';
 function App() {
   return (
     <Routes>
-      <Route path="/home" element={<Navigate to="/" replace />} />
+      {/* <Route path="/home" element={<Navigate to="/" replace />} /> */}
       <Route path="/" element={<Home />} />
       <Route path="/welcome" element={<Welcome />} />
       <Route path="/*" element={<FormWrapper />} />
