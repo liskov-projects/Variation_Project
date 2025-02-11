@@ -1,23 +1,29 @@
 import { SignUp as ClerkSignUp } from "@clerk/clerk-react";
-import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
-  const navigate = useNavigate();
-
   return (
-    <div className="min-h-screen d-flex align-items-center justify-content-center bg-gray-50">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
         <ClerkSignUp 
-          routing="path" 
-          path="/sign-up" 
-          signInUrl="/sign-in"
+          routing="hash"
           fallbackRedirectUrl="/welcome"
+          signInUrl="/TBD/sign-in"
           appearance={{
+            layout: {
+              socialButtonsPlacement: "bottom",
+              socialButtonsVariant: "iconButton",
+              termsPageUrl: "https://clerk.com/terms"
+            },
             elements: {
-              rootBox: "mx-auto",
-              card: "shadow-xl rounded-lg",
-              headerTitle: "text-2xl font-bold text-center",
-              headerSubtitle: "text-center",
+              // formButtonPrimary: 
+              //   "bg-blue-500 hover:bg-blue-600 text-white w-full",
+              // card: "shadow-xl rounded-lg p-6",
+              // headerTitle: "text-2xl font-bold text-center text-gray-900",
+              // headerSubtitle: "text-center text-gray-500",
+              // dividerLine: "bg-gray-200",
+              // dividerText: "text-gray-500",
+              // formFieldLabel: "text-gray-700",
+              // formFieldInput: "border-gray-300 focus:ring-blue-500 focus:border-blue-500",
             },
           }}
         />

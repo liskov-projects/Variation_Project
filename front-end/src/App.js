@@ -1,11 +1,11 @@
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ClerkProvider, RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react';
+import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-react';
 import Home from './pages/Home';
 import Welcome from './pages/Welcome';
 import FormWrapper from './components/FormWrapper';
-import SignIn from './pages/SignIn.jsx';
-import SignUp from './pages/SignUp.jsx';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
 
 const PUBLISHABLE_KEY="pk_test_bWVldC1zaGVlcGRvZy0xNy5jbGVyay5hY2NvdW50cy5kZXYk"
 function PublicRoute({children}){
