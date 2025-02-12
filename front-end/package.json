@@ -4,8 +4,10 @@
   "private": true,
   "homepage": "https://pgd1998.github.io/TBD",
   "dependencies": {
+    "@clerk/clerk-react": "^5.22.12",
     "bootstrap": "^5.3.3",
     "cra-template": "1.2.0",
+    "dotenv": "^16.4.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.1.5",

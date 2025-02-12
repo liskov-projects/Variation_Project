@@ -6,14 +6,17 @@ import StepThree from '../pages/steps/StepThree';
 import StepFour from '../pages/steps/StepFour';
 import FormProgress from './FormProgress';
 import useFormStorage from '../hooks/useFormStorage';
+import Header from './Header';
 
 const FormWrapper = () => {
   const { currentStep } = useFormStorage();
   const location = useLocation();
 
   const showFormProgress = location.pathname !== '/home' && location.pathname !== '/' && location.pathname !== '/welcome';
-
+  const showHeader = location.pathname !== '/home' && location.pathname !== '/';
   return (
+    <div>
+      {showHeader&& <Header/>}
     <div className="d-flex">
       {showFormProgress && <FormProgress currentStep={currentStep} />}
       <div className="flex-grow-1">
@@ -24,6 +27,7 @@ const FormWrapper = () => {
           <Route path="/step4" element={<StepFour />} />
         </Routes>
       </div>
+    </div>
     </div>
   );
 };

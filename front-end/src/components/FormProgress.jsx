@@ -4,11 +4,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const FormProgress = ({ currentStep }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [completed,setIsCompleted]=useState(false);
+  // const [completed,setIsCompleted]=useState(false);
 
-  useEffect(()=>{
+  // useEffect(()=>{
 
-  },[currentStep])
+  // },[currentStep])
 
   
 
