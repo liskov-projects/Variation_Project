@@ -7,7 +7,8 @@ import FormWrapper from './components/FormWrapper';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 
-const PUBLISHABLE_KEY="pk_test_bWVldC1zaGVlcGRvZy0xNy5jbGVyay5hY2NvdW50cy5kZXYk"
+const PUBLISHABLE_KEY=process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
+
 function PublicRoute({children}){
   return(
     <>
