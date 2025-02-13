@@ -1,6 +1,6 @@
 import express from "express";
 import connectDB from "./config/dbStarter.js";
-
+import formRoutes from "./routes/formRoutes.js"
 
 connectDB();
 
@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 
 // this should be done next
-// app.use("/api/users", userRoutes);
+app.use("/api/forms", formRoutes);
 
 
 const port = process.env.PORT || 5000 ;
