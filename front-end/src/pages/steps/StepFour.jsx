@@ -1,20 +1,39 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useFormStorage from '../../hooks/useFormStorage';
+import useFormSubmit from '../../hooks/useFormSubmit';
+import { useAuth } from '@clerk/clerk-react'
 
 const StepFour = () => {
   const navigate = useNavigate();
   const { formData, setCurrentStep, clearFormData } = useFormStorage();
+  const {submitForm,loading,error,success}=useFormSubmit();
+  const { userId, sessionId, getToken, isLoaded, isSignedIn } = useAuth()
+
 
   useEffect(() => {
     setCurrentStep(4);
   }, [setCurrentStep]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    clearFormData();
-    setCurrentStep(1);
-    navigate('/step1');
+
+    try{
+      const token= await getToken();
+      console.log("token: ",token)
+      console.log("user id: ",userId)
+      const email=formData.email;
+      console.log(
+        userId,email,formData,token
+      )
+      await submitForm(userId,email,formData,token)
+      clearFormData();
+      setCurrentStep(1);
+      navigate('/step1');
+    }
+    catch(error){
+      console.error('Error submitting form:', error);
+    }
   };
 
   return (
@@ -68,10 +87,12 @@ const StepFour = () => {
             </div>
             </div>
         }
-        <button type="submit" className="btn btn-primary float-end">
-          Submit
+        <button type="submit" className="btn btn-primary float-end" disabled={loading}>
+          {loading?'Submitting..':'Submit'}
         </button>
       </form>
+      {error && <p className="text-danger">Error: {error.message}</p>}
+      {success && <p className="text-success">Form submitted successfully!</p>}
     </div>
   );
 };
