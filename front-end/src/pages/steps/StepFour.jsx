@@ -20,13 +20,14 @@ const StepFour = () => {
 
     try{
       const token= await getToken();
+      console.log("token",token)
       await submitForm(formData.email,formData,token)
-      clearFormData();
+      // clearFormData();
       setCurrentStep(1);
       navigate('/step1');
     }
     catch(error){
-      console.error('Error submitting form:', err);
+      console.error('Error submitting form:', error);
     }
   };
 

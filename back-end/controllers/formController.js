@@ -1,6 +1,7 @@
-import forms from "../model/dbSchema";
+import forms from "../model/dbSchema.js";
 
 export const submitForm=async(req,res)=>{
+    console.log(req.body)
     const {userId}=req.auth;
     const {email,formData}=req.body;
 

@@ -1,5 +1,5 @@
 import express from 'express';
-import {submitForm} from '../controllers/formController';
+import {submitForm} from '../controllers/formController.js';
 import clerkMiddleware from '../middleware/auth.js';
 
 const router=express.Router();

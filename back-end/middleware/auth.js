@@ -1,10 +1,8 @@
-import { ClerkExpressWithAuth } from '@clerk/clerk-sdk-node';
+import { requireAuth } from '@clerk/express';
 import { config } from 'dotenv';
 
 config();
 
-const clerkMiddleware = ClerkExpressWithAuth({
-  apiKey: process.env.CLERK_API_KEY,
-});
+const clerkMiddleware = requireAuth();
 
 export default clerkMiddleware;
