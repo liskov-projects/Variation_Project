@@ -20,8 +20,13 @@ const StepFour = () => {
 
     try{
       const token= await getToken();
-      console.log("token",token)
-      await submitForm(formData.email,formData,token)
+      console.log("token: ",token)
+      console.log("user id: ",userId)
+      const email=formData.email;
+      console.log(
+        userId,email,formData,token
+      )
+      await submitForm(userId,email,formData,token)
       // clearFormData();
       setCurrentStep(1);
       navigate('/step1');

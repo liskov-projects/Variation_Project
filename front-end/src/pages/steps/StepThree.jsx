@@ -65,8 +65,8 @@ const StepThree = () => {
                     required
                 >
                     <option value="">Select a Team</option>
-                    <option value="kcc">Kansas City Chiefs</option>
-                    <option value="pe">Philadelphia Eagles</option>
+                    <option value="Kansas City Chiefs">Kansas City Chiefs</option>
+                    <option value="Philadelphia Eagles">Philadelphia Eagles</option>
                 </select>
             </div>
             
