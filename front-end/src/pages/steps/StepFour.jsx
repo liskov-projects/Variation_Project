@@ -27,7 +27,7 @@ const StepFour = () => {
         userId,email,formData,token
       )
       await submitForm(userId,email,formData,token)
-      // clearFormData();
+      clearFormData();
       setCurrentStep(1);
       navigate('/step1');
     }
