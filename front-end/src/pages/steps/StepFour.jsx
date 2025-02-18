@@ -8,12 +8,12 @@ const StepFour = () => {
   const navigate = useNavigate();
   const { formData, setCurrentStep, clearFormData } = useFormStorage();
   const {submitForm,loading,error,success}=useFormSubmit();
-  const { userId, sessionId, getToken, isLoaded, isSignedIn } = useAuth()
+  const { userId, sessionId, getToken, isLoaded, isSignedIn } = useAuth();
 
 
   useEffect(() => {
     setCurrentStep(4);
-  }, [setCurrentStep]);
+  }, []);
 
   const handleSubmit = async(e) => {
     e.preventDefault();
@@ -26,10 +26,11 @@ const StepFour = () => {
       console.log(
         userId,email,formData,token
       )
-      await submitForm(userId,email,formData,token)
-      clearFormData();
-      setCurrentStep(1);
-      navigate('/step1');
+      const res=await submitForm(userId,email,formData,token);
+      console.log(res)
+      // clearFormData();
+      setCurrentStep(5);
+      navigate('/step5');
     }
     catch(error){
       console.error('Error submitting form:', error);

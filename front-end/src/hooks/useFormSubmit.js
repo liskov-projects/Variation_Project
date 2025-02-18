@@ -12,8 +12,9 @@ const useFormSubmit=()=>{
         setSuccess(false);
 
         try {
-            await formSubmitApi(userId,email,formData,token);
+            const res=await formSubmitApi(userId,email,formData,token);
             setSuccess(true);
+            return res
         } catch (error) {
             setError(error)
         }finally{

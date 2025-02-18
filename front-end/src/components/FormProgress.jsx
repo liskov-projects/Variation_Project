@@ -16,7 +16,8 @@ const FormProgress = ({ currentStep }) => {
     { path: '/step1', label: 'Personal Information' },
     { path: '/step2', label: 'Professional Details' },
     { path: '/step3', label: 'Additional Info' },
-    { path: '/step4', label: 'Review' }
+    { path: '/step4', label: 'Review' },
+    {path:'/step5',label:'Download'}
   ];
 
   const handleStepClick = (path, stepNumber) => {

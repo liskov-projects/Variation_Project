@@ -7,6 +7,7 @@ import StepFour from '../pages/steps/StepFour';
 import FormProgress from './FormProgress';
 import useFormStorage from '../hooks/useFormStorage';
 import Header from './Header';
+import StepFive from '../pages/steps/StepFive';
 
 const FormWrapper = () => {
   const { currentStep } = useFormStorage();
@@ -25,6 +26,7 @@ const FormWrapper = () => {
           <Route path="/step2" element={<StepTwo />} />
           <Route path="/step3" element={<StepThree />} />
           <Route path="/step4" element={<StepFour />} />
+          <Route path="/step5" element={<StepFive/>}/>
         </Routes>
       </div>
     </div>
