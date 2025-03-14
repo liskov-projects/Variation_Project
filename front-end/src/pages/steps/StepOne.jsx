@@ -18,7 +18,7 @@ const StepOne = () => {
 
   return (
     <div className="container py-4">
-      <h2 className="mb-4">Personal Information</h2>
+      <h2 className="mb-4">Builder Information</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Full Name</label>
@@ -31,13 +31,31 @@ const StepOne = () => {
           />
         </div>
         <div className="mb-3">
+          <label className="form-label">Address</label>
+          <input
+            type="text"
+            className="form-control"
+            value={formData.address || ''}
+            onChange={(e) => updateFormData({ address: e.target.value })}
+            required
+          />
+        </div>
+        <div className="mb-3">
           <label className="form-label">Email</label>
           <input
             type="email"
             className="form-control"
             value={formData.email || ''}
             onChange={(e) => updateFormData({ email: e.target.value })}
-            required
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Phone Number</label>
+          <input
+            type="number"
+            className="form-control"
+            value={formData.phonenumber || ''}
+            onChange={(e) => updateFormData({ phonenumber: e.target.value })}
           />
         </div>
         <div className="mb-3">
