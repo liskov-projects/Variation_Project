@@ -1,48 +1,39 @@
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useProfile } from '../contexts/ProfileContext';
 
-const FormProgress = ({ currentStep }) => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  // const [completed,setIsCompleted]=useState(false);
-
-  // useEffect(()=>{
-
-  // },[currentStep])
-
-  
+const FormProgress = () => {
+  const { currentStep, setCurrentStep } = useProfile();
 
   const steps = [
-    { path: '/step1', label: 'Personal Information' },
-    { path: '/step2', label: 'Professional Details' },
-    { path: '/step3', label: 'Additional Info' },
-    { path: '/step4', label: 'Review' },
-    {path:'/step5',label:'Download'}
+    { number: 1, label: 'Builder Information' },
+    { number: 2, label: 'Company & Partnership' },
+    { number: 3, label: 'Individual Information' },
+    { number: 4, label: 'Review & Submit' }
   ];
 
-  const handleStepClick = (path, stepNumber) => {
+  const handleStepClick = (stepNumber) => {
+    // Only allow navigation to completed steps or the current step
     if (stepNumber <= currentStep) {
-      navigate(path);
+      setCurrentStep(stepNumber);
     }
   };
 
   return (
     <div className="sidebar bg-light border-end p-4" style={{ width: '280px', minHeight: '100vh' }}>
-      <h4 className="mb-4">Application Progress</h4>
+      <h4 className="mb-4">Profile Setup</h4>
       <div className="d-flex flex-column gap-3">
-        {steps.map((step, index) => {
-          const stepNumber = index + 1;
-          const isActive = location.pathname === step.path;
-          const isCompleted =  stepNumber < currentStep; 
-          const isClickable = stepNumber <= currentStep;
+        {steps.map((step) => {
+          const isActive = currentStep === step.number;
+          const isCompleted = step.number < currentStep;
+          const isClickable = step.number <= currentStep;
 
           return (
             <div
-              key={step.path}
-              onClick={() => handleStepClick(step.path, stepNumber)}
+              key={step.number}
+              onClick={() => handleStepClick(step.number)}
               className={`
-                d-flex align-items-center p-3 rounded cursor-pointer
-                ${isActive ? 'bg-primary text-white' : 'bg-white'}
+                d-flex align-items-center p-3 rounded 
+                ${isActive ? 'bg-primary text-white' : 'bg-white'} 
                 ${isClickable ? 'cursor-pointer' : 'opacity-50'}
               `}
               style={{ cursor: isClickable ? 'pointer' : 'not-allowed' }}
@@ -50,11 +41,15 @@ const FormProgress = ({ currentStep }) => {
               <div
                 className={`
                   step-number me-3 rounded-circle d-flex align-items-center justify-content-center
-                  ${isCompleted ? 'bg-success text-white' : ''} 
+                  ${isCompleted ? 'bg-success text-white' : ''}
                 `}
-                style={{ width: '30px', height: '30px', border: '2px solid currentColor' }}
+                style={{ 
+                  width: '30px', 
+                  height: '30px', 
+                  border: '2px solid currentColor'
+                }}
               >
-                {isCompleted ? '✓' : stepNumber} 
+                {isCompleted ? '✓' : step.number}
               </div>
               <span>{step.label}</span>
             </div>
