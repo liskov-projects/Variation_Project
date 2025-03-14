@@ -21,7 +21,7 @@ const StepOne = () => {
       <h2 className="mb-4">Builder Information</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Full Name</label>
+          <label className="form-label">Builder Name *</label>
           <input
             type="text"
             className="form-control"
@@ -31,7 +31,7 @@ const StepOne = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Address</label>
+          <label className="form-label">Address *</label>
           <input
             type="text"
             className="form-control"
@@ -41,46 +41,24 @@ const StepOne = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Email</label>
+          <label className="form-label">Email *</label>
           <input
             type="email"
             className="form-control"
             value={formData.email || ''}
             onChange={(e) => updateFormData({ email: e.target.value })}
+            required
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Phone Number</label>
+          <label className="form-label">Telephone/Mobile Number *</label>
           <input
-            type="number"
+            type="tel"
             className="form-control"
             value={formData.phonenumber || ''}
             onChange={(e) => updateFormData({ phonenumber: e.target.value })}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Date of Birth</label>
-          <input
-            type="date"
-            className="form-control"
-            value={formData.dob || ''}
-            onChange={(e) => updateFormData({ dob: e.target.value })}
             required
           />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Gender</label>
-          <select
-            className="form-select"
-            value={formData.gender || ''}
-            onChange={(e) => updateFormData({ gender: e.target.value })}
-            required
-          >
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
         </div>
         <button type="submit" className="btn btn-primary float-end">
           Next

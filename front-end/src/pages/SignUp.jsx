@@ -6,8 +6,8 @@ const SignUp = () => {
       <div className="max-w-md w-full space-y-8">
         <ClerkSignUp 
           routing="hash"
-          fallbackRedirectUrl="/TBD/welcome"
-          signInUrl="/TBD/sign-in"
+          fallbackRedirectUrl="/welcome"
+          signInUrl="/sign-in"
           appearance={{
             layout: {
               socialButtonsPlacement: "bottom",

@@ -2,7 +2,7 @@
   "name": "front-end",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://pgd1998.github.io/TBD",
+  "homepage": "https://pgd1998.github.io/",
   "proxy": "http://localhost:5000",
   "dependencies": {
     "@clerk/clerk-react": "^5.22.12",

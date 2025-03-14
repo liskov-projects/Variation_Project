@@ -6,6 +6,7 @@ import Welcome from './pages/Welcome';
 import FormWrapper from './components/FormWrapper';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
+import UserProfile from './pages/UserProfile';
 
 const PUBLISHABLE_KEY=process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
@@ -33,7 +34,7 @@ function PrivateRoute({children}){
 
 function App() {
   return (
-    <BrowserRouter basename="/TBD">
+    <BrowserRouter>
       <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
         <Routes>
           {/* Public routes */}
@@ -65,6 +66,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Welcome />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <UserProfile />
               </PrivateRoute>
             }
           />
