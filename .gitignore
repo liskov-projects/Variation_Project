@@ -17,6 +17,9 @@
 /front-end/.env
 /back-end/.env
 
+# Ignore .pack files
+*.pack
+
 # misc
 .DS_Store
 /front-end/.env.local
