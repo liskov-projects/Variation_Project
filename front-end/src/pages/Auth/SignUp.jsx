@@ -18,21 +18,29 @@ const SignUp = () => {
       
       <div className="card shadow-sm" style={{ width: '100%', maxWidth: '450px' }}>
         <div className="card-body p-4">
-          <ClerkSignUp 
-            routing="path"
-            path="/sign-up"
-            signInUrl="/sign-in"
-            redirectUrl="/welcome"
-            appearance={{
-              elements: {
-                rootBox: 'mx-auto',
-                card: '',
-                formButtonPrimary: 'btn btn-primary w-100',
-                footerAction: 'text-center mt-3',
-                formContainer: 'gap-4'
-              },
-            }}
-          />
+        <ClerkSignUp 
+          routing="hash"
+          fallbackRedirectUrl="/welcome"
+          signInUrl="/sign-in"
+          appearance={{
+            layout: {
+              socialButtonsPlacement: "bottom",
+              socialButtonsVariant: "iconButton",
+              termsPageUrl: "https://clerk.com/terms"
+            },
+            elements: {
+              formButtonPrimary: 
+                "bg-blue-500 hover:bg-blue-600 text-white w-full",
+              card: "shadow-xl rounded-lg p-6",
+              headerTitle: "text-2xl font-bold text-center text-gray-900",
+              headerSubtitle: "text-center text-gray-500",
+              dividerLine: "bg-gray-200",
+              dividerText: "text-gray-500",
+              formFieldLabel: "text-gray-700",
+              formFieldInput: "border-gray-300 focus:ring-blue-500 focus:border-blue-500",
+            },
+          }}
+        />
         </div>
       </div>
       

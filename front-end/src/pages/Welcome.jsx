@@ -2,7 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProfile } from '../contexts/ProfileContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Header from '../components/Header';
+// import Header from '../components/Header';
+import Header from '../components/Header/index';
 
 const Welcome = () => {
   const navigate = useNavigate();

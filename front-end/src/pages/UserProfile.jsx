@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import axios from 'axios';
 import useFormStorage from '../hooks/useFormStorage';
-import Header from '../components/Header';
-
+// import Header from '../components/Header';
+import Header from '../components/Header/index';
 const UserProfile = () => {
   const navigate = useNavigate();
   const { userId, getToken } = useAuth();

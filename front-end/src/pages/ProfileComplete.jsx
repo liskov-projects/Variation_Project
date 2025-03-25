@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProfile } from '../contexts/ProfileContext';
-import Header from '../components/Header';
+// import Header from '../components/Header';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Header from '../components/Header/index';
 
 const ProfileComplete = () => {
   const navigate = useNavigate();

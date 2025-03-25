@@ -1,13 +1,17 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProfile } from '../contexts/ProfileContext';
-import Header from '../components/Header';
+// import Header from '../components/Header';
+import Header from '../components/Header/index';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { isProfileComplete, profileData, loading } = useProfile();
+
+  // TODO: phone number validation
 
   // Redirect if profile is not complete
   useEffect(() => {

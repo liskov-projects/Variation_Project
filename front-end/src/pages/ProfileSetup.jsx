@@ -6,7 +6,8 @@ import StepTwo from '../components/ProfileSteps/StepTwo';
 import StepThree from '../components/ProfileSteps/StepThree';
 import StepReview from '../components/ProfileSteps/StepReview';
 import FormProgress from '../components/FormProgress';
-import Header from '../components/Header';
+// import Header from '../components/Header';
+import Header from '../components/Header/index';
 
 const ProfileSetup = () => {
   const navigate = useNavigate();
