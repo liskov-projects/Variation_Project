@@ -1,36 +1,49 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/front-end/node_modules
-/back-end/node_modules
-
-/front-end/.pnp
-/front-end/.pnp.js
+node_modules/
+.pnp
+.pnp.js
 
 # testing
-/coverage
+coverage/
 
 # production
-/front-end/build
+build/
+dist/
+out/
 
 # Environment variables
-/front-end/.env
-/back-end/.env
+.env
+.env.local
+.env.development
+.env.test
+.env.production
 
 # Ignore .pack files
 *.pack
 
 # misc
 .DS_Store
-/front-end/.env.local
-/front-end/.env.development.local
-/front-end/.env.test.local
-/front-end/.env.production.local
-/back-end/.env.local
-/back-end/.env.development.local
-/back-end/.env.test.local
-/back-end/.env.production.local
+Thumbs.db
+*.tmp
+*.swp
 
+# Editor directories and files
+.idea/
+.vscode/
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Cache
+.cache/
+.parcel-cache/
+
+# Jest snapshots
+__snapshots__/
