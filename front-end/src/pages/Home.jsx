@@ -218,41 +218,41 @@ export default Home;
 
 
 
-      {/* Features Section
-      <section className="py-5" id="services">
-        <div className="container">
-          <div className="text-center mb-5">
-            <h2 className="display-5 fw-bold">Our Services</h2>
-            <p className="lead text-muted">Comprehensive solutions for your business needs</p>
-          </div>
-          <div className="row g-4">
-            {[
-              {
-                title: 'Custom Solutions',
-                description: 'Tailored solutions designed specifically for your unique business requirements',
-                icon: '💡'
-              },
-              {
-                title: 'Expert Consultation',
-                description: 'Strategic guidance from industry experts to help you make informed decisions',
-                icon: '🤝'
-              },
-              {
-                title: 'Innovation Focus',
-                description: 'Cutting-edge technologies and approaches to keep you ahead of the curve',
-                icon: '🚀'
-              }
-            ].map((feature, index) => (
-              <div key={index} className="col-md-4">
-                <div className="card h-100 border-0 shadow-sm">
-                  <div className="card-body text-center p-4">
-                    <div className="display-5 mb-3">{feature.icon}</div>
-                    <h3 className="h4 mb-3">{feature.title}</h3>
-                    <p className="text-muted mb-0">{feature.description}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
+//       {/* Features Section
+//       <section className="py-5" id="services">
+//         <div className="container">
+//           <div className="text-center mb-5">
+//             <h2 className="display-5 fw-bold">Our Services</h2>
+//             <p className="lead text-muted">Comprehensive solutions for your business needs</p>
+//           </div>
+//           <div className="row g-4">
+//             {[
+//               {
+//                 title: 'Custom Solutions',
+//                 description: 'Tailored solutions designed specifically for your unique business requirements',
+//                 icon: '💡'
+//               },
+//               {
+//                 title: 'Expert Consultation',
+//                 description: 'Strategic guidance from industry experts to help you make informed decisions',
+//                 icon: '🤝'
+//               },
+//               {
+//                 title: 'Innovation Focus',
+//                 description: 'Cutting-edge technologies and approaches to keep you ahead of the curve',
+//                 icon: '🚀'
+//               }
+//             ].map((feature, index) => (
+//               <div key={index} className="col-md-4">
+//                 <div className="card h-100 border-0 shadow-sm">
+//                   <div className="card-body text-center p-4">
+//                     <div className="display-5 mb-3">{feature.icon}</div>
+//                     <h3 className="h4 mb-3">{feature.title}</h3>
+//                     <p className="text-muted mb-0">{feature.description}</p>
+//                   </div>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+//       </section> */}
