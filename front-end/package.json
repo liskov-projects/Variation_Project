@@ -2,7 +2,6 @@
   "name": "front-end",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://pgd1998.github.io/",
   "proxy": "http://localhost:5000",
   "dependencies": {
     "@clerk/clerk-react": "^5.22.12",
@@ -24,7 +23,7 @@
     "gh-pages": "^6.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts --openssl-legacy-provider start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
