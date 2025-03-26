@@ -38,7 +38,7 @@ export const getProfile = async (req, res) => {
 // @access  Private
 export const createProfile = async (req, res) => {
   try {
-    const { userId, email, profileData, profileSetupComplete } = req.body;
+    const { userId, profileData, profileSetupComplete } = req.body;
 
     // Check if the request user ID matches the body
     if (req.auth.userId !== userId) {
@@ -71,7 +71,6 @@ export const createProfile = async (req, res) => {
     // Create new profile
     const newProfile = new Profile({
       userId,
-      email,
       profileData,
       profileSetupComplete: profileSetupComplete || false
     });
