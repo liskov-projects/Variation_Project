@@ -83,11 +83,11 @@ const Dashboard = () => {
         </div>
 
         {/* Future Implementation Note */}
-        <div className="alert alert-info mt-4">
+        {/* <div className="alert alert-info mt-4">
           <i className="bi bi-info-circle me-2"></i>
           The Variation Project functionality will be implemented in the next phase. 
           For now, you can view and edit your builder profile.
-        </div>
+        </div> */}
 
         {/* Quick Profile Summary */}
         <div className="card mt-4">

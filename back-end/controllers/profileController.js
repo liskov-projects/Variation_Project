@@ -3,7 +3,6 @@ import Profile from '../models/profileModel.js';
 
 // @desc    Get user profile by userId
 // @route   GET /api/profile/:userId
-// @access  Private
 export const getProfile = async (req, res) => {
   try {
     const { userId } = req.params;
