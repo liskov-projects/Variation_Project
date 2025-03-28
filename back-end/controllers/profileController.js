@@ -34,7 +34,6 @@ export const getProfile = async (req, res) => {
 
 // @desc    Create new profile
 // @route   POST /api/profile
-// @access  Private
 export const createProfile = async (req, res) => {
   try {
     const { userId, profileData, profileSetupComplete } = req.body;
@@ -101,7 +100,6 @@ export const createProfile = async (req, res) => {
 
 // @desc    Update profile
 // @route   PUT /api/profile/:userId
-// @access  Private
 export const updateProfile = async (req, res) => {
   try {
     const { userId } = req.params;

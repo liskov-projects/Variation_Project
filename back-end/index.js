@@ -2,9 +2,10 @@
 import express from 'express';
 import cors from 'cors';
 import { config } from 'dotenv';
-import mongoose from 'mongoose';
 import profileRoutes from './routes/profileRoutes.js';
+import projectRoutes from './routes/projectRoutes.js';
 import connectDB from './config/dbStarter.js';
+
 // Load environment variables
 config();
 
@@ -15,27 +16,18 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-// const connectDB = async () => {
-//   try {
-//     const conn = await mongoose.connect(process.env.MONGO_URI);
-//     console.log(`MongoDB Connected: ${conn.connection.host}`);
-//   } catch (error) {
-//     console.error(`Error: ${error.message}`);
-//     process.exit(1);
-//   }
-// };
-
 connectDB();
 
 // Routes
 app.use('/api/profile', profileRoutes);
+app.use('/api/project',projectRoutes);
 
 // Root route
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-// Error handler
+// Error handler for middleware and routes
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
