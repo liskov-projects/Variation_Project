@@ -124,9 +124,6 @@ const projectSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Property address is required']
   },
-//   owners: [ownerSchema],
-//   architect: architectSchema,
-//   contractInfo: contractSchema,
   variations: [variationFormSchema],
   createdAt: {
     type: Date,

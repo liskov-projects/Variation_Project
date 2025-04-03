@@ -13,7 +13,7 @@ router.route('/')
   .get(getProjects)
   .post(createProject);
 
-router.route('/:id')
+router.route('/:projectId')
   .get(getProjectById)
   .put(updateProject)
   .delete(deleteProject);

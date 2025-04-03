@@ -23,7 +23,8 @@ export const getProjects = async (req, res) => {
 // @access  Private
 export const getProjectById = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id);
+    const {projectId}=req.params;
+    const project = await Project.findById(projectId);
     
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
