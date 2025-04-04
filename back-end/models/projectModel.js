@@ -1,75 +1,5 @@
+// backend/models/projectModel.js
 import mongoose from 'mongoose';
-
-// Owner schema for project owners
-const ownerSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Owner name is required']
-  },
-  phone: String,
-  email: String,
-  address: String,
-  isDifferentAddress: {
-    type: Boolean,
-    default: false
-  }
-});
-
-// Architect/Contract Administrator schema
-const architectSchema = new mongoose.Schema({
-  isInvolved: {
-    type: Boolean,
-    default: false
-  },
-  name: String,
-  address: String,
-  phone: String,
-  email: String
-});
-
-// Contract Information schema
-const contractSchema = new mongoose.Schema({
-  price: {
-    type: Number,
-    required: [true, 'Contract price is required']
-  },
-  depositAmount: {
-    type: Number,
-    required: [true, 'Deposit amount is required']
-  },
-  isDomesticBuildingOnly: {
-    type: Boolean,
-    default: true
-  },
-  contractStatementProvided: {
-    type: Boolean,
-    default: false
-  },
-  foundationsDataObtained: {
-    type: Boolean,
-    default: false
-  },
-  startDate: {
-    type: Date,
-    required: [true, 'Start date is required']
-  },
-  numberOfDays: {
-    type: Number,
-    required: [true, 'Number of days is required']
-  },
-  contractDate: {
-    type: Date,
-    required: [true, 'Contract date is required']
-  },
-  endDate: {
-    type: Date
-  },
-  insuranceDetails: String,
-  signedByAllParties: {
-    type: Boolean,
-    default: false
-  }
-});
 
 // Variation Form schema
 const variationFormSchema = new mongoose.Schema({
@@ -124,27 +54,42 @@ const projectSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Property address is required']
   },
-  variations: [variationFormSchema],
-  createdAt: {
-    type: Date,
-    default: Date.now
+  clientName: {
+    type: String,
+    required: [true, 'Client name is required']
   },
-  updatedAt: {
+  clientEmail: {
+    type: String,
+    required: [true, 'Client email is required'],
+    match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address']
+  },
+  clientPhone: {
+    type: String,
+    required: [true, 'Client phone is required']
+  },
+  projectName: {
+    type: String,
+    required: [true, 'Project name is required']
+  },
+  startDate: {
     type: Date,
-    default: Date.now
-  }
-});
-
-// Pre-save hook to calculate end date
-projectSchema.pre('save', function(next) {
-  if (this.contractInfo.startDate && this.contractInfo.numberOfDays) {
-    const startDate = new Date(this.contractInfo.startDate);
-    const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + this.contractInfo.numberOfDays);
-    this.contractInfo.endDate = endDate;
-  }
-  this.updatedAt = Date.now();
-  next();
+    required: [true, 'Start date is required']
+  },
+  expectedEndDate: {
+    type: Date
+  },
+  status: {
+    type: String,
+    enum: ['active', 'on-hold', 'completed', 'cancelled'],
+    default: 'active'
+  },
+  description: {
+    type: String,
+    default: ''
+  },
+  variations: [variationFormSchema]
+}, {
+  timestamps: true
 });
 
 const Project = mongoose.model('Project', projectSchema);

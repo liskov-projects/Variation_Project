@@ -20,7 +20,7 @@ connectDB();
 
 // Routes
 app.use('/api/profile', profileRoutes);
-app.use('/api/project',projectRoutes);
+app.use('/api/projects',projectRoutes);
 
 // Root route
 app.get('/', (req, res) => {

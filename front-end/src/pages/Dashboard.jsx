@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProfile } from '../contexts/ProfileContext';
+import { useProject } from '../contexts/ProjectContext';
 // import Header from '../components/Header';
 import Header from '../components/Header/index';
 
@@ -10,7 +11,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 const Dashboard = () => {
   const navigate = useNavigate();
   const { isProfileComplete, profileData, loading } = useProfile();
-
+  const { projects, loading: projectsLoading, fetchProjects } = useProject(); 
   // TODO: phone number validation
 
   // Redirect if profile is not complete
@@ -19,6 +20,12 @@ const Dashboard = () => {
       navigate('/profile-setup');
     }
   }, [isProfileComplete, loading, navigate]);
+  
+  // useEffect(() => {
+  //   if (isProfileComplete) {
+  //     fetchProjects();
+  //   }
+  // }, []);
 
   if (loading) {
     return (
@@ -41,7 +48,7 @@ const Dashboard = () => {
           <h2>Dashboard</h2>
           <button 
             className="btn btn-primary"
-            onClick={() => navigate('/new-project')}
+            onClick={() => navigate('/projects/new')}
           >
             <i className="bi bi-plus-lg me-2"></i>
             New Variation Project
@@ -61,24 +68,70 @@ const Dashboard = () => {
 
         {/* Project List Placeholder */}
         <div className="card">
-          <div className="card-header bg-light">
+          <div className="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 className="mb-0">Your Projects</h5>
+            <button 
+              className="btn btn-sm btn-outline-primary"
+              onClick={() => navigate('/projects')}  // Add this to view all projects
+            >
+              View All
+            </button>
           </div>
           <div className="card-body">
-            <div className="text-center py-5">
-              <i className="bi bi-folder-plus" style={{ fontSize: '3rem', color: '#ccc' }}></i>
-              <h5 className="mt-3">No Projects Yet</h5>
-              <p className="text-muted">
-                You haven't created any variation projects yet. 
-                Click the "New Variation Project" button to get started.
-              </p>
-              <button 
-                className="btn btn-primary mt-2"
-                onClick={() => navigate('/new-project')}
-              >
-                Create Your First Project
-              </button>
-            </div>
+            {projectsLoading ? (
+              <div className="text-center py-3">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading projects...</span>
+                </div>
+              </div>
+            ) : projects && projects.length > 0 ? (
+              <div>
+                {/* Show most recent 3 projects */}
+                {projects.slice(0, 3).map(project => (
+                  <div key={project._id} className="card mb-2 shadow-sm">
+                    <div className="card-body p-3">
+                      <div className="d-flex justify-content-between align-items-center">
+                        <h6 className="mb-0">{project.projectName}</h6>
+                        <button 
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={() => navigate(`/projects/${project._id}`)}
+                        >
+                          View
+                        </button>
+                      </div>
+                      <small className="text-muted">
+                        {project.propertyAddress} | Variations: {project.variations?.length || 0}
+                      </small>
+                    </div>
+                  </div>
+                ))}
+                {projects.length > 3 && (
+                  <div className="text-center mt-3">
+                    <button 
+                      className="btn btn-outline-primary btn-sm"
+                      onClick={() => navigate('/projects')}
+                    >
+                      View All Projects
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-5">
+                <i className="bi bi-folder-plus" style={{ fontSize: '3rem', color: '#ccc' }}></i>
+                <h5 className="mt-3">No Projects Yet</h5>
+                <p className="text-muted">
+                  You haven't created any variation projects yet. 
+                  Click the "New Variation Project" button to get started.
+                </p>
+                <button 
+                  className="btn btn-primary mt-2"
+                  onClick={() => navigate('/projects/new')}  // Changed from '/new-project'
+                >
+                  Create Your First Project
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

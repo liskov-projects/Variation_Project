@@ -1,6 +1,13 @@
 // routes/projectRoutes.js
 import express from 'express';
-import { getProjects, getProjectById, createProject, updateProject, deleteProject, addVariation } from '../controllers/projectController.js';
+import { getUserProjects,
+  getProjectById,
+  createProject,
+  updateProject,
+  deleteProject,
+  addVariation,
+  updateVariation,
+  deleteVariation } from '../controllers/projectController.js';
 import clerkMiddleware from '../middleware/auth.js';
 
 const router = express.Router();
@@ -9,9 +16,10 @@ const router = express.Router();
 router.use(clerkMiddleware);
 
 // Project routes
-router.route('/')
-  .get(getProjects)
-  .post(createProject);
+router.route('/user/:userId')
+  .get(getUserProjects);
+
+  router.route('/').post(createProject);
 
 router.route('/:projectId')
   .get(getProjectById)
@@ -19,7 +27,11 @@ router.route('/:projectId')
   .delete(deleteProject);
 
 // Variation routes (nested under projects)
-router.route('/:id/variations')
+router.route('/:projectId/variations')
   .post(addVariation);
+
+router.route('/:projectId/variations/:variationId').put(updateVariation);
+
+router.route('/:projectId/variations/:variationId').delete(deleteVariation);
 
 export default router;
