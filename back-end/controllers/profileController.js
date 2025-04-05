@@ -3,7 +3,6 @@ import Profile from '../models/profileModel.js';
 
 // @desc    Get user profile by userId
 // @route   GET /api/profile/:userId
-// @access  Private
 export const getProfile = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -35,10 +34,9 @@ export const getProfile = async (req, res) => {
 
 // @desc    Create new profile
 // @route   POST /api/profile
-// @access  Private
 export const createProfile = async (req, res) => {
   try {
-    const { userId, profileData, profileSetupComplete } = req.body;
+    const { userId, email,profileData, profileSetupComplete } = req.body;
 
     // Check if the request user ID matches the body
     if (req.auth.userId !== userId) {
@@ -71,6 +69,7 @@ export const createProfile = async (req, res) => {
     // Create new profile
     const newProfile = new Profile({
       userId,
+      email,
       profileData,
       profileSetupComplete: profileSetupComplete || false
     });
@@ -102,7 +101,6 @@ export const createProfile = async (req, res) => {
 
 // @desc    Update profile
 // @route   PUT /api/profile/:userId
-// @access  Private
 export const updateProfile = async (req, res) => {
   try {
     const { userId } = req.params;

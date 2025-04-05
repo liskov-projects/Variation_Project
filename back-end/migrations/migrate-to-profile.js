@@ -2,7 +2,7 @@
 import mongoose from 'mongoose';
 import { config } from 'dotenv';
 import forms from "./models/dbSchema.js";
-import Profile from "./models/profileModel.js";
+import Profile from "../models/profileModel.js";
 
 config();
 

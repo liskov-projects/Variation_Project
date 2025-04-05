@@ -150,6 +150,7 @@ export const ProfileProvider = ({ children }) => {
       
       const payload = {
         userId,
+        email: profileData.email,
         profileData,
         profileSetupComplete: isComplete
       };
