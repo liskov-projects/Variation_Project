@@ -98,6 +98,7 @@ const handleSubmit = async (e) => {
       return;
     }
     
+    // TODO: contract price (display why the addition is happening)
     // Ensure numbers and dates are properly formatted
     const formattedData = {
       ...variationData,
