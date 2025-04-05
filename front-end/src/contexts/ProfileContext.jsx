@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
+import API_BASE_URL from '../api';
 import axios from 'axios';
 
 const ProfileContext = createContext();
@@ -44,7 +45,7 @@ export const ProfileProvider = ({ children }) => {
       setLoading(true);
       try {
         const token = await getToken();
-        const response = await axios.get(`/api/profile/${userId}`, {
+        const response = await axios.get(`${API_BASE_URL}/api/profile/${userId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -140,7 +141,7 @@ export const ProfileProvider = ({ children }) => {
       // Check if profile exists
       let userExists = false;
       try {
-        const checkResponse = await axios.get(`/api/profile/${userId}`, {
+        const checkResponse = await axios.get(`${API_BASE_URL}/api/profile/${userId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         userExists = checkResponse.status === 200;
@@ -158,12 +159,12 @@ export const ProfileProvider = ({ children }) => {
       let response;
       if (userExists) {
         // Update existing profile
-        response = await axios.put(`/api/profile/${userId}`, payload, {
+        response = await axios.put(`${API_BASE_URL}/api/profile/${userId}`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
         // Create new profile
-        response = await axios.post('/api/profile', payload, {
+        response = await axios.post('${API_BASE_URL}/api/profile', payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }

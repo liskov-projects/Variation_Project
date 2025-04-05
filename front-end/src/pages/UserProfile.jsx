@@ -5,6 +5,8 @@ import axios from 'axios';
 import useFormStorage from '../hooks/useFormStorage';
 // import Header from '../components/Header';
 import Header from '../components/Header/index';
+import API_BASE_URL from '../api';
+
 const UserProfile = () => {
   const navigate = useNavigate();
   const { userId, getToken } = useAuth();
@@ -45,7 +47,7 @@ const UserProfile = () => {
       setLoading(true);
       try {
         const token = await getToken();
-        const response = await axios.get(`/api/user/${userId}`, {
+        const response = await axios.get(`${API_BASE_URL}/api/user/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -158,7 +160,7 @@ const UserProfile = () => {
       // Check if user already exists
       let userExists = false;
       try {
-        const checkResponse = await axios.get(`/api/user/${userId}`, {
+        const checkResponse = await axios.get(`${API_BASE_URL}/api/user/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -171,7 +173,7 @@ const UserProfile = () => {
       let response;
       if (userExists) {
         // Update existing user
-        response = await axios.put(`/api/user/${userId}`, {
+        response = await axios.put(`${API_BASE_URL}/api/user/${userId}`, {
           userId,
           email: userInfo.email,
           formData: userInfo
@@ -182,7 +184,7 @@ const UserProfile = () => {
         });
       } else {
         // Create new user
-        response = await axios.post(`/api/forms/submit`, {
+        response = await axios.post(`${API_BASE_URL}/api/forms/submit`, {
           userId,
           email: userInfo.email,
           formData: userInfo

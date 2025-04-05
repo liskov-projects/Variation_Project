@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useEffect,useCallback } fro
 import { useAuth } from '@clerk/clerk-react';
 import axios from 'axios';
 import { createEmptyProject, createEmptyVariation } from '../models/ProjectModel';
-
+import API_BASE_URL from '../api';
 const ProjectContext = createContext();
 
 export const useProject = ()=> useContext(ProjectContext);
@@ -22,7 +22,7 @@ export const ProjectProvider = ({children})=>{
 
         try {
             const token = await getToken();
-            const response = await axios.get(`/api/projects/user/${userId}`,{
+            const response = await axios.get(`${API_BASE_URL}/api/projects/user/${userId}`,{
                 headers:{Authorization: `Bearer ${token}`}
             });
             if (response.data){
@@ -44,7 +44,7 @@ export const ProjectProvider = ({children})=>{
       
       try {
         const token = await getToken();
-        const response = await axios.get(`/api/projects/${projectId}`, {
+        const response = await axios.get(`${API_BASE_URL}/api/projects/${projectId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -70,7 +70,7 @@ export const ProjectProvider = ({children})=>{
 
         try {
           const token = await getToken();
-          const response = await axios.post('/api/projects/',{
+          const response = await axios.post(`${API_BASE_URL}/api/projects/`,{
             ...projectData, userId
           },
           {headers: { Authorization: `Bearer ${token}` }
@@ -93,7 +93,7 @@ export const ProjectProvider = ({children})=>{
 
       try {
         const token = await getToken();
-        const response = await axios.put(`/api/projects/${projectId}`,projectData,{
+        const response = await axios.put(`${API_BASE_URL}/api/projects/${projectId}`,projectData,{
           headers:{Authorization:`Bearer ${token}`}
         })
 
@@ -121,7 +121,7 @@ export const ProjectProvider = ({children})=>{
       setError(null);
       try {
         const token = await getToken();
-        const response = await axios.delete(`/api/projects/${projectId}`,{
+        const response = await axios.delete(`${API_BASE_URL}/api/projects/${projectId}`,{
           headers:{Authorization:`Bearer ${token}`}
         })
 
@@ -147,7 +147,7 @@ export const ProjectProvider = ({children})=>{
       setError(null);
       try {
         const token = await getToken();
-        const response = await axios.post(`/api/projects/${projectId}/variations`,variationData,{
+        const response = await axios.post(`${API_BASE_URL}/api/projects/${projectId}/variations`,variationData,{
           headers:{Authorization: `Bearer ${token}`}
         });
           // Update current project with the new variation
@@ -175,7 +175,7 @@ export const ProjectProvider = ({children})=>{
 
       try {
         const token = await getToken();
-        const response = await axios.put(`/api/projects/${projectId}/${variationId}`,variationData,{
+        const response = await axios.put(`${API_BASE_URL}/api/projects/${projectId}/${variationId}`,variationData,{
           headers:{Authorization: `Bearer ${token}`}
         });
         if (currentProject && currentProject._id === projectId) {
@@ -201,7 +201,7 @@ export const ProjectProvider = ({children})=>{
 
       try {
         const token = await getToken();
-        const response = await axios.delete(`/api/projects/${projectId}/${variationId}`,{
+        const response = await axios.delete(`${API_BASE_URL}/api/projects/${projectId}/${variationId}`,{
           headers:{Authorization:`Bearer ${token}`}
         })
 
