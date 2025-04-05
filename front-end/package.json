@@ -2,7 +2,6 @@
   "name": "front-end",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
   "dependencies": {
     "@clerk/clerk-react": "^5.22.12",
     "axios": "^1.7.9",
