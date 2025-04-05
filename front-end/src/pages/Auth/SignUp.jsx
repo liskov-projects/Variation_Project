@@ -19,7 +19,8 @@ const SignUp = () => {
       <div className="card shadow-sm" style={{ width: '100%', maxWidth: '450px' }}>
         <div className="card-body p-4">
         <ClerkSignUp 
-          routing="hash"
+          routing="path"
+          path="/sign-up"
           fallbackRedirectUrl="/welcome"
           signInUrl="/sign-in"
           appearance={{
