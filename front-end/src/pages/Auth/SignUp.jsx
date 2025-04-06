@@ -1,6 +1,6 @@
 // pages/Auth/SignUp.jsx
 import React,{useEffect} from 'react';
-import { SignUp as ClerkSignUp } from '@clerk/clerk-react';
+import { SignUp as ClerkSignUp, useAuth } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
