@@ -67,8 +67,14 @@ function PublicRoute({ children }) {
       </div>
     );
   }
-  
-  return isSignedIn ? <Navigate to="/welcome" replace /> : children;
+
+  // Redirect signed-in users to the welcome page
+  if (isSignedIn) {
+    return <Navigate to="/welcome" replace />;
+  }
+
+  // Allow access to public routes for non-signed-in users
+  return children;
 }
 
 function PrivateRoute({ children }) {
