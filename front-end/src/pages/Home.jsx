@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const Home = () => {
-  // Navigation and scroll handlers remain the same
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -26,43 +26,62 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Navigation Bar remains the same */}
-      <nav className={`navbar navbar-expand-lg fixed-top transition-all duration-300 ${
-        isScrolled ? 'py-2' : 'py-3'
-      }`} style={{ 
-        backgroundColor: isScrolled ? '#2C3E50' : 'rgba(44, 62, 80, 0.9)',
-        backdropFilter: 'blur(8px)',
-        borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.1)' : 'none'
-      }}>
-        <div className="container">
-          <a className="navbar-brand fw-bold text-white" href="/">CompanyName</a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span className="navbar-toggler-icon"></span>
+      <nav
+  className={`navbar navbar-expand-lg fixed-top transition-all duration-300 ${
+    isScrolled ? 'py-2' : 'py-3'
+  }`}
+  style={{
+    backgroundColor: isScrolled ? '#2C3E50' : 'rgba(44, 62, 80, 0.9)',
+    backdropFilter: 'blur(8px)',
+    borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.9)' : 'none',
+  }}
+>
+  <div className="container">
+    <a className="navbar-brand fw-bold text-white" href="/">
+      Variation
+    </a>
+    <button
+      className="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+      style={{
+        background: 'rgba(255, 255, 255, 0.9)', 
+      }}
+    >
+      <span className="navbar-toggler-icon"></span>
+    </button>
+    <div className="collapse navbar-collapse" id="navbarNav">
+      <ul className="navbar-nav ms-auto">
+        <li className="nav-item">
+          <a className="nav-link text-white" href="#about">
+            About
+          </a>
+        </li>
+        <li className="nav-item">
+          <a className="nav-link text-white" href="#contact">
+            Contact
+          </a>
+        </li>
+        <li className="nav-item">
+          <button
+            className="btn btn-outline-light ms-2"
+            onClick={() => handleNavigation('/welcome')}
+            style={{
+              // borderRadius: '25px',
+              backgroundColor: isScrolled ? 'transparent' : 'rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            Get Started
           </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <a className="nav-link text-white" href="#about">About</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link text-white" href="#contact">Contact</a>
-              </li>
-              <li className="nav-item">
-                <button 
-                  className="btn btn-outline-light ms-2" 
-                  onClick={() => handleNavigation('/welcome')}
-                  style={{ 
-                    borderRadius: '25px',
-                    backgroundColor: isScrolled ? 'transparent' : 'rgba(255, 255, 255, 0.1)'
-                  }}
-                >
-                  Get Started
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
       {/* Hero Section remains the same */}
       <section className="position-relative vh-100 d-flex align-items-center" style={{ backgroundColor: '#2C3E50' }}>
@@ -196,7 +215,7 @@ const Home = () => {
         <div className="container">
           <div className="row align-items-center">
             <div className="col-md-6">
-              <h5 className="mb-0">CompanyName</h5>
+              <h5 className="mb-0">Variation</h5>
             </div>
             <div className="col-md-6 text-md-end">
               <div className="d-flex gap-4 justify-content-md-end">

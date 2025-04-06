@@ -1,8 +1,25 @@
 // pages/Auth/SignIn.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SignIn as ClerkSignIn } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+// Add this CSS to your component
+const customStyles = `
+  .cl-footerAction {
+    display: none !important;
+  }
+  
+  /* If the above doesn't work, try these alternatives */
+  .cl-footer {
+    display: none !important;
+  }
+  
+  .cl-formButtonPrimary + div, 
+  div[data-localization-key="footerActionLink"] {
+    display: none !important;
+  }
+`;
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -11,6 +28,19 @@ const SignIn = () => {
     console.log("Sign up button clicked - navigating to /sign-up");
     navigate('/sign-up');
   };
+  
+  // Add effect to inject the CSS
+  useEffect(() => {
+    // Create a style element
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = customStyles;
+    document.head.appendChild(styleElement);
+    
+    // Cleanup
+    return () => {
+      document.head.removeChild(styleElement);
+    };
+  }, []);
 
   return (
     <div className="d-flex flex-column min-vh-100 justify-content-center align-items-center bg-light">
@@ -54,11 +84,6 @@ const SignIn = () => {
             >
               Sign up here
             </button>
-            
-            {/* Alternative direct link if the button doesn't work */}
-            <div className="mt-2">
-              <small>If the button doesn't work, <a href="/sign-up">click here</a> to sign up</small>
-            </div>
           </div>
         </div>
       </div>

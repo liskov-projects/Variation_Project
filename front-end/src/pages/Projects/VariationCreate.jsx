@@ -15,7 +15,7 @@ const VariationCreate = () => {
         if (projectId) {
           fetchProjectById(projectId);
         }
-      }, [projectId, fetchProjectById]);
+      }, [projectId]);
     
       // Initialize variation with today's date
       useEffect(() => {

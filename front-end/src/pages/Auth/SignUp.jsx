@@ -4,16 +4,42 @@ import { SignUp as ClerkSignUp, useAuth } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const customStyles = `
+  .cl-footerAction {
+    display: none !important;
+  }
+  
+  /* If the above doesn't work, try these alternatives */
+  .cl-footer {
+    display: none !important;
+  }
+  
+  .cl-formButtonPrimary + div, 
+  div[data-localization-key="footerActionLink"] {
+    display: none !important;
+  }
+`;
+
 const SignUp = () => {
   const navigate = useNavigate();
-  const { isSignedIn, isLoaded } = useAuth();
 
-  // Redirect if user becomes signed in
-  useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      navigate('/auth-redirect');
-    }
-  }, [isSignedIn, isLoaded, navigate]);
+  const handleSignIn = () => {
+      console.log("Sign up button clicked - navigating to /sign-up");
+      navigate('/sign-in');
+    };
+    
+    // Add effect to inject the CSS
+    useEffect(() => {
+      // Create a style element
+      const styleElement = document.createElement('style');
+      styleElement.innerHTML = customStyles;
+      document.head.appendChild(styleElement);
+      
+      // Cleanup
+      return () => {
+        document.head.removeChild(styleElement);
+      };
+    }, []);
 
   return (
     <div className="d-flex flex-column min-vh-100 justify-content-center align-items-center bg-light">
@@ -47,9 +73,19 @@ const SignUp = () => {
             },
           }}
         />
-        </div>
-      </div>
+        
       
+      <div className="text-center mt-3">
+            <p>Have an account?</p>
+            <button 
+              className="btn btn-outline-primary"
+              onClick={handleSignIn}
+            >
+              Sign in here
+            </button>
+          </div>
+          </div>
+          </div>
       <div className="mt-4">
         <button
           className="btn btn-link text-secondary"
