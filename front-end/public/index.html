@@ -42,29 +42,15 @@
 
     <!-- Add this script for SPA routing on static hosting -->
     <script>
-      // This script handles redirects for a single page app
+      // Handle SPA routing for static hosting
       (function() {
-        // Don't run this in development
-        if (window.location.hostname === 'localhost') return;
-        
-        // Get the current path
-        var path = window.location.pathname;
-        
-        // If there's a 404 response and we're not already on the index page
-        if (path !== '/' && path !== '/index.html') {
-          // Store the path in session storage
-          sessionStorage.setItem('redirect', path);
-          // Redirect to the index
-          window.location.href = '/';
-        }
-        
-        // If we have a redirect path stored, use it
-        if (path === '/' || path === '/index.html') {
-          var redirect = sessionStorage.getItem('redirect');
-          if (redirect) {
-            sessionStorage.removeItem('redirect');
-            history.replaceState(null, null, redirect);
-          }
+        // Check if we have a redirect path stored
+        var redirectPath = sessionStorage.getItem('redirectPath');
+        if (redirectPath && window.location.pathname === '/') {
+          // Clear the redirect path
+          sessionStorage.removeItem('redirectPath');
+          // Update the URL without refreshing the page
+          window.history.replaceState(null, '', redirectPath);
         }
       })();
     </script>

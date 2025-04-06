@@ -8,7 +8,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 const ProjectDetails = () => {
     const { projectId } = useParams();
     const navigate = useNavigate();
-    const { fetchProjectById, currentProject, loading, error, deleteVariation } = useProject();
+    const { fetchProjectById, currentProject, loading, deleteVariation } = useProject();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [variationToDelete, setVariationToDelete] = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
