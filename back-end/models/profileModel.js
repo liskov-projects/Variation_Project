@@ -89,12 +89,6 @@ const profileSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-    projects: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Project'
-      }
-    ]
   },
   {
     timestamps: true
