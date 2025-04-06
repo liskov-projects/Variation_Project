@@ -1,7 +1,7 @@
 import './App.css';
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { ClerkProvider, SignedIn, SignedOut, useAuth } from '@clerk/clerk-react';
 import { ProfileProvider } from './contexts/ProfileContext';
 import { ProjectProvider } from './contexts/ProjectContext';
 
@@ -25,126 +25,181 @@ import ProjectVariation from './pages/Projects/ProjectVariation';
 import VariationCreate from './pages/Projects/VariationCreate';
 import VariationEdit from './pages/Projects/VariationEdit';
 
-
 // Home page (landing page for guests)
 import Home from './pages/Home';
 
 const PUBLISHABLE_KEY = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
-function PublicRoute({ children }) {
+// Auth redirect component
+const AuthRedirect = () => {
+  const navigate = useNavigate();
+  const { isSignedIn, isLoaded } = useAuth();
+
+  React.useEffect(() => {
+    if (isLoaded) {
+      if (isSignedIn) {
+        navigate('/welcome');
+      } else {
+        navigate('/sign-in');
+      }
+    }
+  }, [isSignedIn, isLoaded, navigate]);
+
   return (
-    <>
-      <SignedIn>
-        <Navigate to="/welcome" replace />
-      </SignedIn>
-      <SignedOut>{children}</SignedOut>
-    </>
+    <div className="d-flex justify-content-center align-items-center vh-100">
+      <div className="spinner-border text-primary" role="status">
+        <span className="visually-hidden">Redirecting...</span>
+      </div>
+    </div>
   );
+};
+
+function PublicRoute({ children }) {
+  const { isSignedIn, isLoaded } = useAuth();
+  
+  // Wait for Clerk to initialize
+  if (!isLoaded) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading authentication...</span>
+        </div>
+      </div>
+    );
+  }
+  
+  return isSignedIn ? <Navigate to="/welcome" replace /> : children;
 }
 
 function PrivateRoute({ children }) {
+  const { isSignedIn, isLoaded } = useAuth();
+  
+  // Wait for Clerk to initialize
+  if (!isLoaded) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading authentication...</span>
+        </div>
+      </div>
+    );
+  }
+  
+  return isSignedIn ? children : <Navigate to="/sign-in" replace />;
+}
+
+function ClerkProviderWithNavigate({ children }) {
+  const navigate = useNavigate();
+  
   return (
-    <>
-      <SignedIn>{children}</SignedIn>
-      <SignedOut>
-        <Navigate to="/sign-in" replace />
-      </SignedOut>
-    </>
+    <ClerkProvider 
+      publishableKey={PUBLISHABLE_KEY}
+      navigate={(to) => navigate(to)}
+    >
+      {children}
+    </ClerkProvider>
   );
 }
 
 function App() {
   return (
     <BrowserRouter>
-      <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-        <ProfileProvider>
-          <ProjectProvider>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={
-              <PublicRoute>
-                <Home />
-              </PublicRoute>
-            } />
-            <Route path="/sign-in" element={
-              <PublicRoute>
-                <SignIn />
-              </PublicRoute>
-            } />
-            <Route path="/sign-up" element={
-              <PublicRoute>
-                <SignUp />
-              </PublicRoute>
-            } />
+      <Routes>
+        <Route path="/*" element={
+          <ClerkProviderWithNavigate>
+            <ProfileProvider>
+              <ProjectProvider>
+                <Routes>
+                  {/* Public routes */}
+                  <Route path="/" element={
+                    <PublicRoute>
+                      <Home />
+                    </PublicRoute>
+                  } />
+                  <Route path="/sign-in" element={
+                    <PublicRoute>
+                      <SignIn />
+                    </PublicRoute>
+                  } />
+                  <Route path="/sign-up" element={
+                    <PublicRoute>
+                      <SignUp />
+                    </PublicRoute>
+                  } />
+                  
+                  {/* Auth redirect route */}
+                  <Route path="/auth-redirect" element={<AuthRedirect />} />
 
-            {/* Protected routes */}
-            <Route path="/welcome" element={
-              <PrivateRoute>
-                <Welcome />
-              </PrivateRoute>
-            } />
-            <Route path="/profile-setup" element={
-              <PrivateRoute>
-                <ProfileSetup />
-              </PrivateRoute>
-            } />
-            <Route path="/profile-edit" element={
-              <PrivateRoute>
-                <ProfileEdit />
-              </PrivateRoute>
-            } />
-            <Route path="/profile-complete" element={
-              <PrivateRoute>
-                <ProfileComplete />
-              </PrivateRoute>
-            } />
-            <Route path="/dashboard" element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            } />
-            <Route path="/projects" element={
-                <PrivateRoute>
-                  <ProjectList />
-                </PrivateRoute>
-              } />
-              <Route path="/projects/new" element={
-                <PrivateRoute>
-                  <ProjectCreate />
-                </PrivateRoute>
-              } />
-              <Route path="/projects/:projectId" element={
-                <PrivateRoute>
-                  <ProjectDetails />
-                </PrivateRoute>
-              } />
-              <Route path="/projects/:projectId/edit" element={
-                <PrivateRoute>
-                  <ProjectEdit />
-                </PrivateRoute>
-              } />
-              <Route path="/projects/:projectId/variations/new" element={
-                <PrivateRoute>
-                  <VariationCreate />
-                </PrivateRoute>
-              } />
-              <Route path="/projects/:projectId/variations/:variationId" element={
-                <PrivateRoute>
-                  <ProjectVariation />
-                </PrivateRoute>
-              } />
-              <Route path="/projects/:projectId/variations/:variationId/edit" element={
-                <PrivateRoute>
-                  <VariationEdit />
-                </PrivateRoute>
-              } />
+                  {/* Protected routes */}
+                  <Route path="/welcome" element={
+                    <PrivateRoute>
+                      <Welcome />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/profile-setup" element={
+                    <PrivateRoute>
+                      <ProfileSetup />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/profile-edit" element={
+                    <PrivateRoute>
+                      <ProfileEdit />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/profile-complete" element={
+                    <PrivateRoute>
+                      <ProfileComplete />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/dashboard" element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/projects" element={
+                    <PrivateRoute>
+                      <ProjectList />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/projects/new" element={
+                    <PrivateRoute>
+                      <ProjectCreate />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/projects/:projectId" element={
+                    <PrivateRoute>
+                      <ProjectDetails />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/projects/:projectId/edit" element={
+                    <PrivateRoute>
+                      <ProjectEdit />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/projects/:projectId/variations/new" element={
+                    <PrivateRoute>
+                      <VariationCreate />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/projects/:projectId/variations/:variationId" element={
+                    <PrivateRoute>
+                      <ProjectVariation />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/projects/:projectId/variations/:variationId/edit" element={
+                    <PrivateRoute>
+                      <VariationEdit />
+                    </PrivateRoute>
+                  } />
 
-            {/* Fallback redirect */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-          </ProjectProvider>
-        </ProfileProvider>
-      </ClerkProvider>
+                  {/* Fallback redirect */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </ProjectProvider>
+            </ProfileProvider>
+          </ClerkProviderWithNavigate>
+        } />
+      </Routes>
     </BrowserRouter>
   );
 }

@@ -1,11 +1,19 @@
 // pages/Auth/SignUp.jsx
-import React from 'react';
+import React,{useEffect} from 'react';
 import { SignUp as ClerkSignUp } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { isSignedIn, isLoaded } = useAuth();
+
+  // Redirect if user becomes signed in
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      navigate('/auth-redirect');
+    }
+  }, [isSignedIn, isLoaded, navigate]);
 
   return (
     <div className="d-flex flex-column min-vh-100 justify-content-center align-items-center bg-light">
