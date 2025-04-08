@@ -68,7 +68,8 @@ const ProfileSetup = () => {
       }
     }
   };
-
+  
+  // Validate form data for each step
   const validateStep = (step, profileData) => {
     if (step === 1) {
       if (!profileData.fullName) return "Full name is required";
