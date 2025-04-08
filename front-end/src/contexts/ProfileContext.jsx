@@ -44,12 +44,13 @@ export const ProfileProvider = ({ children }) => {
       
       setLoading(true);
       try {
+
         const token = await getToken();
         const response = await axios.get(`${API_BASE_URL}/api/profile/${userId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        
-        if (response.data && response.data.profileData) {
+     
+        if (response.data && response.dataprofileData) {
           setProfileData(response.data.profileData);
           setIsProfileComplete(response.data.profileSetupComplete || false);
         }
