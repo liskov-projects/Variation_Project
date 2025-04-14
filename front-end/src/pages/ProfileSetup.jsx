@@ -17,7 +17,8 @@ const ProfileSetup = () => {
     saveProfile, 
     loading,
     isProfileComplete,
-    error 
+    error,
+    profileData,
   } = useProfile();
 
   // Redirect if profile is already complete
@@ -44,6 +45,16 @@ const ProfileSetup = () => {
   };
 
   const handleNext = async () => {
+  // Validate the current step before proceeding
+    const validationError = validateStep(currentStep, profileData);
+    if (validationError) {
+      setFormError(validationError);
+      console.log(formError);
+      return;
+    }
+
+    setFormError(null);//Clear any previous errors
+    
     if (currentStep < 4) {
       // For steps 1-3, just save progress and move to next step
       await saveProfile(false);
