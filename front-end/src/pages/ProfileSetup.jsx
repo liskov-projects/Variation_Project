@@ -20,6 +20,7 @@ const ProfileSetup = () => {
     error,
     profileData,
   } = useProfile();
+  const [formError, setFormError] = React.useState(null);
 
   // Redirect if profile is already complete
   useEffect(() => {
@@ -57,7 +58,9 @@ const ProfileSetup = () => {
     
     if (currentStep < 4) {
       // For steps 1-3, just save progress and move to next step
-      await saveProfile(false);
+
+      // Disable for now to avoid saving incomplete data
+      // await saveProfile(false);
       setCurrentStep(currentStep + 1);
     } else {
       // For final step (review), mark profile as complete and redirect
@@ -117,7 +120,7 @@ const ProfileSetup = () => {
       <div className="d-flex">
         <FormProgress currentStep={currentStep} />
         <div className="flex-grow-1 p-4">
-          {error && <div className="alert alert-danger">{error}</div>}
+          {validationError && <div className="alert alert-danger">{validationError}</div>}
           
           <div className="card shadow-sm">
             <div className="card-header bg-primary text-white">
