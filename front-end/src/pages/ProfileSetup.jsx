@@ -11,6 +11,7 @@ import Header from '../components/Header/index';
 
 const ProfileSetup = () => {
   const navigate = useNavigate();
+  const [formError, setFormError] = React.useState(null);
   const { 
     currentStep, 
     setCurrentStep, 
@@ -20,7 +21,6 @@ const ProfileSetup = () => {
     error,
     profileData,
   } = useProfile();
-  const [formError, setFormError] = React.useState(null);
 
   // Redirect if profile is already complete
   useEffect(() => {
@@ -46,7 +46,6 @@ const ProfileSetup = () => {
   };
 
   const handleNext = async () => {
-  // Validate the current step before proceeding
     const validationError = validateStep(currentStep, profileData);
     if (validationError) {
       setFormError(validationError);
@@ -54,12 +53,11 @@ const ProfileSetup = () => {
       return;
     }
 
-    setFormError(null);//Clear any previous errors
-    
+    setFormError(null); // Clear any previous errors
+
+
     if (currentStep < 4) {
       // For steps 1-3, just save progress and move to next step
-
-      // Disable for now to avoid saving incomplete data
       // await saveProfile(false);
       setCurrentStep(currentStep + 1);
     } else {
@@ -70,30 +68,30 @@ const ProfileSetup = () => {
       }
     }
   };
+  
+  // Validate form data for each step
+  const validateStep = (step, profileData) => {
+    if (step === 1) {
+      if (!profileData.fullName) return "Full name is required";
+      if (!profileData.address) return "Address is required";
+      if (!profileData.email || !profileData.email.includes("@")) return "A valid email is required";
+      if (!profileData.phoneNumber) return "Phone number is required";
+    }
+  
+    if (step === 3) {
+      if (!profileData.acn) return "ACN is required";
+      if (profileData.acn.toString().length !== 9) return "ACN must be 9 digits";
 
-    // Validate form data for each step
-    const validateStep = (step, profileData) => {
-      if (step === 1) {
-        if (!profileData.fullName) return "Full name is required";
-        if (!profileData.address) return "Address is required";
-        if (!profileData.email || !profileData.email.includes("@")) return "A valid email is required";
-        if (!profileData.phoneNumber) return "Phone number is required";
-      }
-    
-      if (step === 3) {
-        if (!profileData.acn) return "ACN is required";
-        if (profileData.acn.toString().length !== 9) return "ACN must be 9 digits";
+      if (!profileData.abn) return "ABN is required";
+      if (profileData.abn.toString().length !== 11) return "ABN must be 11 digits";
+
+      if (!profileData.brn) return "Builder Registration  is required";
+
+    }
   
-        if (!profileData.abn) return "ABN is required";
-        if (profileData.abn.toString().length !== 11) return "ABN must be 11 digits";
+    return null; 
+  };
   
-        if (!profileData.brn) return "Builder Registration  is required";
-  
-      }
-    
-      return null; 
-    };
-    
 
   const handlePrevious = () => {
     if (currentStep > 1) {
@@ -120,7 +118,7 @@ const ProfileSetup = () => {
       <div className="d-flex">
         <FormProgress currentStep={currentStep} />
         <div className="flex-grow-1 p-4">
-          {validationError && <div className="alert alert-danger">{validationError}</div>}
+          {formError && <div className="alert alert-danger">{formError}</div>}
           
           <div className="card shadow-sm">
             <div className="card-header bg-primary text-white">
