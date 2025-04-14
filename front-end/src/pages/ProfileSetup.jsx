@@ -68,6 +68,30 @@ const ProfileSetup = () => {
     }
   };
 
+    // Validate form data for each step
+    const validateStep = (step, profileData) => {
+      if (step === 1) {
+        if (!profileData.fullName) return "Full name is required";
+        if (!profileData.address) return "Address is required";
+        if (!profileData.email || !profileData.email.includes("@")) return "A valid email is required";
+        if (!profileData.phoneNumber) return "Phone number is required";
+      }
+    
+      if (step === 3) {
+        if (!profileData.acn) return "ACN is required";
+        if (profileData.acn.toString().length !== 9) return "ACN must be 9 digits";
+  
+        if (!profileData.abn) return "ABN is required";
+        if (profileData.abn.toString().length !== 11) return "ABN must be 11 digits";
+  
+        if (!profileData.brn) return "Builder Registration  is required";
+  
+      }
+    
+      return null; 
+    };
+    
+
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
