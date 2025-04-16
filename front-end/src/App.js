@@ -1,5 +1,5 @@
 import './App.css';
-import React from 'react';
+import React,{useEffect} from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { ClerkProvider, SignedIn, SignedOut, useAuth } from '@clerk/clerk-react';
 import { ProfileProvider } from './contexts/ProfileContext';
@@ -35,7 +35,7 @@ const AuthRedirect = () => {
   const navigate = useNavigate();
   const { isSignedIn, isLoaded } = useAuth();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isLoaded) {
       if (isSignedIn) {
         navigate('/welcome');

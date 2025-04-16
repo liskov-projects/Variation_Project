@@ -17,7 +17,7 @@ const ProjectEdit = () => {
     if (projectId) {
       fetchProjectById(projectId);
     }
-  }, [projectId, fetchProjectById]);
+  }, [projectId]);
 
   // Set initial form data when project is loaded
   useEffect(() => {

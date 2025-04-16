@@ -27,7 +27,7 @@ const ProfileSetup = () => {
     if (isProfileComplete) {
       navigate("/dashboard");
     }
-  }, [isProfileComplete, navigate]);
+  }, [isProfileComplete]);
 
   // Render appropriate step component
   const renderStep = () => {
