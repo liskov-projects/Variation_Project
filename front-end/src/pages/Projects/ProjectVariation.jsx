@@ -18,7 +18,7 @@ const ProjectVariation = () => {
             findVariation();
           });
         }
-      }, [projectId, fetchProjectById]);
+      }, [projectId]);
 
       // Find the requested variation in the current project
     const findVariation = () => {

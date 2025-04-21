@@ -19,7 +19,7 @@ const VariationEdit = () => {
             fetchProjectById(projectId)
             .then(() => setHasFetched(true));
         }
-        }, [projectId, fetchProjectById, hasFetched]);
+        }, [projectId, hasFetched]);
             
     useEffect(() => {
         if (currentProject && hasFetched) {

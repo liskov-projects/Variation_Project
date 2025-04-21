@@ -175,7 +175,7 @@ export const ProjectProvider = ({children})=>{
 
       try {
         const token = await getToken();
-        const response = await axios.put(`${API_BASE_URL}/api/projects/${projectId}/${variationId}`,variationData,{
+        const response = await axios.put(`${API_BASE_URL}/api/projects/${projectId}/variations/${variationId}`,variationData,{
           headers:{Authorization: `Bearer ${token}`}
         });
         if (currentProject && currentProject._id === projectId) {
@@ -201,7 +201,7 @@ export const ProjectProvider = ({children})=>{
 
       try {
         const token = await getToken();
-        const response = await axios.delete(`${API_BASE_URL}/api/projects/${projectId}/${variationId}`,{
+        const response = await axios.delete(`${API_BASE_URL}/api/projects/${projectId}/variations/${variationId}`,{
           headers:{Authorization:`Bearer ${token}`}
         })
 
