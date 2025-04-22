@@ -5,7 +5,7 @@ import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import VariationPDF from "./VariationPDF"; // adjust path as needed
+import VariationPDF from "./VariationPDF"; 
 
 const ProjectVariation = () => {
   const { projectId, variationId } = useParams();
@@ -400,7 +400,7 @@ const ProjectVariation = () => {
               <VariationPDF project={currentProject} variation={variation} />
             }
             fileName={`variation-${variation._id}.pdf`}
-            className="btn btn-primary"
+            className="btn btn-danger"
           >
             {({ loading }) => (loading ? "Preparing PDF..." : "Download PDF")}
           </PDFDownloadLink>
