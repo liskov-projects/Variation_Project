@@ -1,4 +1,3 @@
-// backend/models/projectModel.js
 import mongoose from 'mongoose';
 
 // Variation Form schema

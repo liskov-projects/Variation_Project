@@ -1,4 +1,3 @@
-// backend/models/profileModel.js
 import mongoose from 'mongoose';
 
 const partnerSchema = new mongoose.Schema({
