@@ -8,16 +8,25 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 const ProjectVariation = () => {
     const { projectId, variationId } = useParams();
     const navigate = useNavigate();
-    const { fetchProjectById, currentProject, loading, error } = useProject();
+    const { fetchProjectById, currentProject, loading, error, sendForSignature } = useProject();
     const [variation, setVariation] = useState(null);
-    
+    const [fetchedProject,setFetchedProject]=useState(null);
+
     useEffect(() => {
-        if (projectId) {
-          fetchProjectById(projectId).then(() => {
-            // Fetch completed, now find the variation
-            findVariation();
-          });
+
+      const fetchAndFindVariation = async()=>{
+        try {
+          if (projectId){
+            const response=await fetchProjectById(projectId);
+            setFetchedProject(response);
+             findVariation();
+          }
+        } catch (error) {
+          console.error('Error fetching project or finding variation:', error);
+
         }
+      }
+      fetchAndFindVariation();
       }, [projectId]);
 
       // Find the requested variation in the current project
@@ -42,6 +51,13 @@ const ProjectVariation = () => {
     const handleEditVariation = () => {
         navigate(`/projects/${projectId}/variations/${variationId}/edit`);
     };
+
+    const handleSendVariationForSignature = async() => {
+      if (fetchedProject){
+      const response= await sendForSignature(projectId,variationId,variation,fetchProjectById.clientEmail);
+      console.log(response.data)
+    }
+  }
     
     // Format date strings
     const formatDate = (dateString) => {
@@ -297,6 +313,12 @@ const ProjectVariation = () => {
             onClick={handleBackToProject}
           >
             Back to Project
+          </button>
+          <button 
+          className='btn btn-primary mr-2'
+          onClick={handleSendVariationForSignature}
+          >
+            Send Variation for Approval
           </button>
           <button
             className="btn btn-primary"

@@ -1,4 +1,4 @@
-// controllers/projectController.js
+import nodemailer from 'nodemailer';
 import Project from '../models/projectModel.js';
 
 // @desc    Get all projects for a user
@@ -309,3 +309,73 @@ export const deleteVariation = async (req, res) => {
     });
   }
 };
+
+export const sendForSignature=async(req,res)=>{
+  try {
+    const {projectId,variationId}=req.params;
+    
+    const project=await Project.findById(projectId);
+    if(!project){
+      return res.status(404).json({message:"Project not found"})
+    }
+    if(req.auth.userId!==project.userId){
+      return res.status(403).json({
+        message: 'Unauthorized: You can only delete variations from your own projects'
+      });
+    }
+
+    const variation = project.variations.find(v => v._id.toString() === variationId);
+    if (!variation) {
+      return res.status(404).json({
+        message: 'Variation not found'
+      });
+    }
+    if (variation.status !== 'Draft') {
+      return res.status(400).json({ 
+        error: 'Variation has already been submitted or processed' 
+      });
+    }
+
+    // Generate a unique signature token and expiration date
+    const signatureToken = Math.random().toString(36).substr(2); // Random token generation
+    const signatureTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // Token valid for 24 hours
+
+    variation.signatureToken=signatureToken;
+    variation.signatureTokenExpiresAt=signatureTokenExpiresAt;
+    
+    await project.save();
+
+    // send the mail
+    const transporter = nodemailer.createTransport({
+      service:'gmail',
+      auth:{
+        user:process.env.VARIATION_EMAIL,
+        pass:process.env.VARIATION_PASSWORD
+      }
+    });
+    const signatureUrl=`https://variation-front-end.onrender.com/signature?token=${signatureToken}`;
+    const mailOptions={
+      from:process.env.VARIATION_EMAIL,
+      to:project.clientEmail,
+      subject: `Signature Request for Variation for the project ${project.name}`,
+      html: `
+        <p>Dear ${project.clientName},</p>
+        <p>Please review and sign the variation for your project:</p>
+        <p><strong>${variation.description}</strong></p>
+        <p>Click the link below to view and sign:</p>
+        <a href="${signatureUrl}">${signatureUrl}</a>
+        <p>This link will expire in 24 hours.</p>
+        <p>Thank you!</p>
+      `
+    }
+    await transporter.sendMail(mailOptions)
+    res.status(200).json({ success: true, message: 'Email sent successfully' });
+
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message
+    });
+  }
+}

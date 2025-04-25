@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
 
+const signatureSchema = new mongoose.Schema({
+
+});
+
 // Variation Form schema
 const variationFormSchema = new mongoose.Schema({
   description: {
@@ -38,8 +42,30 @@ const variationFormSchema = new mongoose.Schema({
     type: String,
     enum: ['draft', 'submitted', 'approved', 'rejected'],
     default: 'draft'
+  },
+  signatureToken:{
+    type:String,
+    // Using 'unique' would require an index on nested documents,
+    // which has limitations in MongoDB, so we handle uniqueness in application logic
+  },
+  signatureTokenExpiresAt:{
+    type:Date
+  },
+  signatureData: {
+    type: String // Base64 encoded signature image
+  },
+  signedAt: {
+    type: Date
+  },
+  signedBy: {
+    name: String,
+    email: String,
+    ipAddress: String,
+    userAgent: String
+    // All fields in signedBy Creates a more complete audit trail for verification
   }
-}, {
+},
+{
   timestamps: true
 });
 
@@ -90,6 +116,19 @@ const projectSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+// Helper method to find a variation by its signature token
+projectSchema.statics.findVariationByToken=async function(token){
+  if (!token) return null;
+  const project=await this.findOne({
+    'variations.signatureToken':token,
+    'variations.signatureTokenExpiresAt':{$gt:new Date()}
+  });
+
+  if (!project) return null;
+  const variation=project.variations.find(v=>v.signatureToken===token)
+  return {project,variation}
+}
 
 const Project = mongoose.model('Project', projectSchema);
 
