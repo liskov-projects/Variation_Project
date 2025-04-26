@@ -7,7 +7,7 @@ import { getUserProjects,
   deleteProject,
   addVariation,
   updateVariation,
-  deleteVariation,sendForSignature } from '../controllers/projectController.js';
+  deleteVariation,sendForSignature,validateSignatureToken } from '../controllers/projectController.js';
 import clerkMiddleware from '../middleware/auth.js';
 
 const router = express.Router();
@@ -35,5 +35,7 @@ router.route('/:projectId/variations/:variationId').put(updateVariation);
 router.route('/:projectId/variations/:variationId').delete(deleteVariation);
 
 router.route('/projects/:projectId/variations/:variationId/send-for-signature').post(sendForSignature)
+
+router.route('/variations/validate-token').get(validateSignatureToken);
 
 export default router;

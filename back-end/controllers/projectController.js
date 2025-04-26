@@ -379,3 +379,20 @@ export const sendForSignature=async(req,res)=>{
     });
   }
 }
+
+export const validateSignatureToken=async(req,res)=>{
+  try{ 
+    const {token}=req.query;
+    const result=await Project.findVariationByToken(token);
+    if (!result){
+      return res.status(404).json({message:"Invalid or expired variation"})
+    }
+
+    const {project,variation}=result;
+    res.status(200).json({success:true,project,variation});
+  }
+    catch(error){
+      console.error('Error validating token:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+    }
+}
