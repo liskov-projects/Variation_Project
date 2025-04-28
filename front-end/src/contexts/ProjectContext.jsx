@@ -227,12 +227,12 @@ export const ProjectProvider = ({children})=>{
 
       try {
         const token = await getToken();
-        const response = await axios.post(`${API_BASE_URL}/api/projects/${projectId}/variations/${variationId}/send-for-signature`,variationData,clientEmail,{
+        const response = await axios.post(`${API_BASE_URL}/api/projects/${projectId}/variations/${variationId}/send-for-signature`,{ variationData, clientEmail },{
           headers:{Authorization:`Bearer ${token}`}
         });
         return { success: true, data: response.data };
 
-      } catch (error) {
+      } catch (err) {
         const errorMessage = err.response?.data?.message || err.message || 'Failed to send the variation for approval';
         setError(errorMessage);
         return { success: false, error: errorMessage };
@@ -263,8 +263,8 @@ export const ProjectProvider = ({children})=>{
         deleteVariation,
         setCurrentProject,
         sendForSignature,
-      createEmptyProject,
-      createEmptyVariation
+        createEmptyProject,
+        createEmptyVariation
       }
 
       return (

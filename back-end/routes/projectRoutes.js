@@ -12,6 +12,8 @@ import clerkMiddleware from '../middleware/auth.js';
 
 const router = express.Router();
 
+router.route('/variations/validate-token').get(validateSignatureToken);
+
 // All routes require authentication
 router.use(clerkMiddleware);
 
@@ -34,8 +36,7 @@ router.route('/:projectId/variations/:variationId').put(updateVariation);
 
 router.route('/:projectId/variations/:variationId').delete(deleteVariation);
 
-router.route('/projects/:projectId/variations/:variationId/send-for-signature').post(sendForSignature)
+router.route('/:projectId/variations/:variationId/send-for-signature').post(sendForSignature)
 
-router.route('/variations/validate-token').get(validateSignatureToken);
 
 export default router;

@@ -52,12 +52,17 @@ const ProjectVariation = () => {
         navigate(`/projects/${projectId}/variations/${variationId}/edit`);
     };
 
-    const handleSendVariationForSignature = async() => {
-      if (fetchedProject){
-      const response= await sendForSignature(projectId,variationId,variation,fetchProjectById.clientEmail);
-      console.log(response.data)
-    }
-  }
+    const handleSendVariationForSignature = async () => {
+      if (fetchedProject) {
+        const response = await sendForSignature(projectId, variationId, variation, fetchedProject.clientEmail);
+        if (response.success) {
+          console.log('Variation sent for approval:', response.data);
+        } else {
+          console.error('Error sending variation for approval:', response.error);
+          alert(`Error: ${response.error}`); // Notify the user of the error
+        }
+      }
+    };
     
     // Format date strings
     const formatDate = (dateString) => {
