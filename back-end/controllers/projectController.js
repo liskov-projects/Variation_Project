@@ -1,6 +1,8 @@
-// controllers/projectController.js
+import nodemailer from 'nodemailer';
 import Project from '../models/projectModel.js';
+import { config } from 'dotenv';
 
+config();
 // @desc    Get all projects for a user
 // @route   GET /api/projects
 // @access  Private
@@ -307,5 +309,108 @@ export const deleteVariation = async (req, res) => {
       message: 'Server error',
       error: error.message
     });
+  }
+};
+
+export const sendForSignature = async (req, res) => {
+  try {
+    console.log("sending email starts")
+    const { projectId, variationId } = req.params;
+    
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    
+    if (req.auth.userId !== project.userId) {
+      return res.status(403).json({
+        message: 'Unauthorized: You can only send variations from your own projects'
+      });
+    }
+
+    const variation = project.variations.find(v => v._id.toString() === variationId);
+    if (!variation) {
+      return res.status(404).json({
+        message: 'Variation not found'
+      });
+    }
+    
+    // Fix: Change 'Draft' to 'draft' to match your enum
+    if (variation.status !== 'draft') {
+      return res.status(400).json({ 
+        error: 'Variation has already been submitted or processed' 
+      });
+    }
+
+    // Generate a unique signature token and expiration date
+    const signatureToken = Math.random().toString(36).substr(2); // Better token generation
+    const signatureTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    variation.signatureToken = signatureToken;
+    variation.signatureTokenExpiresAt = signatureTokenExpiresAt;
+    variation.status = 'submitted'; // Update status to submitted
+    
+    await project.save();
+
+    // send the mail
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.VARIATION_EMAIL,
+        pass: process.env.VARIATION_PASSWORD
+      }
+    });
+
+    // Use environment-specific URL
+    const signatureUrl = process.env.NODE_ENV === 'production'
+      ? `https://variation-front-end.onrender.com/signature?token=${signatureToken}`
+      : `http://localhost:3000/signature?token=${signatureToken}`;
+
+    const mailOptions = {
+      from: process.env.VARIATION_EMAIL,
+      to: project.clientEmail,
+      subject: `Signature Request for Variation for the project ${project.projectName}`, // Fix: project.projectName instead of project.name
+      html: `
+        <p>Dear ${project.clientName},</p>
+        <p>Please review and sign the variation for your project:</p>
+        <p><strong>${variation.description}</strong></p>
+        <p>Click the link below to view and sign:</p>
+        <a href="${signatureUrl}">${signatureUrl}</a>
+        <p>This link will expire in 24 hours.</p>
+        <p>Thank you!</p>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("email sent ",mailOptions);
+    res.status(200).json({ success: true, message: 'Email sent successfully' });
+
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
+export const validateSignatureToken = async (req, res) => {
+  try {
+    const { token } = req.query;
+    console.log('Token received:', token);
+
+    const result = await Project.findVariationByToken(token);
+    if (!result) {
+      console.log('No result found for token:', token);
+      return res.status(404).json({ message: 'Invalid or expired variation' });
+    }
+
+    const { project, variation } = result;
+    console.log('Project and variation found:', { project, variation });
+
+    res.status(200).json({ success: true, project, variation });
+  } catch (error) {
+    console.error('Error validating token:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

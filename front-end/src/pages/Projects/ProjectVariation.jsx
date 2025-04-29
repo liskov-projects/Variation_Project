@@ -8,19 +8,28 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import VariationPDF from "./VariationPDF"; 
 
 const ProjectVariation = () => {
-  const { projectId, variationId } = useParams();
-  const navigate = useNavigate();
-  const { fetchProjectById, currentProject, loading, error } = useProject();
-  const [variation, setVariation] = useState(null);
+    const { projectId, variationId } = useParams();
+    const navigate = useNavigate();
+    const { fetchProjectById, currentProject, loading, error, sendForSignature } = useProject();
+    const [variation, setVariation] = useState(null);
+    const [fetchedProject,setFetchedProject]=useState(null);
 
-  useEffect(() => {
-    if (projectId) {
-      fetchProjectById(projectId).then(() => {
-        // Fetch completed, now find the variation
-        findVariation();
-      });
-    }
-  }, [projectId]);
+    useEffect(() => {
+
+      const fetchAndFindVariation = async()=>{
+        try {
+          if (projectId){
+            const response=await fetchProjectById(projectId);
+            setFetchedProject(response);
+             findVariation();
+          }
+        } catch (error) {
+          console.error('Error fetching project or finding variation:', error);
+
+        }
+      }
+      fetchAndFindVariation();
+      }, [projectId]);
 
   // Find the requested variation in the current project
   const findVariation = () => {
@@ -43,16 +52,28 @@ const ProjectVariation = () => {
     navigate(`/projects/${projectId}`);
   };
 
-  const handleEditVariation = () => {
-    navigate(`/projects/${projectId}/variations/${variationId}/edit`);
-  };
+    const handleEditVariation = () => {
+        navigate(`/projects/${projectId}/variations/${variationId}/edit`);
+    };
 
-  // Format date strings
-  const formatDate = (dateString) => {
-    if (!dateString) return "Not set";
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
+    const handleSendVariationForSignature = async () => {
+      if (fetchedProject) {
+        const response = await sendForSignature(projectId, variationId, variation, fetchedProject.clientEmail);
+        if (response.success) {
+          console.log('Variation sent for approval:', response.data);
+        } else {
+          console.error('Error sending variation for approval:', response.error);
+          alert(`Error: ${response.error}`); // Notify the user of the error
+        }
+      }
+    };
+    
+    // Format date strings
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Not set';
+        const date = new Date(dateString);
+        return date.toLocaleDateString();
+    };
 
   // Get status badge style
   const getStatusBadgeClass = (status) => {
@@ -392,7 +413,16 @@ const ProjectVariation = () => {
           <button className="btn btn-secondary" onClick={handleBackToProject}>
             Back to Project
           </button>
-          <button className="btn btn-primary" onClick={handleEditVariation}>
+          <button 
+          className='btn btn-primary mr-2'
+          onClick={handleSendVariationForSignature}
+          >
+            Send Variation for Approval
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={handleEditVariation}
+          >
             Edit Variation
           </button>
           <PDFDownloadLink

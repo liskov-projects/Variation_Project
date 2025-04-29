@@ -220,6 +220,27 @@ export const ProjectProvider = ({children})=>{
       }
     }
 
+    const sendForSignature=async(projectId,variationId,variationData,clientEmail)=>{
+      if (!isSignedIn || !userId) return { success: false, error: 'User not authenticated' };
+      setLoading(true);
+      setError(null);
+
+      try {
+        const token = await getToken();
+        const response = await axios.post(`${API_BASE_URL}/api/projects/${projectId}/variations/${variationId}/send-for-signature`,{ variationData, clientEmail },{
+          headers:{Authorization:`Bearer ${token}`}
+        });
+        return { success: true, data: response.data };
+
+      } catch (err) {
+        const errorMessage = err.response?.data?.message || err.message || 'Failed to send the variation for approval';
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      } finally{
+        setLoading(false);
+      }
+    }
+
       // Load user's projects on init
       useEffect(() => {
         if (isSignedIn && userId) {
@@ -241,8 +262,9 @@ export const ProjectProvider = ({children})=>{
         updateVariation,
         deleteVariation,
         setCurrentProject,
-      createEmptyProject,
-      createEmptyVariation
+        sendForSignature,
+        createEmptyProject,
+        createEmptyVariation
       }
 
       return (

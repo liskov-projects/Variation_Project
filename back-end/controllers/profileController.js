@@ -1,4 +1,3 @@
-// backend/controllers/profileController.js
 import Profile from '../models/profileModel.js';
 
 // @desc    Get user profile by userId

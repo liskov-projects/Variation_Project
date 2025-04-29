@@ -15,7 +15,7 @@ import ProfileSetup from './pages/ProfileSetup';
 import ProfileEdit from './pages/ProfileEdit';
 import ProfileComplete from './pages/ProfileComplete';
 import Dashboard from './pages/Dashboard';
-
+import SignaturePage from './pages/SignaturePage';
 // Project paths
 import ProjectCreate from './pages/Projects/ProjectCreate';
 import ProjectEdit from './pages/Projects/ProjectEdit';
@@ -132,7 +132,9 @@ function App() {
                       <SignUp />
                     </PublicRoute>
                   } />
-                  
+                  {/* Add the SignaturePage route */}
+                  <Route path="/signature" element={<SignaturePage />} />
+
                   {/* Auth redirect route */}
                   <Route path="/auth-redirect" element={<AuthRedirect />} />
 
