@@ -49,6 +49,20 @@ const StepTwo = () => {
         </div>
       )}
 
+      {profileData.company === 'Yes' && (
+        <div className="mb-3">
+          <label className="form-label">ACN *</label>
+          <input
+            type="number"
+            className="form-control"
+            value={profileData.acn || ''}
+            onChange={(e) => updateProfile({ acn: e.target.value })}
+            required
+          />
+          <small className="text-muted">Must be exactly 9 digits</small>
+        </div>
+      )}
+
       {/* Partnership Section */}
       <h4 className="mb-3 mt-4">Partnership Information</h4>
       <div className="mb-3">

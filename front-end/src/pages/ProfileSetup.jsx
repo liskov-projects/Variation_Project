@@ -78,10 +78,16 @@ const ProfileSetup = () => {
       if (!profileData.phoneNumber) return "Phone number is required";
     }
 
+    if (step === 2) {
+      console.log(profileData.company);
+      if (profileData.company === "Yes") {
+        if (profileData.acn.toString().length !== 9)
+          return "ACN must be 9 digits";
+      }
+    }
+
     if (step === 3) {
-      if (!profileData.acn) return "ACN is required";
-      if (profileData.acn.toString().length !== 9)
-        return "ACN must be 9 digits";
+      
 
       if (!profileData.abn) return "ABN is required";
       if (profileData.abn.toString().length !== 11)
