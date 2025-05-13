@@ -71,6 +71,13 @@ export const createProject = async (req, res) => {
       delete req.body._id;
     }
 
+    // Ensure contractPrice is provided
+    if (!req.body.contractPrice) {
+      return res.status(400).json({
+        message: 'Contract price is required'
+      });
+    }
+
     // Create the project
     const newProject = Project(req.body);
     const savedProject = await newProject.save();
@@ -192,6 +199,8 @@ export const addVariation = async (req, res) => {
     
     // Add variation to project
     project.variations.push(req.body);
+    
+    // The pre-save middleware will automatically calculate the new contract price
     const updatedProject = await project.save();
     
     res.status(201).json(updatedProject);
@@ -250,6 +259,7 @@ export const updateVariation = async (req, res) => {
       project.variations[variationIndex][key] = req.body[key];
     });
 
+    // The pre-save middleware will automatically recalculate the contract price
     const updatedProject = await project.save();
 
     res.status(200).json(updatedProject);
@@ -300,6 +310,7 @@ export const deleteVariation = async (req, res) => {
       v => v._id.toString() !== variationId
     );
 
+    // The pre-save middleware will automatically recalculate the contract price
     const updatedProject = await project.save();
 
     res.status(200).json(updatedProject);
@@ -369,11 +380,14 @@ export const sendForSignature = async (req, res) => {
     const mailOptions = {
       from: process.env.VARIATION_EMAIL,
       to: project.clientEmail,
-      subject: `Signature Request for Variation for the project ${project.projectName}`, // Fix: project.projectName instead of project.name
+      subject: `Signature Request for Variation for the project ${project.projectName}`, 
       html: `
         <p>Dear ${project.clientName},</p>
         <p>Please review and sign the variation for your project:</p>
         <p><strong>${variation.description}</strong></p>
+        <p><strong>Original Contract Price:</strong> $${project.contractPrice.toLocaleString()}</p>
+        <p><strong>Variation Cost:</strong> $${variation.cost.toLocaleString()}</p>
+        <p><strong>New Contract Price:</strong> $${project.currentContractPrice.toLocaleString()}</p>
         <p>Click the link below to view and sign:</p>
         <a href="${signatureUrl}">${signatureUrl}</a>
         <p>This link will expire in 24 hours.</p>

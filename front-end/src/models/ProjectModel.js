@@ -13,6 +13,7 @@ export class Project {
       this.startDate = data.startDate || '';
       this.expectedEndDate = data.expectedEndDate || '';
       this.status = data.status || 'active'; // active, on-hold, completed, cancelled
+      this.contractPrice = data.contractPrice || 0;
       this.variations = data.variations || [];
       this.userId = data.userId || '';
       this.createdAt = data.createdAt || new Date().toISOString();
@@ -29,7 +30,7 @@ export class Project {
       this.permitVariation = data.permitVariation || '';
       this.delay = data.delay || '';
       this.cost = data.cost || 0;
-      this.newContractPrice = data.newContractPrice || 0;
+      // this.newContractPrice = data.newContractPrice || 0; Commented this because the user will not edit the new contract price.
       this.dateCreated = data.dateCreated || new Date().toISOString();
       this.status = data.status || 'draft'; // draft, submitted, approved, rejected
       this.createdAt = data.createdAt || new Date().toISOString();
