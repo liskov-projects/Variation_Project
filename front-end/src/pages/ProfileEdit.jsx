@@ -23,7 +23,7 @@ const ProfileEdit = () => {
     e.preventDefault();
     
     // Validate ACN and ABN
-    if (profileData.acn && profileData.acn.toString().length !== 9) {
+    if (profileData.companyDetails?.acn && profileData.companyDetails?.acn.toString().length !== 9) {
       alert('ACN must be exactly 9 digits');
       return;
     }
@@ -137,12 +137,42 @@ const ProfileEdit = () => {
                       <input
                         type="text"
                         className="form-control"
-                        value={profileData.companyName || ''}
-                        onChange={(e) => updateProfile({ companyName: e.target.value })}
+                        value={profileData.companyDetails?.companyName || ''}
+                        onChange={(e) =>
+                          updateProfile({
+                            companyDetails: {
+                              ...profileData.companyDetails,
+                              companyName: e.target.value
+                            }
+                          })
+                        }
                         required
                       />
                     </div>
                   )}
+
+
+                  {profileData.company === 'Yes' && (
+                    <div className="mb-3">
+                      <label className="form-label">ACN *</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={profileData.companyDetails?.acn || ''}
+                        onChange={(e) =>
+                          updateProfile({
+                            companyDetails: {
+                              ...profileData.companyDetails,
+                              acn: e.target.value
+                            }
+                          })
+                        }
+                        required
+                      />
+                    </div>
+                    
+                  )}
+                  <small className="text-muted">Must be exactly 9 digits</small>
 
                   {/* Partnership Section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">Partnership Details</h4>
@@ -220,18 +250,6 @@ const ProfileEdit = () => {
 
                   {/* Individual Information */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">Individual (Default)</h4>
-                  <div className="mb-3">
-                    <label className="form-label">ACN (9 digits) *</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      name="acn"
-                      value={profileData.acn || ''}
-                      onChange={(e) => updateProfile({ acn: e.target.value })}
-                      required
-                    />
-                    <small className="text-muted">Must be exactly 9 digits</small>
-                  </div>
                   <div className="mb-3">
                     <label className="form-label">ABN (11 digits) *</label>
                     <input

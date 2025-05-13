@@ -19,7 +19,10 @@ export const ProfileProvider = ({ children }) => {
     
     // Company Information
     company: 'No',
-    companyName: '',
+    companyDetails: {  
+      companyName: '',
+      acn: ''
+    },
     
     // Partnership Information
     partnership: 'No',
@@ -27,7 +30,6 @@ export const ProfileProvider = ({ children }) => {
     partners: [],
     
     // Individual Information
-    acn: '',
     abn: '',
     brn: '',
   });
@@ -130,7 +132,7 @@ export const ProfileProvider = ({ children }) => {
       const token = await getToken();
       
       // Validate important fields
-      if (profileData.acn && profileData.acn.toString().length !== 9) {
+      if (profileData.companyDetails?.acn && profileData.companyDetails?.acn.toString().length !== 9) {
         throw new Error('ACN must be exactly 9 digits');
       }
       

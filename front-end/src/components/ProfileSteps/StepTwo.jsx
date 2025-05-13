@@ -4,6 +4,10 @@ import { useProfile } from '../../contexts/ProfileContext';
 const StepTwo = () => {
   const { profileData, updateProfile, updatePartner } = useProfile();
 
+  if (profileData.companyDetails?.acn){
+    profileData.company = 'Yes';
+  }
+
   return (
     <div>
       {/* Company Section */}
@@ -28,7 +32,7 @@ const StepTwo = () => {
               className="form-check-input"
               id="companyNo"
               checked={profileData.company === 'No'}
-              onChange={() => updateProfile({ company: 'No' })}
+              onChange={() => updateProfile({ company: 'No', companyName: '', acn: '' })}
               required
             />
             <label className="form-check-label" htmlFor="companyNo">No</label>
@@ -42,8 +46,15 @@ const StepTwo = () => {
           <input
             type="text"
             className="form-control"
-            value={profileData.companyName || ''}
-            onChange={(e) => updateProfile({ companyName: e.target.value })}
+            value={profileData.companyDetails?.companyName || ''}
+            onChange={(e) =>
+              updateProfile({
+                companyDetails: {
+                  ...profileData.companyDetails,
+                  companyName: e.target.value
+                }
+              })
+            }
             required
           />
         </div>
@@ -55,8 +66,16 @@ const StepTwo = () => {
           <input
             type="number"
             className="form-control"
-            value={profileData.acn || ''}
-            onChange={(e) => updateProfile({ acn: e.target.value })}
+            value={profileData.companyDetails?.acn || ''}
+            onChange={(e) =>
+              updateProfile({
+                companyDetails: {
+                  ...profileData.companyDetails,
+                  acn: e.target.value
+                }
+              })
+            }
+            
             required
           />
           <small className="text-muted">Must be exactly 9 digits</small>

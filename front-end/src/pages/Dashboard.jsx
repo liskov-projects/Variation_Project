@@ -166,7 +166,7 @@ const Dashboard = () => {
               <div className="col-md-3 fw-bold">Company:</div>
               <div className="col-md-9">
                 {profileData.company === 'Yes'
-                  ? `Yes (${profileData.companyName})`
+                  ? `Yes (${profileData.companyDetails.companyName})`
                   : 'No'}
               </div>
             </div>

@@ -61,6 +61,7 @@ const ProfileSetup = () => {
       setCurrentStep(currentStep + 1);
     } else {
       // For final step (review), mark profile as complete and redirect
+      console.log(profileData);
       const result = await saveProfile(true);
       if (result.success) {
         navigate("/profile-complete");
@@ -79,16 +80,17 @@ const ProfileSetup = () => {
     }
 
     if (step === 2) {
-      console.log(profileData.company);
+   
       if (profileData.company === "Yes") {
-        if (profileData.acn.toString().length !== 9)
+        if (profileData.companyDetails.acn.toString().length !== 9)
           return "ACN must be 9 digits";
+
+        if (!profileData.companyDetails.companyName) 
+          return "Company name is required";
       }
     }
 
     if (step === 3) {
-      
-
       if (!profileData.abn) return "ABN is required";
       if (profileData.abn.toString().length !== 11)
         return "ABN must be 11 digits";

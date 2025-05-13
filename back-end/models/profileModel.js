@@ -41,10 +41,25 @@ const profileSchema = new mongoose.Schema(
         enum: ['Yes', 'No'],
         required: [true, 'Company status is required']
       },
-      companyName: {
-        type: String,
-        required: function() {
-          return this.profileData.company === 'Yes';
+      companyDetails: {
+        companyName: {
+          type: String,
+          required: function () {
+            return this.profileData.company === 'Yes';
+          }
+        },
+        acn: {
+          type: String,
+          required: function () {
+            return this.profileData.company === 'Yes';
+          },
+          validate: {
+            validator: function (v) {
+              // Only validate if provided
+              return !v || v.length === 9;
+            },
+            message: 'ACN must be exactly 9 digits'
+          }
         }
       },
       partnership: {
@@ -59,16 +74,7 @@ const profileSchema = new mongoose.Schema(
         }
       },
       partners: [partnerSchema],
-      acn: {
-        type: String,
-        required: [true, 'ACN is required'],
-        validate: {
-          validator: function(v) {
-            return v.length === 9;
-          },
-          message: 'ACN must be exactly 9 digits'
-        }
-      },
+
       abn: {
         type: String,
         required: [true, 'ABN is required'],
