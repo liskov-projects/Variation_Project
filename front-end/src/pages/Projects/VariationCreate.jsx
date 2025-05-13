@@ -125,7 +125,7 @@ const VariationCreate = () => {
                           <div className="card-body">
                             {error && <div className="alert alert-danger">{error}</div>}
                             
-                            {currentProject && (
+                            {/* {currentProject && (
                               <div className="alert alert-info mb-3">
                                 <h5>Contract Price Summary</h5>
                                 <div className="row">
@@ -143,7 +143,7 @@ const VariationCreate = () => {
                                   </div>
                                 </div>
                               </div>
-                            )}
+                            )} */}
                             
                             <form onSubmit={handleSubmit}>
                               <div className="mb-3">
@@ -202,8 +202,8 @@ const VariationCreate = () => {
                                   {formErrors.permitVariation && <div className="invalid-feedback">{formErrors.permitVariation}</div>}
                                 </div>
                                 <div className="col-md-6">
-                                  <label className="form-label">Delay to Project Timeline? *</label>
-                                  <select
+                                  <label className="form-label">Delay to Project Timeline? (Enter the delay in days) *</label>
+                                  {/* <select
                                     className={`form-select ${formErrors.delay ? 'is-invalid' : ''}`}
                                     name="delay"
                                     value={variationData.delay || ''}
@@ -217,7 +217,16 @@ const VariationCreate = () => {
                                     <option value="1-2 weeks">1-2 weeks</option>
                                     <option value="2-4 weeks">2-4 weeks</option>
                                     <option value="More than 4 weeks">More than 4 weeks</option>
-                                  </select>
+                                  </select> */}
+                                  <input
+                                      type="number"
+                                      step="1"
+                                      className={`form-control ${formErrors.delay ? 'is-invalid' : ''}`}
+                                      name="delay"
+                                      value={variationData.delay || ''}
+                                      onChange={handleChange}
+                                      required
+                                    />
                                   {formErrors.delay && <div className="invalid-feedback">{formErrors.delay}</div>}
                                 </div>
                               </div>
@@ -270,7 +279,25 @@ const VariationCreate = () => {
                                   <option value="rejected">Rejected</option>
                                 </select>
                               </div>
-                              
+                              {currentProject && (
+                              <div className="alert alert-info mb-3">
+                                <h5>Contract Price Summary</h5>
+                                <div className="row">
+                                  <div className="col-md-4">
+                                    <strong>Original Contract Price:</strong><br/>
+                                    <span className="text-primary">${currentProject.contractPrice?.toLocaleString() || 0}</span>
+                                  </div>
+                                  <div className="col-md-4">
+                                    <strong>Current Contract Price:</strong><br/>
+                                    <span className="text-success">${currentProject.currentContractPrice?.toLocaleString() || 0}</span>
+                                  </div>
+                                  <div className="col-md-4">
+                                    <strong>Projected New Price:</strong><br/>
+                                    <span className="text-warning">${projectedContractPrice.toLocaleString()}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                               <div className="d-flex justify-content-between mt-4">
                                 <button
                                   type="button"

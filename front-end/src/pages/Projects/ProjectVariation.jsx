@@ -211,43 +211,46 @@ const ProjectVariation = () => {
               <h4 className="mb-0">Contract Price Summary</h4>
             </div>
             <div className="card-body">
-              <div className="row text-center">
-                <div className="col-md-4">
-                  <div className="card bg-primary text-white">
-                    <div className="card-body">
-                      <h5 className="card-title">Original Contract Price</h5>
-                      <p className="display-6">
-                        {formatCurrency(currentProject.contractPrice || 0)}
-                      </p>
+              <div className="row">
+                <div className="col-md-4 mb-3">
+                  <div className="border rounded p-3 bg-light h-100">
+                    <div className="d-flex align-items-center mb-2">
+                      <i className="bi bi-file-text text-primary me-2"></i>
+                      <h6 className="mb-0 text-muted">Original Contract Price</h6>
                     </div>
+                    <h4 className="mb-0 text-primary">
+                      {formatCurrency(currentProject.contractPrice || 0)}
+                    </h4>
                   </div>
                 </div>
-                <div className="col-md-4">
-                  <div className="card bg-success text-white">
-                    <div className="card-body">
-                      <h5 className="card-title">Current Contract Price</h5>
-                      <p className="display-6">
-                        {formatCurrency(currentProject.currentContractPrice || currentProject.contractPrice || 0)}
-                      </p>
-                      <small>Including all approved variations</small>
+                <div className="col-md-4 mb-3">
+                  <div className="border rounded p-3 bg-light h-100">
+                    <div className="d-flex align-items-center mb-2">
+                      <i className="bi bi-check-circle text-success me-2"></i>
+                      <h6 className="mb-0 text-muted">Current Contract Price</h6>
                     </div>
+                    <h4 className="mb-0 text-success">
+                      {formatCurrency(currentProject.currentContractPrice || currentProject.contractPrice || 0)}
+                    </h4>
+                    <small className="text-muted">Including all approved variations</small>
                   </div>
                 </div>
-                <div className="col-md-4">
-                  <div className={`card ${variation.status === 'approved' ? 'bg-success' : 'bg-warning'} text-white`}>
-                    <div className="card-body">
-                      <h5 className="card-title">
+                <div className="col-md-4 mb-3">
+                  <div className="border rounded p-3 bg-light h-100">
+                    <div className="d-flex align-items-center mb-2">
+                      <i className={`bi ${variation.status === 'approved' ? 'bi-check-circle text-success' : 'bi-clock text-warning'} me-2`}></i>
+                      <h6 className="mb-0 text-muted">
                         {variation.status === 'approved' ? 'Contract Price' : 'Projected Contract Price'}
-                      </h5>
-                      <p className="display-6">
-                        {formatCurrency(contractPriceWithVariation)}
-                      </p>
-                      <small>
-                        {variation.status === 'approved' 
-                          ? 'This variation is approved' 
-                          : 'If this variation is approved'}
-                      </small>
+                      </h6>
                     </div>
+                    <h4 className={`mb-0 ${variation.status === 'approved' ? 'text-success' : 'text-warning'}`}>
+                      {formatCurrency(contractPriceWithVariation)}
+                    </h4>
+                    <small className="text-muted">
+                      {variation.status === 'approved' 
+                        ? 'This variation is approved' 
+                        : 'If this variation is approved'}
+                    </small>
                   </div>
                 </div>
               </div>

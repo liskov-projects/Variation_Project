@@ -179,7 +179,7 @@ const VariationEdit = () => {
                 {error && <div className="alert alert-danger">{error}</div>}
                 {success && <div className="alert alert-success">Variation updated successfully!</div>}
                 
-                <div className="alert alert-info mb-3">
+                {/* <div className="alert alert-info mb-3">
                   <h5>Contract Price Summary</h5>
                   <div className="row">
                     <div className="col-md-4">
@@ -195,7 +195,7 @@ const VariationEdit = () => {
                       <span className="text-warning">${projectedContractPrice.toLocaleString()}</span>
                     </div>
                   </div>
-                </div>
+                </div> */}
                 
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
@@ -325,7 +325,23 @@ const VariationEdit = () => {
                       Note: Only approved variations count toward the contract price total.
                     </div>
                   </div>
-                  
+                  <div className="alert alert-info mb-3">
+                  <h5>Contract Price Summary</h5>
+                  <div className="row">
+                    <div className="col-md-4">
+                      <strong>Original Contract Price:</strong><br/>
+                      <span className="text-primary">${(currentProject.contractPrice || 0).toLocaleString()}</span>
+                    </div>
+                    <div className="col-md-4">
+                      <strong>Current Contract Price:</strong><br/>
+                      <span className="text-success">${currentContractPriceValue.toLocaleString()}</span>
+                    </div>
+                    <div className="col-md-4">
+                      <strong>Price After This Variation:</strong><br/>
+                      <span className="text-warning">${projectedContractPrice.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
                   <div className="d-flex justify-content-between mt-4">
                     <button
                       type="button"
