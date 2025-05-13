@@ -111,19 +111,6 @@ const ProjectDetails = () => {
     }).format(amount || 0);
   };
 
-  //   if (loading) {
-  //     return (
-  //       <div>
-  //         <Header />
-  //         <div className="d-flex justify-content-center align-items-center vh-100">
-  //           <div className="spinner-border text-primary" role="status">
-  //             <span className="visually-hidden">Loading...</span>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     );
-  //   }
-
   if (loading) {
     return (
       <div>
@@ -242,8 +229,65 @@ const ProjectDetails = () => {
                 </div>
               </div>
             </div>
+
+            {/* Contract Price Summary */}
+            <div className="border-top pt-3">
+              <h5>Contract Price Summary</h5>
+              <div className="ms-3">
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="row mb-2">
+                      <div className="col-md-6 fw-bold">Original Contract Price:</div>
+                      <div className="col-md-6">
+                        <span className="text-primary fs-5">
+                          {formatCurrency(currentProject.contractPrice || 0)}
+                        </span>
+                      </div>
+                    </div>
+                    {currentProject.variations && currentProject.variations.length > 0 && (
+                      <div className="row mb-2">
+                        <div className="col-md-6 fw-bold">Current Contract Price:</div>
+                        <div className="col-md-6">
+                          <span className="text-success fs-5">
+                            {formatCurrency(currentProject.currentContractPrice || currentProject.contractPrice)}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-md-6">
+                    {currentProject.variations && currentProject.variations.length > 0 && (
+                      <>
+                        <div className="row mb-2">
+                          <div className="col-md-6 fw-bold">Total Variations:</div>
+                          <div className="col-md-6">
+                            {currentProject.variations.length}
+                          </div>
+                        </div>
+                        <div className="row mb-2">
+                          <div className="col-md-6 fw-bold">Total Variation Cost:</div>
+                          <div className="col-md-6">
+                            <span className="text-info">
+                              {formatCurrency(
+                                currentProject.variations.reduce((total, variation) => {
+                                  if (variation.status === 'approved') {
+                                    return total + (variation.cost || 0);
+                                  }
+                                  return total;
+                                }, 0)
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
         {/* Variations Section */}
         <div className="card">
           <div className="card-header bg-light d-flex justify-content-between align-items-center">
@@ -282,8 +326,7 @@ const ProjectDetails = () => {
                     <tr>
                       <th>Description</th>
                       <th>Reason</th>
-                      <th>Cost</th>
-                      <th>New Contract Price</th>
+                      <th>Variation Cost</th>
                       <th>Date Created</th>
                       <th>Status</th>
                       <th>Actions</th>
@@ -310,9 +353,10 @@ const ProjectDetails = () => {
                               : variation.reason
                             : "No reason provided"}
                         </td>
-                        <td>{formatCurrency(variation.cost || 0)}</td>
                         <td>
-                          {formatCurrency(variation.newContractPrice || 0)}
+                          <span className={variation.status === 'approved' ? 'text-success' : ''}>
+                            {formatCurrency(variation.cost || 0)}
+                          </span>
                         </td>
                         <td>{formatDate(variation.dateCreated)}</td>
                         <td>

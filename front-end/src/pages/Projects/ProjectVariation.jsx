@@ -99,6 +99,24 @@ const ProjectVariation = () => {
     }).format(amount || 0);
   };
 
+  // Calculate contract price with this variation
+  const calculateContractPrice = () => {
+    if (!currentProject) return 0;
+    
+    // If this variation is approved, it's already included in currentContractPrice
+    if (variation && variation.status === 'approved') {
+      return currentProject.currentContractPrice || 0;
+    }
+    
+    // If not approved, calculate what the price would be if approved
+    if (variation) {
+      const basePrice = currentProject.currentContractPrice || currentProject.contractPrice || 0;
+      return basePrice + (variation.cost || 0);
+    }
+    
+    return currentProject.currentContractPrice || currentProject.contractPrice || 0;
+  };
+
   if (loading) {
     return (
       <div>
@@ -139,6 +157,8 @@ const ProjectVariation = () => {
       </div>
     );
   }
+
+  const contractPriceWithVariation = calculateContractPrice();
 
   return (
     <div>
@@ -183,6 +203,57 @@ const ProjectVariation = () => {
             </div>
           </div>
         </div>
+
+        {/* Contract Price Summary */}
+        {currentProject && (
+          <div className="card mb-4">
+            <div className="card-header bg-light">
+              <h4 className="mb-0">Contract Price Summary</h4>
+            </div>
+            <div className="card-body">
+              <div className="row text-center">
+                <div className="col-md-4">
+                  <div className="card bg-primary text-white">
+                    <div className="card-body">
+                      <h5 className="card-title">Original Contract Price</h5>
+                      <p className="display-6">
+                        {formatCurrency(currentProject.contractPrice || 0)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="card bg-success text-white">
+                    <div className="card-body">
+                      <h5 className="card-title">Current Contract Price</h5>
+                      <p className="display-6">
+                        {formatCurrency(currentProject.currentContractPrice || currentProject.contractPrice || 0)}
+                      </p>
+                      <small>Including all approved variations</small>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className={`card ${variation.status === 'approved' ? 'bg-success' : 'bg-warning'} text-white`}>
+                    <div className="card-body">
+                      <h5 className="card-title">
+                        {variation.status === 'approved' ? 'Contract Price' : 'Projected Contract Price'}
+                      </h5>
+                      <p className="display-6">
+                        {formatCurrency(contractPriceWithVariation)}
+                      </p>
+                      <small>
+                        {variation.status === 'approved' 
+                          ? 'This variation is approved' 
+                          : 'If this variation is approved'}
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Variation Details Card */}
         <div className="card mb-4">
@@ -235,26 +306,17 @@ const ProjectVariation = () => {
             </div>
 
             <div className="row">
-              <div className="col-md-4">
+              <div className="col-md-12">
                 <div className="card bg-light">
                   <div className="card-body text-center">
                     <h5 className="card-title">Variation Cost</h5>
-                    <p className="display-6">
+                    <p className="display-6 text-primary">
                       {formatCurrency(variation.cost)}
                     </p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-8">
-                <div className="card bg-light">
-                  <div className="card-body text-center">
-                    <h5 className="card-title">New Contract Price</h5>
-                    <p className="display-5">
-                      {formatCurrency(variation.newContractPrice)}
-                    </p>
                     <small className="text-muted">
-                      Updated total contract value after this variation is
-                      applied
+                      {variation.status === 'approved' 
+                        ? 'This amount has been added to the contract price'
+                        : 'This amount will be added if the variation is approved'}
                     </small>
                   </div>
                 </div>
@@ -413,12 +475,14 @@ const ProjectVariation = () => {
           <button className="btn btn-secondary" onClick={handleBackToProject}>
             Back to Project
           </button>
-          <button 
-          className='btn btn-primary mr-2'
-          onClick={handleSendVariationForSignature}
-          >
-            Send Variation for Approval
-          </button>
+          {variation.status === 'draft' && (
+            <button 
+              className='btn btn-primary'
+              onClick={handleSendVariationForSignature}
+            >
+              Send Variation for Approval
+            </button>
+          )}
           <button
             className="btn btn-primary"
             onClick={handleEditVariation}

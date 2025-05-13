@@ -52,7 +52,8 @@ const ProjectEdit = () => {
       'clientName', 
       'clientEmail', 
       'clientPhone',
-      'startDate'
+      'startDate',
+      'contractPrice'  // Added contract price as required
     ];
     
     requiredFields.forEach(field => {
@@ -75,6 +76,11 @@ const ProjectEdit = () => {
         errors.expectedEndDate = 'End date must be after start date';
       }
     }
+
+    // Validate contract price
+    if (projectData.contractPrice && (isNaN(parseFloat(projectData.contractPrice)) || parseFloat(projectData.contractPrice) < 0)) {
+      errors.contractPrice = 'Contract price must be a valid positive number';
+    }
     
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -87,7 +93,13 @@ const ProjectEdit = () => {
       return;
     }
     
-    const result = await updateProject(projectId, projectData);
+    // Ensure contractPrice is sent as a number
+    const formattedData = {
+      ...projectData,
+      contractPrice: parseFloat(projectData.contractPrice)
+    };
+    
+    const result = await updateProject(projectId, formattedData);
     
     if (result.success) {
       setSuccess(true);
@@ -120,6 +132,17 @@ const ProjectEdit = () => {
     );
   }
 
+  // Calculate contract price summary for display
+  const totalVariationCost = projectData.variations ? 
+    projectData.variations.reduce((total, variation) => {
+      if (variation.status === 'approved') {
+        return total + (variation.cost || 0);
+      }
+      return total;
+    }, 0) : 0;
+
+  const currentContractPrice = (projectData.contractPrice || 0) + totalVariationCost;
+
   return (
     <div>
       <Header />
@@ -139,6 +162,24 @@ const ProjectEdit = () => {
               <div className="card-body">
                 {error && <div className="alert alert-danger">{error}</div>}
                 {success && <div className="alert alert-success">Project updated successfully!</div>}
+                
+                {/* Current Contract Price Summary */}
+                {projectData.variations && projectData.variations.length > 0 && (
+                  <div className="alert alert-info mb-4">
+                    <h5>Current Contract Summary</h5>
+                    <div className="row">
+                      <div className="col-md-6">
+                        <strong>Original Contract Price:</strong><br/>
+                        <span className="text-primary fs-5">${(projectData.contractPrice || 0).toLocaleString()}</span>
+                      </div>
+                      <div className="col-md-6">
+                        <strong>Current Contract Price (with approved variations):</strong><br/>
+                        <span className="text-success fs-5">${currentContractPrice.toLocaleString()}</span>
+                      </div>
+                    </div>
+                    <small className="text-muted">Note: Changing the original contract price will not affect existing variations.</small>
+                  </div>
+                )}
                 
                 <form onSubmit={handleSubmit}>
                   {/* Project Details Section */}
@@ -178,6 +219,28 @@ const ProjectEdit = () => {
                       onChange={handleChange}
                       rows="3"
                     />
+                  </div>
+
+                  {/* Contract Price Field */}
+                  <div className="mb-3">
+                    <label className="form-label">Original Contract Price *</label>
+                    <div className="input-group">
+                      <span className="input-group-text">$</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        className={`form-control ${formErrors.contractPrice ? 'is-invalid' : ''}`}
+                        name="contractPrice"
+                        value={projectData.contractPrice || ''}
+                        onChange={handleChange}
+                        required
+                      />
+                      {formErrors.contractPrice && <div className="invalid-feedback">{formErrors.contractPrice}</div>}
+                    </div>
+                    <div className="form-text">
+                      This is the base contract price. Variations will be added to this amount to calculate the total.
+                    </div>
                   </div>
                   
                   <div className="row mb-3">
