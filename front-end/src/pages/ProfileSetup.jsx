@@ -18,7 +18,6 @@ const ProfileSetup = () => {
     saveProfile,
     loading,
     isProfileComplete,
-    error,
     profileData,
   } = useProfile();
 
@@ -61,7 +60,6 @@ const ProfileSetup = () => {
       setCurrentStep(currentStep + 1);
     } else {
       // For final step (review), mark profile as complete and redirect
-      console.log(profileData);
       const result = await saveProfile(true);
       if (result.success) {
         navigate("/profile-complete");
