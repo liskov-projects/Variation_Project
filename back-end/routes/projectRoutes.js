@@ -7,14 +7,19 @@ import { getUserProjects,
   deleteProject,
   addVariation,
   updateVariation,
-  deleteVariation,sendForSignature,validateSignatureToken } from '../controllers/projectController.js';
+  deleteVariation,
+  sendForSignature,
+  validateSignatureToken,
+  signVariation } from '../controllers/projectController.js';
 import clerkMiddleware from '../middleware/auth.js';
 
 const router = express.Router();
 
+// Public routes (token-based authentication)
 router.route('/variations/validate-token').get(validateSignatureToken);
+router.route('/variations/sign').post(signVariation);
 
-// All routes require authentication
+// All other routes require authentication
 router.use(clerkMiddleware);
 
 // Project routes

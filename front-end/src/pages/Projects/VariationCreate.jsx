@@ -27,34 +27,21 @@ const VariationCreate = () => {
         }));
       }, []);
 
+      // Calculate projected new contract price whenever cost changes
+      const calculateProjectedContractPrice = (variationCost) => {
+        if (!currentProject) return 0;
+        
+        // The current contract price already includes all approved variations
+        const projectedPrice = currentProject.currentContractPrice + parseFloat(variationCost || 0);
+        return projectedPrice;
+      };
+
       const handleChange = (e) => {
         const { name, value } = e.target;
         setVariationData(prev => ({
           ...prev,
           [name]: value
         }));
-    
-        // If changing cost, update the new contract price
-        if (name === 'cost' && currentProject) {
-          // Calculate total cost of all existing variations
-          const existingVariationsCost = currentProject.variations.reduce(
-            (total, variation) => total + (parseFloat(variation.cost) || 0), 
-            0
-          );
-          
-          // Calculate initial contract price (not stored directly, so we derive it)
-          const initialContractPrice = currentProject.variations.length > 0 
-            ? currentProject.variations[0].newContractPrice - existingVariationsCost
-            : 0;
-            
-          // Calculate new contract price
-          const newContractPrice = initialContractPrice + existingVariationsCost + parseFloat(value || 0);
-          
-          setVariationData(prev => ({
-            ...prev,
-            newContractPrice: newContractPrice.toFixed(2)
-          }));
-        }
 
         if (formErrors[name]) {
             setFormErrors(prev => ({
@@ -67,7 +54,6 @@ const VariationCreate = () => {
         const validateForm = () => {
             const errors = {};
             
-            // Required fields
             const requiredFields = [
               'description', 
               'reason', 
@@ -75,7 +61,6 @@ const VariationCreate = () => {
               'permitVariation', 
               'delay',
               'cost',
-              'newContractPrice',
               'dateCreated'
             ];
             
@@ -85,14 +70,10 @@ const VariationCreate = () => {
               }
             });
             
-            // Validate cost and newContractPrice as numbers
+            // Validate cost as a number
             if (isNaN(parseFloat(variationData.cost))) {
               errors.cost = 'Cost must be a valid number';
             }
-
-            if (isNaN(parseFloat(variationData.newContractPrice))) {
-                errors.newContractPrice = 'New contract price must be a valid number';
-              }
               
               setFormErrors(errors);
               return Object.keys(errors).length === 0;
@@ -105,12 +86,14 @@ const VariationCreate = () => {
                   return;
                 }
                 
-                // Ensure numbers are properly formatted
+                // Only send the cost, not newContractPrice
                 const formattedData = {
                   ...variationData,
-                  cost: parseFloat(variationData.cost),
-                  newContractPrice: parseFloat(variationData.newContractPrice)
+                  cost: parseFloat(variationData.cost)
                 };
+                
+                // Remove newContractPrice if it exists
+                delete formattedData.newContractPrice;
                 
                 const result = await addVariation(projectId, formattedData);
                 
@@ -122,6 +105,9 @@ const VariationCreate = () => {
               const handleCancel = () => {
                 navigate(`/projects/${projectId}`);
               };
+
+              // Calculate the projected new contract price for display
+              const projectedContractPrice = calculateProjectedContractPrice(variationData.cost);
 
               return (
                 <div>
@@ -138,6 +124,26 @@ const VariationCreate = () => {
                           </div>
                           <div className="card-body">
                             {error && <div className="alert alert-danger">{error}</div>}
+                            
+                            {/* {currentProject && (
+                              <div className="alert alert-info mb-3">
+                                <h5>Contract Price Summary</h5>
+                                <div className="row">
+                                  <div className="col-md-4">
+                                    <strong>Original Contract Price:</strong><br/>
+                                    <span className="text-primary">${currentProject.contractPrice?.toLocaleString() || 0}</span>
+                                  </div>
+                                  <div className="col-md-4">
+                                    <strong>Current Contract Price:</strong><br/>
+                                    <span className="text-success">${currentProject.currentContractPrice?.toLocaleString() || 0}</span>
+                                  </div>
+                                  <div className="col-md-4">
+                                    <strong>Projected New Price:</strong><br/>
+                                    <span className="text-warning">${projectedContractPrice.toLocaleString()}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )} */}
                             
                             <form onSubmit={handleSubmit}>
                               <div className="mb-3">
@@ -196,8 +202,8 @@ const VariationCreate = () => {
                                   {formErrors.permitVariation && <div className="invalid-feedback">{formErrors.permitVariation}</div>}
                                 </div>
                                 <div className="col-md-6">
-                                  <label className="form-label">Delay to Project Timeline? *</label>
-                                  <select
+                                  <label className="form-label">Delay to Project Timeline? (Enter the delay in days) *</label>
+                                  {/* <select
                                     className={`form-select ${formErrors.delay ? 'is-invalid' : ''}`}
                                     name="delay"
                                     value={variationData.delay || ''}
@@ -211,13 +217,22 @@ const VariationCreate = () => {
                                     <option value="1-2 weeks">1-2 weeks</option>
                                     <option value="2-4 weeks">2-4 weeks</option>
                                     <option value="More than 4 weeks">More than 4 weeks</option>
-                                  </select>
+                                  </select> */}
+                                  <input
+                                      type="number"
+                                      step="1"
+                                      className={`form-control ${formErrors.delay ? 'is-invalid' : ''}`}
+                                      name="delay"
+                                      value={variationData.delay || ''}
+                                      onChange={handleChange}
+                                      required
+                                    />
                                   {formErrors.delay && <div className="invalid-feedback">{formErrors.delay}</div>}
                                 </div>
                               </div>
                               
                               <div className="row mb-3">
-                                <div className="col-md-4">
+                                <div className="col-md-6">
                                   <label className="form-label">Variation Cost *</label>
                                   <div className="input-group">
                                     <span className="input-group-text">$</span>
@@ -232,24 +247,11 @@ const VariationCreate = () => {
                                     />
                                     {formErrors.cost && <div className="invalid-feedback">{formErrors.cost}</div>}
                                   </div>
-                                </div>
-                                <div className="col-md-4">
-                                  <label className="form-label">New Contract Price *</label>
-                                  <div className="input-group">
-                                    <span className="input-group-text">$</span>
-                                    <input
-                                      type="number"
-                                      step="0.01"
-                                      className={`form-control ${formErrors.newContractPrice ? 'is-invalid' : ''}`}
-                                      name="newContractPrice"
-                                      value={variationData.newContractPrice || ''}
-                                      onChange={handleChange}
-                                      required
-                                    />
-                                    {formErrors.newContractPrice && <div className="invalid-feedback">{formErrors.newContractPrice}</div>}
+                                  <div className="form-text">
+                                    Enter the cost of this variation. The new contract price will be calculated automatically.
                                   </div>
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-md-6">
                                   <label className="form-label">Date Created *</label>
                                   <input
                                     type="date"
@@ -277,7 +279,25 @@ const VariationCreate = () => {
                                   <option value="rejected">Rejected</option>
                                 </select>
                               </div>
-                              
+                              {currentProject && (
+                              <div className="alert alert-info mb-3">
+                                <h5>Contract Price Summary</h5>
+                                <div className="row">
+                                  <div className="col-md-4">
+                                    <strong>Original Contract Price:</strong><br/>
+                                    <span className="text-primary">${currentProject.contractPrice?.toLocaleString() || 0}</span>
+                                  </div>
+                                  <div className="col-md-4">
+                                    <strong>Current Contract Price:</strong><br/>
+                                    <span className="text-success">${currentProject.currentContractPrice?.toLocaleString() || 0}</span>
+                                  </div>
+                                  <div className="col-md-4">
+                                    <strong>Projected New Price:</strong><br/>
+                                    <span className="text-warning">${projectedContractPrice.toLocaleString()}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                               <div className="d-flex justify-content-between mt-4">
                                 <button
                                   type="button"

@@ -26,6 +26,7 @@ const VariationEdit = () => {
         findVariation();
         }
     }, [currentProject, hasFetched]);
+    
     // Find the requested variation in the current project
   const findVariation = () => {
     if (currentProject && currentProject.variations) {
@@ -56,10 +57,11 @@ const VariationEdit = () => {
       }));
     }
   };
+  
   const validateForm = () => {
     const errors = {};
     
-    // Required fields
+    // Required fields - removed newContractPrice
     const requiredFields = [
       'description', 
       'reason', 
@@ -67,7 +69,6 @@ const VariationEdit = () => {
       'permitVariation', 
       'delay',
       'cost',
-      'newContractPrice',
       'dateCreated'
     ];
     
@@ -77,13 +78,9 @@ const VariationEdit = () => {
       }
     });
     
-    // Validate cost and newContractPrice as numbers
+    // Validate cost as a number
     if (isNaN(parseFloat(variationData.cost))) {
       errors.cost = 'Cost must be a valid number';
-    }
-    
-    if (isNaN(parseFloat(variationData.newContractPrice))) {
-      errors.newContractPrice = 'New contract price must be a valid number';
     }
     
     setFormErrors(errors);
@@ -91,22 +88,23 @@ const VariationEdit = () => {
   };
 
   // Make sure dates are properly formatted before sending to backend
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
       return;
     }
     
-    // TODO: contract price (display why the addition is happening)
-    // Ensure numbers and dates are properly formatted
+    // Only send cost, not newContractPrice - the backend will calculate it
     const formattedData = {
       ...variationData,
       cost: parseFloat(variationData.cost),
-      newContractPrice: parseFloat(variationData.newContractPrice),
       // Ensure dateCreated is a valid ISO string
       dateCreated: new Date(variationData.dateCreated).toISOString()
     };
+    
+    // Remove newContractPrice if it exists
+    delete formattedData.newContractPrice;
     
     console.log("Submitting data:", formattedData); // Debug what's being sent
     
@@ -133,7 +131,7 @@ const handleSubmit = async (e) => {
     return date.toISOString().split('T')[0];
   };
 
-  if (!variationData) {
+  if (!variationData || !currentProject) {
     return (
       <div>
         <Header />
@@ -145,6 +143,24 @@ const handleSubmit = async (e) => {
       </div>
     );
   }
+
+  // Calculate projected contract price after this variation
+  const currentContractPriceValue = currentProject.currentContractPrice || currentProject.contractPrice || 0;
+  
+  // Calculate what the contract price will be with this variation's cost
+  const calculateProjectedPrice = () => {
+    // If this variation is already approved, we need to calculate without its current cost first
+    // Then add the new cost to see the projected value
+    if (variationData.status === 'approved') {
+      const priceWithoutThisVariation = currentContractPriceValue - (variationData.cost || 0);
+      return priceWithoutThisVariation + parseFloat(variationData.cost || 0);
+    } else {
+      // If not approved, just add the cost to current contract price
+      return currentContractPriceValue + parseFloat(variationData.cost || 0);
+    }
+  };
+
+  const projectedContractPrice = calculateProjectedPrice();
 
   return (
     <div>
@@ -162,6 +178,24 @@ const handleSubmit = async (e) => {
               <div className="card-body">
                 {error && <div className="alert alert-danger">{error}</div>}
                 {success && <div className="alert alert-success">Variation updated successfully!</div>}
+                
+                {/* <div className="alert alert-info mb-3">
+                  <h5>Contract Price Summary</h5>
+                  <div className="row">
+                    <div className="col-md-4">
+                      <strong>Original Contract Price:</strong><br/>
+                      <span className="text-primary">${(currentProject.contractPrice || 0).toLocaleString()}</span>
+                    </div>
+                    <div className="col-md-4">
+                      <strong>Current Contract Price:</strong><br/>
+                      <span className="text-success">${currentContractPriceValue.toLocaleString()}</span>
+                    </div>
+                    <div className="col-md-4">
+                      <strong>Price After This Variation:</strong><br/>
+                      <span className="text-warning">${projectedContractPrice.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div> */}
                 
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
@@ -220,28 +254,22 @@ const handleSubmit = async (e) => {
                       {formErrors.permitVariation && <div className="invalid-feedback">{formErrors.permitVariation}</div>}
                     </div>
                     <div className="col-md-6">
-                      <label className="form-label">Delay to Project Timeline? *</label>
-                      <select
-                        className={`form-select ${formErrors.delay ? 'is-invalid' : ''}`}
-                        name="delay"
-                        value={variationData.delay || ''}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select...</option>
-                        <option value="None">None</option>
-                        <option value="1-3 days">1-3 days</option>
-                        <option value="4-7 days">4-7 days</option>
-                        <option value="1-2 weeks">1-2 weeks</option>
-                        <option value="2-4 weeks">2-4 weeks</option>
-                        <option value="More than 4 weeks">More than 4 weeks</option>
-                      </select>
-                      {formErrors.delay && <div className="invalid-feedback">{formErrors.delay}</div>}
-                    </div>
+                                  <label className="form-label">Delay to Project Timeline? (Enter the delay in days) *</label>
+                                  <input
+                                      type="number"
+                                      step="1"
+                                      className={`form-control ${formErrors.delay ? 'is-invalid' : ''}`}
+                                      name="delay"
+                                      value={variationData.delay || ''}
+                                      onChange={handleChange}
+                                      required
+                                    />
+                                  {formErrors.delay && <div className="invalid-feedback">{formErrors.delay}</div>}
+                                </div>
                   </div>
                   
                   <div className="row mb-3">
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                       <label className="form-label">Variation Cost *</label>
                       <div className="input-group">
                         <span className="input-group-text">$</span>
@@ -256,24 +284,11 @@ const handleSubmit = async (e) => {
                         />
                         {formErrors.cost && <div className="invalid-feedback">{formErrors.cost}</div>}
                       </div>
-                    </div>
-                    <div className="col-md-4">
-                      <label className="form-label">New Contract Price *</label>
-                      <div className="input-group">
-                        <span className="input-group-text">$</span>
-                        <input
-                          type="number"
-                          step="0.01"
-                          className={`form-control ${formErrors.newContractPrice ? 'is-invalid' : ''}`}
-                          name="newContractPrice"
-                          value={variationData.newContractPrice || ''}
-                          onChange={handleChange}
-                          required
-                        />
-                        {formErrors.newContractPrice && <div className="invalid-feedback">{formErrors.newContractPrice}</div>}
+                      <div className="form-text">
+                        Enter the cost of this variation. The new contract price will be calculated automatically.
                       </div>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                       <label className="form-label">Date Created *</label>
                       <input
                         type="date"
@@ -300,8 +315,27 @@ const handleSubmit = async (e) => {
                       <option value="approved">Approved</option>
                       <option value="rejected">Rejected</option>
                     </select>
+                    <div className="form-text">
+                      Note: Only approved variations count toward the contract price total.
+                    </div>
                   </div>
-                  
+                  <div className="alert alert-info mb-3">
+                  <h5>Contract Price Summary</h5>
+                  <div className="row">
+                    <div className="col-md-4">
+                      <strong>Original Contract Price:</strong><br/>
+                      <span className="text-primary">${(currentProject.contractPrice || 0).toLocaleString()}</span>
+                    </div>
+                    <div className="col-md-4">
+                      <strong>Current Contract Price:</strong><br/>
+                      <span className="text-success">${currentContractPriceValue.toLocaleString()}</span>
+                    </div>
+                    <div className="col-md-4">
+                      <strong>Price After This Variation:</strong><br/>
+                      <span className="text-warning">${projectedContractPrice.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
                   <div className="d-flex justify-content-between mt-4">
                     <button
                       type="button"

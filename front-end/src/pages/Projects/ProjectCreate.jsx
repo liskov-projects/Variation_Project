@@ -38,14 +38,14 @@ const ProjectCreate = ()=>{
       const validateForm=()=>{
         const errors = {};
     
-        // Required fields
         const requiredFields = [
         'projectName', 
         'propertyAddress', 
         'clientName', 
         'clientEmail', 
         'clientPhone',
-        'startDate'
+        'startDate',
+        'contractPrice'  
         ];
 
         requiredFields.forEach(field=>{
@@ -53,6 +53,7 @@ const ProjectCreate = ()=>{
                 errors[field] = 'This field is required';
             }
         });
+        
         if (projectData.clientEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(projectData.clientEmail)) {
             errors.clientEmail = 'Please enter a valid email address';
           }
@@ -65,8 +66,12 @@ const ProjectCreate = ()=>{
                 errors.expectedEndDate = 'End date must be after start date';
             }
         }
+
+        if (projectData.contractPrice && (isNaN(parseFloat(projectData.contractPrice)) || parseFloat(projectData.contractPrice) < 0)) {
+            errors.contractPrice = 'Contract price must be a valid positive number';
+        }
+        
         setFormErrors(errors);
-        // TODO: learn the return statement here
         return Object.keys(errors).length === 0;
       }
 
@@ -79,7 +84,8 @@ const ProjectCreate = ()=>{
 
         const projectWithUserId={
             ...projectData,
-            userId
+            userId,
+            contractPrice: parseFloat(projectData.contractPrice)  
         }
         if (projectWithUserId._id === '') {
             delete projectWithUserId._id;
@@ -146,6 +152,25 @@ const ProjectCreate = ()=>{
                         onChange={handleChange}
                         rows="3"
                         />
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="form-label">Contract Price *</label>
+                        <div className="input-group">
+                            <span className="input-group-text">$</span>
+                            <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            className={`form-control ${formErrors.contractPrice ? 'is-invalid' : ''}`}
+                            name="contractPrice"
+                            value={projectData.contractPrice || ''}
+                            onChange={handleChange}
+                            required
+                            />
+                            {formErrors.contractPrice && <div className="invalid-feedback">{formErrors.contractPrice}</div>}
+                        </div>
+                        <div className="form-text">This is the base contract price before any variations.</div>
                     </div>
 
                     <div className="row mb-3">

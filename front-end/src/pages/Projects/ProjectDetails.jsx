@@ -16,12 +16,33 @@ const ProjectDetails = () => {
   const [variationToDelete, setVariationToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
+  const [lastFetchTime, setLastFetchTime] = useState(Date.now());
 
   useEffect(() => {
     if (projectId && !hasFetched) {
       fetchProjectById(projectId).then(() => setHasFetched(true));
     }
   }, [projectId, fetchProjectById, hasFetched]);
+
+  // Add polling to check for updates every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (projectId && Date.now() - lastFetchTime > 30000) {
+        fetchProjectById(projectId);
+        setLastFetchTime(Date.now());
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [projectId, fetchProjectById, lastFetchTime]);
+
+  // Manual refresh function
+  const handleRefresh = async () => {
+    if (projectId) {
+      await fetchProjectById(projectId);
+      setLastFetchTime(Date.now());
+    }
+  };
 
   const handleEditProject = () => {
     navigate(`/projects/${projectId}/edit`);
@@ -60,6 +81,8 @@ const ProjectDetails = () => {
     if (result.success) {
       setShowDeleteModal(false);
       setVariationToDelete(null);
+      // Refresh the project data after deletion
+      await handleRefresh();
     }
   };
 
@@ -111,20 +134,7 @@ const ProjectDetails = () => {
     }).format(amount || 0);
   };
 
-  //   if (loading) {
-  //     return (
-  //       <div>
-  //         <Header />
-  //         <div className="d-flex justify-content-center align-items-center vh-100">
-  //           <div className="spinner-border text-primary" role="status">
-  //             <span className="visually-hidden">Loading...</span>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     );
-  //   }
-
-  if (loading) {
+  if (loading && !currentProject) {
     return (
       <div>
         <Header />
@@ -174,6 +184,14 @@ const ProjectDetails = () => {
             </span>
           </div>
           <div>
+            <button
+              className="btn btn-outline-secondary me-2"
+              onClick={handleRefresh}
+              disabled={loading}
+              title="Refresh project data"
+            >
+              <i className={`bi bi-arrow-clockwise ${loading ? 'spin' : ''}`}></i>
+            </button>
             <button
               className="btn btn-outline-primary me-2"
               onClick={handleEditProject}
@@ -242,19 +260,84 @@ const ProjectDetails = () => {
                 </div>
               </div>
             </div>
+
+            {/* Contract Price Summary */}
+            <div className="border-top pt-3">
+              <h5>Contract Price Summary</h5>
+              <div className="ms-3">
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="row mb-2">
+                      <div className="col-md-6 fw-bold">Original Contract Price:</div>
+                      <div className="col-md-6">
+                        <span className="text-primary fs-5">
+                          {formatCurrency(currentProject.contractPrice || 0)}
+                        </span>
+                      </div>
+                    </div>
+                    {currentProject.variations && currentProject.variations.length > 0 && (
+                      <div className="row mb-2">
+                        <div className="col-md-6 fw-bold">Current Contract Price:</div>
+                        <div className="col-md-6">
+                          <span className="text-success fs-5">
+                            {formatCurrency(currentProject.currentContractPrice || currentProject.contractPrice)}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-md-6">
+                    {currentProject.variations && currentProject.variations.length > 0 && (
+                      <>
+                        <div className="row mb-2">
+                          <div className="col-md-6 fw-bold">Total Variations:</div>
+                          <div className="col-md-6">
+                            {currentProject.variations.length}
+                          </div>
+                        </div>
+                        <div className="row mb-2">
+                          <div className="col-md-6 fw-bold">Total Variation Cost:</div>
+                          <div className="col-md-6">
+                            <span className="text-info">
+                              {formatCurrency(
+                                currentProject.variations.reduce((total, variation) => {
+                                  if (variation.status === 'approved') {
+                                    return total + (variation.cost || 0);
+                                  }
+                                  return total;
+                                }, 0)
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
         {/* Variations Section */}
         <div className="card">
           <div className="card-header bg-light d-flex justify-content-between align-items-center">
             <h4 className="mb-0">Variations</h4>
-            <button
-              className="btn btn-sm btn-primary"
-              onClick={handleCreateVariation}
-            >
-              <i className="bi bi-plus-lg me-1"></i>
-              Add Variation
-            </button>
+            <div>
+              {loading && (
+                <small className="text-muted me-3">
+                  <i className="bi bi-arrow-clockwise spin"></i>
+                  Refreshing...
+                </small>
+              )}
+              <button
+                className="btn btn-sm btn-primary"
+                onClick={handleCreateVariation}
+              >
+                <i className="bi bi-plus-lg me-1"></i>
+                Add Variation
+              </button>
+            </div>
           </div>
           <div className="card-body">
             {!currentProject.variations ||
@@ -282,8 +365,7 @@ const ProjectDetails = () => {
                     <tr>
                       <th>Description</th>
                       <th>Reason</th>
-                      <th>Cost</th>
-                      <th>New Contract Price</th>
+                      <th>Variation Cost</th>
                       <th>Date Created</th>
                       <th>Status</th>
                       <th>Actions</th>
@@ -310,9 +392,10 @@ const ProjectDetails = () => {
                               : variation.reason
                             : "No reason provided"}
                         </td>
-                        <td>{formatCurrency(variation.cost || 0)}</td>
                         <td>
-                          {formatCurrency(variation.newContractPrice || 0)}
+                          <span className={variation.status === 'approved' ? 'text-success fw-bold' : ''}>
+                            {formatCurrency(variation.cost || 0)}
+                          </span>
                         </td>
                         <td>{formatDate(variation.dateCreated)}</td>
                         <td>
@@ -324,21 +407,32 @@ const ProjectDetails = () => {
                             {variation.status.charAt(0).toUpperCase() +
                               variation.status.slice(1)}
                           </span>
+                          {/* {variation.status === 'approved' && variation.signedAt && (
+                            <div>
+                              <small className="text-muted">
+                                Signed: {formatDate(variation.signedAt)}
+                              </small>
+                            </div>
+                          )} */}
                         </td>
                         <td className="d-flex gap-1">
-                          <button
-                            className="btn btn-sm btn-outline-primary"
-                            onClick={(e) =>
-                              handleEditVariation(variation._id, e)
-                            }
-                          >
-                            <i className="bi bi-pencil"></i>
-                          </button>
+                          {variation.status !== 'approved' && (
+                            <button
+                              className="btn btn-sm btn-outline-primary"
+                              onClick={(e) =>
+                                handleEditVariation(variation._id, e)
+                              }
+                              title="Edit variation"
+                            >
+                              <i className="bi bi-pencil"></i>
+                            </button>
+                          )}
                           <button
                             className="btn btn-sm btn-outline-danger"
                             onClick={(e) =>
                               confirmDeleteVariation(variation, e)
                             }
+                            title="Delete variation"
                           >
                             <i className="bi bi-trash"></i>
                           </button>
@@ -352,10 +446,11 @@ const ProjectDetails = () => {
                             fileName={`variation-${variation._id}.pdf`}
                             className="btn btn-sm btn-outline-success"
                             onClick={(e) => e.stopPropagation()}
+                            title="Download PDF"
                           >
                             {({ loading }) =>
                               loading ? (
-                                <i className="bi bi-download"></i>
+                                <i className="bi bi-download spin"></i>
                               ) : (
                                 <i className="bi bi-download"></i>
                               )
@@ -392,6 +487,15 @@ const ProjectDetails = () => {
               <div className="modal-body">
                 <p>Are you sure you want to delete this variation?</p>
                 <p className="text-danger">This action cannot be undone.</p>
+                {variationToDelete && (
+                  <div className="bg-light p-3 rounded">
+                    <strong>Variation:</strong> {variationToDelete.description}<br/>
+                    <strong>Cost:</strong> {formatCurrency(variationToDelete.cost)}<br/>
+                    <strong>Status:</strong> <span className={`badge ${getVariationStatusBadgeClass(variationToDelete.status)}`}>
+                      {variationToDelete.status.charAt(0).toUpperCase() + variationToDelete.status.slice(1)}
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="modal-footer">
                 <button
@@ -421,28 +525,22 @@ const ProjectDetails = () => {
                     "Delete Variation"
                   )}
                 </button>
-                {/* <PDFDownloadLink
-                  document={<VariationPDF project={currentProject} />}
-                  fileName={`project-${currentProject._id}.pdf`}
-                  className="btn btn-outline-success me-2"
-                >
-                  {({ loading }) =>
-                    loading ? (
-                      <span>
-                        <i className="bi bi-download me-1"></i> Preparing...
-                      </span>
-                    ) : (
-                      <span>
-                        <i className="bi bi-download me-1"></i> Download PDF
-                      </span>
-                    )
-                  }
-                </PDFDownloadLink> */}
               </div>
             </div>
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        .spin {
+          animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };

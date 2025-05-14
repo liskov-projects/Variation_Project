@@ -30,10 +30,7 @@ const variationFormSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Cost is required']
   },
-  newContractPrice: {
-    type: Number,
-    required: [true, 'New Contract price is required']
-  },
+  // Removed newContractPrice since it will be calculated automatically
   dateCreated: {
     type: Date,
     default: Date.now
@@ -112,6 +109,17 @@ const projectSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  contractPrice: {
+    type: Number,
+    required: [true, 'Contract price is required'],
+    min: [0, 'Contract price must be a positive number']
+  },
+  currentContractPrice: {
+    type: Number,
+    default: function() {
+      return this.contractPrice;
+    }
+  },
   variations: [variationFormSchema]
 }, {
   timestamps: true
@@ -129,6 +137,28 @@ projectSchema.statics.findVariationByToken=async function(token){
   const variation=project.variations.find(v=>v.signatureToken===token)
   return {project,variation}
 }
+
+// Method to calculate current contract price
+projectSchema.methods.calculateCurrentContractPrice = function() {
+  const totalVariationCost = this.variations.reduce((total, variation) => {
+    // Only include approved variations in the calculation
+    if (variation.status === 'approved') {
+      return total + (variation.cost || 0);
+    }
+    return total;
+  }, 0);
+  
+  this.currentContractPrice = this.contractPrice + totalVariationCost;
+  return this.currentContractPrice;
+};
+
+// Pre-save middleware to automatically update current contract price
+projectSchema.pre('save', function(next) {
+  if (this.isModified('variations') || this.isModified('contractPrice')) {
+    this.calculateCurrentContractPrice();
+  }
+  next();
+});
 
 const Project = mongoose.model('Project', projectSchema);
 
