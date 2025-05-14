@@ -254,24 +254,18 @@ const VariationEdit = () => {
                       {formErrors.permitVariation && <div className="invalid-feedback">{formErrors.permitVariation}</div>}
                     </div>
                     <div className="col-md-6">
-                      <label className="form-label">Delay to Project Timeline? *</label>
-                      <select
-                        className={`form-select ${formErrors.delay ? 'is-invalid' : ''}`}
-                        name="delay"
-                        value={variationData.delay || ''}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select...</option>
-                        <option value="None">None</option>
-                        <option value="1-3 days">1-3 days</option>
-                        <option value="4-7 days">4-7 days</option>
-                        <option value="1-2 weeks">1-2 weeks</option>
-                        <option value="2-4 weeks">2-4 weeks</option>
-                        <option value="More than 4 weeks">More than 4 weeks</option>
-                      </select>
-                      {formErrors.delay && <div className="invalid-feedback">{formErrors.delay}</div>}
-                    </div>
+                                  <label className="form-label">Delay to Project Timeline? (Enter the delay in days) *</label>
+                                  <input
+                                      type="number"
+                                      step="1"
+                                      className={`form-control ${formErrors.delay ? 'is-invalid' : ''}`}
+                                      name="delay"
+                                      value={variationData.delay || ''}
+                                      onChange={handleChange}
+                                      required
+                                    />
+                                  {formErrors.delay && <div className="invalid-feedback">{formErrors.delay}</div>}
+                                </div>
                   </div>
                   
                   <div className="row mb-3">

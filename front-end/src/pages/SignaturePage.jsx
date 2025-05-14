@@ -42,20 +42,38 @@ const SignaturePage = () => {
             setError('Please enter your name to sign this variation');
             return;
         }
+        
+        // Check if the checkbox is checked
+        const agreementCheck = document.getElementById('agreementCheck');
+        if (!agreementCheck.checked) {
+            setError('Please acknowledge the agreement by checking the box');
+            return;
+        }
+        
         try {
             setIsSubmitting(true);
+            setError(null); // Clear any previous errors
+            
             const response = await axios.post(`${API_BASE_URL}/api/projects/variations/sign`, {
                 token,
                 signedBy: {
-                    name: clientName,
+                    name: clientName.trim(),
                     userAgent: navigator.userAgent,
                 }
             });
             
-            setSuccessMessage('Variation successfully signed! Thank you.');
-            setIsSubmitting(false);
+            if (response.data.success) {
+                setSuccessMessage('Variation successfully signed and approved! Thank you.');
+                // Update local state with the signed variation
+                setVariation(response.data.variation);
+                setProject(response.data.project);
+            } else {
+                setError('Failed to sign variation. Please try again.');
+            }
         } catch (error) {
-            setError(error.response?.data?.message || 'Failed to submit signature');
+            console.error('Error signing variation:', error);
+            setError(error.response?.data?.message || 'Failed to submit signature. Please try again.');
+        } finally {
             setIsSubmitting(false);
         }
     }

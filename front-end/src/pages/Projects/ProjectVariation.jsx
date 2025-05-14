@@ -13,6 +13,10 @@ const ProjectVariation = () => {
     const { fetchProjectById, currentProject, loading, error, sendForSignature } = useProject();
     const [variation, setVariation] = useState(null);
     const [fetchedProject,setFetchedProject]=useState(null);
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('success'); // 'success', 'error', 'info'
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
 
@@ -48,6 +52,22 @@ const ProjectVariation = () => {
     findVariation();
   }, [currentProject, variationId]);
 
+  // Auto-hide alert after 5 seconds
+  useEffect(() => {
+    if (showAlert) {
+      const timer = setTimeout(() => {
+        setShowAlert(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showAlert]);
+
+  const showNotification = (message, type = 'success') => {
+    setAlertMessage(message);
+    setAlertType(type);
+    setShowAlert(true);
+  };
+
   const handleBackToProject = () => {
     navigate(`/projects/${projectId}`);
   };
@@ -57,14 +77,37 @@ const ProjectVariation = () => {
     };
 
     const handleSendVariationForSignature = async () => {
-      if (fetchedProject) {
+      if (!fetchedProject) {
+        showNotification('Project data not loaded. Please try again.', 'error');
+        return;
+      }
+
+      setIsSubmitting(true);
+      try {
         const response = await sendForSignature(projectId, variationId, variation, fetchedProject.clientEmail);
+        
         if (response.success) {
-          console.log('Variation sent for approval:', response.data);
+          showNotification(
+            `Variation sent successfully to ${fetchedProject.clientEmail}. The client will receive an email with a signature link.`,
+            'success'
+          );
+          
+          // Refresh the project data to get updated status
+          await fetchProjectById(projectId);
         } else {
-          console.error('Error sending variation for approval:', response.error);
-          alert(`Error: ${response.error}`); // Notify the user of the error
+          showNotification(
+            response.error || 'Failed to send variation for signature. Please try again.',
+            'error'
+          );
         }
+      } catch (error) {
+        console.error('Error sending variation for approval:', error);
+        showNotification(
+          error.response?.data?.message || 'An error occurred while sending the variation. Please try again.',
+          'error'
+        );
+      } finally {
+        setIsSubmitting(false);
       }
     };
     
@@ -73,6 +116,13 @@ const ProjectVariation = () => {
         if (!dateString) return 'Not set';
         const date = new Date(dateString);
         return date.toLocaleDateString();
+    };
+
+    // Format date and time for signatures
+    const formatDateTime = (dateString) => {
+        if (!dateString) return 'Not set';
+        const date = new Date(dateString);
+        return date.toLocaleString();
     };
 
   // Get status badge style
@@ -164,6 +214,16 @@ const ProjectVariation = () => {
     <div>
       <Header />
       <div className="container py-4">
+        {showAlert && (
+          <div className={`alert alert-${alertType} alert-dismissible fade show`} role="alert">
+            <div className="d-flex align-items-center">
+              <i className={`bi ${alertType === 'success' ? 'bi-check-circle' : alertType === 'error' ? 'bi-exclamation-triangle' : 'bi-info-circle'} me-2`}></i>
+              <div>{alertMessage}</div>
+            </div>
+            <button type="button" className="btn-close" onClick={() => setShowAlert(false)}></button>
+          </div>
+        )}
+
         <div className="d-flex justify-content-between align-items-center mb-4">
           <div className="d-flex align-items-center">
             <button
@@ -328,6 +388,36 @@ const ProjectVariation = () => {
           </div>
         </div>
 
+        {/* Signature Information */}
+        {variation.status === 'approved' && variation.signedBy && (
+          <div className="card mb-4">
+            <div className="card-header bg-success text-white">
+              <h4 className="mb-0">
+                <i className="bi bi-check-circle me-2"></i>
+                Signature Information
+              </h4>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-md-6">
+                  <h5>Signed By</h5>
+                  <p className="ms-3">{variation.signedBy.name}</p>
+                </div>
+                <div className="col-md-6">
+                  <h5>Date & Time Signed</h5>
+                  <p className="ms-3">{formatDateTime(variation.signedAt)}</p>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <h5>Email</h5>
+                  <p className="ms-3">{variation.signedBy.email}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Status History */}
         <div className="card mb-4">
           <div className="card-header bg-light">
@@ -462,7 +552,7 @@ const ProjectVariation = () => {
                   </div>
                   <div>
                     {variation.status === "approved"
-                      ? "Approved by client"
+                      ? `Approved by client on ${formatDateTime(variation.signedAt)}`
                       : variation.status === "rejected"
                       ? "Rejected by client"
                       : "Awaiting client decision"}
@@ -473,7 +563,6 @@ const ProjectVariation = () => {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="d-flex justify-content-between mt-4">
           <button className="btn btn-secondary" onClick={handleBackToProject}>
             Back to Project
@@ -482,16 +571,29 @@ const ProjectVariation = () => {
             <button 
               className='btn btn-primary'
               onClick={handleSendVariationForSignature}
+              disabled={isSubmitting}
             >
-              Send Variation for Approval
+              {isSubmitting ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-envelope me-2"></i>
+                  Send Variation for Approval
+                </>
+              )}
             </button>
           )}
-          <button
-            className="btn btn-primary"
-            onClick={handleEditVariation}
-          >
-            Edit Variation
-          </button>
+          {variation.status !== 'approved' && (
+            <button
+              className="btn btn-primary"
+              onClick={handleEditVariation}
+            >
+              Edit Variation
+            </button>
+          )}
           <PDFDownloadLink
             document={
               <VariationPDF project={currentProject} variation={variation} />

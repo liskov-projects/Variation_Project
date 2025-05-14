@@ -372,6 +372,10 @@ export const sendForSignature = async (req, res) => {
       }
     });
 
+    // Calculate proper contract price for email
+    const currentContractPrice = project.currentContractPrice || project.contractPrice || 0;
+    const newContractPrice = currentContractPrice + (variation.cost || 0);
+
     // Use environment-specific URL
     const signatureUrl = process.env.NODE_ENV === 'production'
       ? `https://variation-front-end.onrender.com/signature?token=${signatureToken}`
@@ -387,7 +391,7 @@ export const sendForSignature = async (req, res) => {
         <p><strong>${variation.description}</strong></p>
         <p><strong>Original Contract Price:</strong> $${project.contractPrice.toLocaleString()}</p>
         <p><strong>Variation Cost:</strong> $${variation.cost.toLocaleString()}</p>
-        <p><strong>New Contract Price:</strong> $${project.currentContractPrice.toLocaleString()}</p>
+        <p><strong>New Contract Price:</strong> $${newContractPrice.toLocaleString()}</p>
         <p>Click the link below to view and sign:</p>
         <a href="${signatureUrl}">${signatureUrl}</a>
         <p>This link will expire in 24 hours.</p>
@@ -396,8 +400,14 @@ export const sendForSignature = async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
-    console.log("email sent ",mailOptions);
-    res.status(200).json({ success: true, message: 'Email sent successfully' });
+    console.log("email sent successfully");
+    
+    // Return the updated project with the new status
+    res.status(200).json({ 
+      success: true, 
+      message: 'Email sent successfully',
+      project: project 
+    });
 
   } catch (error) {
     console.error('Error sending email:', error);
@@ -426,5 +436,116 @@ export const validateSignatureToken = async (req, res) => {
   } catch (error) {
     console.error('Error validating token:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// @desc    Sign variation with digital signature
+// @route   POST /api/projects/variations/sign
+// @access  Public (token-based)
+export const signVariation = async (req, res) => {
+  try {
+    const { token, signedBy } = req.body;
+    
+    if (!token || !signedBy || !signedBy.name) {
+      return res.status(400).json({
+        message: 'Token and signedBy.name are required'
+      });
+    }
+
+    // Find the variation by token
+    const result = await Project.findVariationByToken(token);
+    if (!result) {
+      return res.status(404).json({ 
+        message: 'Invalid or expired signature token' 
+      });
+    }
+
+    const { project, variation } = result;
+
+    // Check if already signed
+    if (variation.status === 'approved') {
+      return res.status(400).json({
+        message: 'This variation has already been signed and approved'
+      });
+    }
+
+    // Check if variation is in submitted status
+    if (variation.status !== 'submitted') {
+      return res.status(400).json({
+        message: 'This variation is not ready for signature'
+      });
+    }
+
+    // Get client IP address
+    const ipAddress = req.ip || 
+                     req.connection.remoteAddress || 
+                     req.socket.remoteAddress ||
+                     (req.connection.socket ? req.connection.socket.remoteAddress : '');
+
+    // Update variation with signature
+    variation.signedBy = {
+      name: signedBy.name,
+      email: project.clientEmail, // Get email from project
+      ipAddress: ipAddress,
+      userAgent: signedBy.userAgent || req.get('User-Agent')
+    };
+    
+    variation.signedAt = new Date();
+    variation.status = 'approved';
+    
+    // Clear the signature token since it's no longer needed
+    variation.signatureToken = undefined;
+    variation.signatureTokenExpiresAt = undefined;
+
+    // Save the project (this will trigger the pre-save middleware to recalculate contract price)
+    await project.save();
+
+    // Send confirmation email to both client and project owner
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.VARIATION_EMAIL,
+          pass: process.env.VARIATION_PASSWORD
+        }
+      });
+
+      // Email to client
+      const clientMailOptions = {
+        from: process.env.VARIATION_EMAIL,
+        to: project.clientEmail,
+        subject: `Variation Approved - ${project.projectName}`,
+        html: `
+          <p>Dear ${project.clientName},</p>
+          <p>Thank you for approving the variation for your project:</p>
+          <p><strong>Project:</strong> ${project.projectName}</p>
+          <p><strong>Variation:</strong> ${variation.description}</p>
+          <p><strong>Signed by:</strong> ${variation.signedBy.name}</p>
+          <p><strong>Signed on:</strong> ${new Date(variation.signedAt).toLocaleString()}</p>
+          <p>Your updated contract price is now $${project.currentContractPrice.toLocaleString()}</p>
+          <p>Best regards</p>
+        `
+      };
+
+      await transporter.sendMail(clientMailOptions);
+      console.log("Confirmation email sent to client");
+    } catch (emailError) {
+      console.error('Error sending confirmation email:', emailError);
+      // Don't fail the request if email fails
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Variation signed and approved successfully',
+      project: project,
+      variation: variation
+    });
+
+  } catch (error) {
+    console.error('Error signing variation:', error);
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message
+    });
   }
 };
