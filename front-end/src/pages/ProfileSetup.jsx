@@ -18,7 +18,6 @@ const ProfileSetup = () => {
     saveProfile,
     loading,
     isProfileComplete,
-    error,
     profileData,
   } = useProfile();
 
@@ -78,11 +77,18 @@ const ProfileSetup = () => {
       if (!profileData.phoneNumber) return "Phone number is required";
     }
 
-    if (step === 3) {
-      if (!profileData.acn) return "ACN is required";
-      if (profileData.acn.toString().length !== 9)
-        return "ACN must be 9 digits";
+    if (step === 2) {
+   
+      if (profileData.company === "Yes") {
+        if (profileData.companyDetails.acn.toString().length !== 9)
+          return "ACN must be 9 digits";
 
+        if (!profileData.companyDetails.companyName) 
+          return "Company name is required";
+      }
+    }
+
+    if (step === 3) {
       if (!profileData.abn) return "ABN is required";
       if (profileData.abn.toString().length !== 11)
         return "ABN must be 11 digits";

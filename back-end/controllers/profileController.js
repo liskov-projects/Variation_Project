@@ -15,6 +15,8 @@ export const getProfile = async (req, res) => {
 
     const profile = await Profile.findOne({ userId });
 
+    console.log('Profile:', profile);
+
     if (!profile) {
       return res.status(404).json({
         message: 'Profile not found'
@@ -53,7 +55,7 @@ export const createProfile = async (req, res) => {
     }
 
     // Validate profile data
-    if (profileData.acn && profileData.acn.toString().length !== 9) {
+    if (profileData.companyDetails?.acn && profileData.companyDetails?.acn.toString().length !== 9) {
       return res.status(400).json({
         message: 'ACN must be exactly 9 digits'
       });
@@ -121,7 +123,7 @@ export const updateProfile = async (req, res) => {
     }
 
     // Validate profile data
-    if (profileData.acn && profileData.acn.toString().length !== 9) {
+    if (profileData.companyDetails?.acn && profileData.companyDetails?.acn.toString().length !== 9) {
       return res.status(400).json({
         message: 'ACN must be exactly 9 digits'
       });

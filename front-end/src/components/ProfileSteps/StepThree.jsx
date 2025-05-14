@@ -7,17 +7,6 @@ const StepThree = () => {
   return (
     <div>
       <h4 className="mb-3">Individual (Default) Information</h4>
-      <div className="mb-3">
-        <label className="form-label">ACN (9 digits) *</label>
-        <input
-          type="number"
-          className="form-control"
-          value={profileData.acn || ''}
-          onChange={(e) => updateProfile({ acn: e.target.value })}
-          required
-        />
-        <small className="text-muted">Must be exactly 9 digits</small>
-      </div>
       
       <div className="mb-3">
         <label className="form-label">ABN (11 digits) *</label>

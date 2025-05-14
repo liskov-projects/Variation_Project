@@ -44,7 +44,7 @@ const StepReview = () => {
           {profileData.company === 'Yes' && (
             <div className="row mb-3">
               <div className="col-md-4 fw-bold">Company Name:</div>
-              <div className="col-md-8">{profileData.companyName}</div>
+              <div className="col-md-8">{profileData.companyDetails.companyName}</div>
             </div>
           )}
         </div>
@@ -94,7 +94,7 @@ const StepReview = () => {
         <div className="card-body">
           <div className="row mb-3">
             <div className="col-md-4 fw-bold">ACN:</div>
-            <div className="col-md-8">{profileData.acn}</div>
+            <div className="col-md-8">{profileData.companyDetails.acn ? profileData.companyDetails.acn : "N/A"}</div>
           </div>
           <div className="row mb-3">
             <div className="col-md-4 fw-bold">ABN:</div>
