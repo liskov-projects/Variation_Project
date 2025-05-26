@@ -53,7 +53,7 @@ const ProjectDetails = () => {
   };
 
   const handleCreateVariation = () => {
-    navigate(`/projects/${projectId}/variations/new`);
+    navigate(`/projects/${projectId}/variations/start`);
   };
 
   const handleViewVariation = (variationId) => {
