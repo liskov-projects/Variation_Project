@@ -3,9 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useProject } from '../../contexts/ProjectContext';
 import Header from '../../components/Header/index';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useLocation } from 'react-router-dom';
 
 const VariationCreate = () => {
     const { projectId } = useParams();
+    const location = useLocation();
     const navigate = useNavigate();
     const { fetchProjectById, currentProject, addVariation, loading, error, createEmptyVariation } = useProject();
     const [variationData, setVariationData] = useState(createEmptyVariation());
@@ -27,6 +29,20 @@ const VariationCreate = () => {
         }));
       }, []);
 
+      useEffect(() => {
+        if (location.state?.prefillData) {
+          const { cost, delay, permitVariation } = location.state.prefillData;
+          setVariationData(prev => ({
+            ...prev,
+            cost: cost || '',
+            delay: delay || '',
+            permitVariation: permitVariation || '',
+            description: `Variation - $${cost}`,
+            reason: 'Owner requested variation'
+          }));
+        }
+      }, [location.state]);
+      
       // Calculate projected new contract price whenever cost changes
       const calculateProjectedContractPrice = (variationCost) => {
         if (!currentProject) return 0;

@@ -24,7 +24,7 @@ import ProjectDetails from './pages/Projects/ProjectDetails';
 import ProjectVariation from './pages/Projects/ProjectVariation';
 import VariationCreate from './pages/Projects/VariationCreate';
 import VariationEdit from './pages/Projects/VariationEdit';
-
+import VariationLogicTree from './pages/Projects/VariationLogicTree';
 // Home page (landing page for guests)
 import Home from './pages/Home';
 
@@ -187,6 +187,11 @@ function App() {
                   <Route path="/projects/:projectId/variations/new" element={
                     <PrivateRoute>
                       <VariationCreate />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/projects/:projectId/variations/start" element={
+                    <PrivateRoute>
+                      <VariationLogicTree />
                     </PrivateRoute>
                   } />
                   <Route path="/projects/:projectId/variations/:variationId" element={
