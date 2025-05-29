@@ -27,6 +27,7 @@ import VariationEdit from './pages/Projects/VariationEdit';
 import VariationLogicTree from './pages/Projects/VariationLogicTree';
 // Home page (landing page for guests)
 import Home from './pages/Home';
+import OwnerVariationForm from './pages/Projects/OwnerVariationForm';
 
 const PUBLISHABLE_KEY = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
@@ -185,6 +186,16 @@ function App() {
                     </PrivateRoute>
                   } />
                   <Route path="/projects/:projectId/variations/builder/new" element={
+                    <PrivateRoute>
+                      <VariationCreate />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/projects/:projectId/variations/owner/new/1" element={
+                    <PrivateRoute>
+                      <OwnerVariationForm />
+                    </PrivateRoute>
+                  } />
+                  <Route path="/projects/:projectId/variations/owner/new/2" element={
                     <PrivateRoute>
                       <VariationCreate />
                     </PrivateRoute>
