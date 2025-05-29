@@ -35,9 +35,10 @@ const VariationLogicTree = () => {
     setUserType(type);
     if (type === 'builder') {
       // Direct route to variation create page
-      navigate(`/projects/${projectId}/variations/new`);
+      navigate(`/projects/${projectId}/variations/builder/new`);
     } else if (type === 'owner') {
       setStep('ownerQuestions');
+      // navigate(`/projects/${projectId}/variations/owner/new/1`);
     }
   };
 

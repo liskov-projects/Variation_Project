@@ -184,7 +184,7 @@ function App() {
                       <ProjectEdit />
                     </PrivateRoute>
                   } />
-                  <Route path="/projects/:projectId/variations/new" element={
+                  <Route path="/projects/:projectId/variations/builder/new" element={
                     <PrivateRoute>
                       <VariationCreate />
                     </PrivateRoute>
