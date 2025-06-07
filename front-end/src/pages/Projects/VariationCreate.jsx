@@ -29,28 +29,36 @@ const VariationCreate = () => {
         }));
       }, []);
 
-      useEffect(() => {
-        if (location.state?.prefillData) {
-          const { cost, delay, permitVariation } = location.state.prefillData;
-          setVariationData(prev => ({
-            ...prev,
-            cost: cost || '',
-            delay: delay || '',
-            permitVariation: permitVariation || '',
-            description: `Variation - $${cost}`,
-            reason: 'Owner requested variation'
-          }));
-        }
-      }, [location.state]);
+useEffect(() => {
+  if (location.state?.prefillData) {
+    const { cost, delay, permitVariation } = location.state.prefillData;
+
+    const formattedCost = cost
+      ? parseFloat(cost).toLocaleString()
+      : '';
+
+    setVariationData(prev => ({
+      ...prev,
+      cost: formattedCost,
+      delay: delay || '',
+      permitVariation: permitVariation || '',
+      description: `Variation - $${formattedCost}`,
+      reason: 'Owner requested variation'
+    }));
+  }
+}, [location.state]);
+
       
-      // Calculate projected new contract price whenever cost changes
-      const calculateProjectedContractPrice = (variationCost) => {
-        if (!currentProject) return 0;
-        
-        // The current contract price already includes all approved variations
-        const projectedPrice = currentProject.currentContractPrice + parseFloat(variationCost || 0);
-        return projectedPrice;
-      };
+const calculateProjectedContractPrice = (variationCost) => {
+  if (!currentProject) return 0;
+
+  const cleanCost = parseFloat(String(variationCost || '').replace(/,/g, ''));
+
+  // Fallback to 0 if cost is invalid
+  if (isNaN(cleanCost)) return currentProject.currentContractPrice;
+
+  return currentProject.currentContractPrice + cleanCost;
+};
 
       const handleChange = (e) => {
         const { name, value } = e.target;
@@ -95,28 +103,62 @@ const VariationCreate = () => {
               return Object.keys(errors).length === 0;
             };
 
-            const handleSubmit = async (e) => {
-                e.preventDefault();
-                
-                if (!validateForm()) {
-                  return;
-                }
-                
-                // Only send the cost, not newContractPrice
+            const handleCurrencyChange = (e) => {
+            const { name, value } = e.target;
+
+            // Clean out non-numeric characters (except dot)
+            const rawValue = value.replace(/[^0-9.]/g, '');
+
+            // Separate integer and decimal
+            const [intPart, decPart] = rawValue.split('.');
+
+            const withCommas = parseInt(intPart || '0').toLocaleString();
+
+            const formatted = decPart !== undefined
+            ? `${withCommas}.${decPart.slice(0, 2)}`
+            : withCommas;
+
+            setVariationData(prev => ({
+              ...prev,
+              [name]: formatted
+      }));
+
+            if (formErrors[name]) {
+                setFormErrors(prev => ({
+                      ...prev,
+                      [name]: ''
+          }));
+        }
+      };
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!validateForm()) {
+          return;
+        }
+
+                // Clean comma-formatted number safely
+                const cleanedCost = parseFloat(String(variationData.cost).replace(/,/g, ''));
+
                 const formattedData = {
                   ...variationData,
-                  cost: parseFloat(variationData.cost)
+                  cost: cleanedCost
                 };
-                
-                // Remove newContractPrice if it exists
+
                 delete formattedData.newContractPrice;
-                
+
+                console.log("Submitting cost:", variationData.cost);      // formatted string
+                console.log("Parsed cost:", cleanedCost);                 // numeric value
+                console.log("Final submit payload:", formattedData);      // full payload
+
                 const result = await addVariation(projectId, formattedData);
-                
+
                 if (result.success) {
                   navigate(`/projects/${projectId}`);
                 }
               };
+
 
               const handleCancel = () => {
                 navigate(`/projects/${projectId}`);
@@ -252,15 +294,21 @@ const VariationCreate = () => {
                                   <label className="form-label">Variation Cost *</label>
                                   <div className="input-group">
                                     <span className="input-group-text">$</span>
-                                    <input
-                                      type="number"
-                                      step="0.01"
-                                      className={`form-control ${formErrors.cost ? 'is-invalid' : ''}`}
-                                      name="cost"
-                                      value={variationData.cost || ''}
-                                      onChange={handleChange}
-                                      required
-                                    />
+                                  <input
+                                    type="text"
+                                    className={`form-control ${formErrors.cost ? 'is-invalid' : ''}`}
+                                    name="cost"
+                                    value={variationData.cost || ''}
+                                    onChange={handleCurrencyChange}
+                                    onBlur={() => {
+                                      setVariationData(prev => ({
+                                      ...prev,
+                                      cost: parseFloat(String(prev.cost).replace(/,/g, '') || 0).toLocaleString()
+                                   }));
+                         }}
+                            required
+                                />
+
                                     {formErrors.cost && <div className="invalid-feedback">{formErrors.cost}</div>}
                                   </div>
                                   <div className="form-text">
