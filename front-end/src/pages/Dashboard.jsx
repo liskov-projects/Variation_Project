@@ -88,11 +88,18 @@ const Dashboard = () => {
               <div>
                 {/* Show most recent 3 projects */}
                 {projects.slice(0, 3).map(project => (
-                  <div key={project._id} className="card mb-2 shadow-sm">
+                  <div
+                    key={project._id}
+                    className="card mb-2 shadow-sm"
+                    onClick={() => navigate(`/projects/${project._id}`)}
+                    style={{ cursor: 'pointer', transition: 'background-color 0.2s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}
+                  >
                     <div className="card-body p-3">
                       <div className="d-flex justify-content-between align-items-center">
                         <h6 className="mb-0">{project.projectName}</h6>
-                        <button 
+                        <button   
                           className="btn btn-sm btn-outline-primary"
                           onClick={() => navigate(`/projects/${project._id}`)}
                         >
