@@ -6,39 +6,43 @@ const signatureSchema = new mongoose.Schema({
 
 
 const architectProjectManagerSchema = new mongoose.Schema({
-  hasArchitectPM: {
+  hasArchitect: {
     type: Boolean,
-    required: [true, 'Architect/PM status is required']
+    required: [true, 'Architect status is required'],
+    default: false
   },
   details: {
-    name: {
+    companyName: {
       type: String,
       required: function() {
-        return this.hasArchitectPM;
+        return this.hasArchitect;
       }
     },
-    company: {
+    contactName: {
       type: String,
       required: function() {
-        return this.hasArchitectPM;
+        return this.hasArchitect;
+      }
+    },
+    address: {
+      type: String,
+      required: function() {
+        return this.hasArchitect;
+      }
+    },
+    phone: {
+      type: String,
+      required: function() {
+        return this.hasArchitect;
       }
     },
     email: {
       type: String,
       required: function() {
-        return this.hasArchitectPM;
+        return this.hasArchitect;
       },
       match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address']
-    },
-    phone: {
-      type: String,
-      required: function() {
-        return this.hasArchitectPM;
-      }
-    },
-    // Add more fields as Mark provides them
-    licenseNumber: String,
-    address: String
+    }
   }
 });
 
@@ -46,16 +50,29 @@ const architectProjectManagerSchema = new mongoose.Schema({
 const surveyorSchema = new mongoose.Schema({
   hasSurveyor: {
     type: Boolean,
+    required: [true, 'Surveyor status is required'],
     default: false
   },
   details: {
-    name: {
+    companyName: {
       type: String,
       required: function() {
         return this.hasSurveyor;
       }
     },
-    company: {
+    contactName: {
+      type: String,
+      required: function() {
+        return this.hasSurveyor;
+      }
+    },
+    address: {
+      type: String,
+      required: function() {
+        return this.hasSurveyor;
+      }
+    },
+    phone: {
       type: String,
       required: function() {
         return this.hasSurveyor;
@@ -67,16 +84,7 @@ const surveyorSchema = new mongoose.Schema({
         return this.hasSurveyor;
       },
       match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address']
-    },
-    phone: {
-      type: String,
-      required: function() {
-        return this.hasSurveyor;
-      }
-    },
-    // Add more fields as Mark provides them
-    licenseNumber: String,
-    address: String
+    }
   }
 });
 
@@ -258,7 +266,7 @@ const projectSchema = new mongoose.Schema({
     }
   },
   
-  architectProjectManager: architectProjectManagerSchema,
+  architect: architectProjectManagerSchema,
   
   surveyor: surveyorSchema,
   
@@ -266,6 +274,49 @@ const projectSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+// BUSINESS LOGIC METHODS FOR VARIATION ROUTING
+
+// Method to determine who should receive variation notifications
+projectSchema.methods.getVariationRecipient = function() {
+  // If architect is engaged, variations go to architect, else to owner
+  if (this.architect && this.architect.hasArchitect && this.architect.details.email) {
+    return {
+      type: 'architect',
+      email: this.architect.details.email,
+      name: this.architect.details.contactName,
+      company: this.architect.details.companyName
+    };
+  }
+  
+  // Fall back to client/owner
+  return {
+    type: 'owner',
+    email: this.clientEmail,
+    name: this.clientName
+  };
+};
+
+// Method to check if variation requires surveyor sign-off
+projectSchema.methods.requiresSurveyorSignoff = function(variation) {
+  // If it's a permit variation, it needs surveyor sign-off
+  if (variation && variation.permitVariation && variation.permitVariation.toLowerCase().includes('yes')) {
+    return this.surveyor && this.surveyor.hasSurveyor;
+  }
+  return false;
+};
+
+// Method to get surveyor details for sign-off
+projectSchema.methods.getSurveyorForSignoff = function() {
+  if (this.surveyor && this.surveyor.hasSurveyor && this.surveyor.details.email) {
+    return {
+      email: this.surveyor.details.email,
+      name: this.surveyor.details.contactName,
+      company: this.surveyor.details.companyName
+    };
+  }
+  return null;
+};
 
 // Helper method to find a variation by its signature token
 projectSchema.statics.findVariationByToken=async function(token){
@@ -295,6 +346,7 @@ projectSchema.methods.calculateCurrentContractPrice = function() {
   return this.currentContractPrice;
 };
 
+// TASK 6: Method to calculate current end date based on extensions
 projectSchema.methods.calculateCurrentEndDate = function() {
   if (this.originalEndDate && this.totalDaysExtended !== undefined) {
     const currentDate = new Date(this.originalEndDate);
