@@ -58,7 +58,9 @@ const VariationLogicTree = () => {
 
   const validateOwnerAnswers = () => {
     const errors = {};
-    
+    if (!ownerAnswers.description || ownerAnswers.description.trim() === '') {
+      errors.description = 'Please enter a description for the variation';
+    }
     if (!ownerAnswers.variationPrice || isNaN(parseFloat(ownerAnswers.variationPrice))) {
       errors.variationPrice = 'Please enter a valid variation price';
     }
@@ -114,7 +116,7 @@ const VariationLogicTree = () => {
     const today = new Date().toISOString().split('T')[0];
     
     const variationData = {
-      description: `Owner variation - $${variationPrice.toFixed(2)}`,
+      description: ownerAnswers.description,
       reason: 'Minor variation requested by owner',
       effect: delayDays === 0 ? 'No impact on project timeline' : `${delayDays} day delay`,
       permitVariation: 'No',
@@ -217,7 +219,20 @@ const VariationLogicTree = () => {
                         </small>
                       </div>
                     )}
-
+{/* Description Field */}
+<div className="mb-3">
+      <label className="form-label">Variation Description *</label>
+      <textarea
+        className={`form-control ${formErrors.description ? 'is-invalid' : ''}`}
+        value={ownerAnswers.description}
+        onChange={(e) => handleOwnerAnswerChange('description', e.target.value)}
+        placeholder="Enter a brief description of the variation"
+        rows="3"
+      ></textarea>
+      {formErrors.description && (
+        <div className="invalid-feedback">{formErrors.description}</div>
+      )}
+    </div>
                     <div className="mb-3">
                       <label className="form-label">Variation Price *</label>
                       <div className="input-group">

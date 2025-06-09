@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, replace } from 'react-router-dom';
 import { useProject } from '../../contexts/ProjectContext';
 import Header from '../../components/Header/index';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -155,7 +155,7 @@ const calculateProjectedContractPrice = (variationCost) => {
                 const result = await addVariation(projectId, formattedData);
 
                 if (result.success) {
-                  navigate(`/projects/${projectId}`);
+                  navigate(`/projects/${projectId}`, replace=true);
                 }
               };
 

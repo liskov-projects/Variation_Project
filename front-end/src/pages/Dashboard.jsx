@@ -51,7 +51,7 @@ const Dashboard = () => {
             onClick={() => navigate('/projects/new')}
           >
             <i className="bi bi-plus-lg me-2"></i>
-            New Variation Project
+            New Project
           </button>
         </div>
 
