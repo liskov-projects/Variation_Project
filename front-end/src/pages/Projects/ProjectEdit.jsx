@@ -21,10 +21,18 @@ const ProjectEdit = () => {
 
   // Set initial form data when project is loaded
   useEffect(() => {
-    if (currentProject) {
-      setProjectData({...currentProject});
-    }
-  }, [currentProject]);
+  if (currentProject) {
+    const formattedPrice = currentProject.contractPrice
+      ? parseFloat(currentProject.contractPrice).toLocaleString()
+      : '';
+
+    setProjectData({
+      ...currentProject,
+      contractPrice: formattedPrice,
+    });
+  }
+}, [currentProject]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -96,7 +104,10 @@ const ProjectEdit = () => {
     // Ensure contractPrice is sent as a number
     const formattedData = {
       ...projectData,
-      contractPrice: parseFloat(projectData.contractPrice)
+      contractPrice: parseFloat(
+  String(projectData.contractPrice || '').replace(/,/g, '')
+)
+
     };
     
     const result = await updateProject(projectId, formattedData);
@@ -113,6 +124,30 @@ const ProjectEdit = () => {
   const handleCancel = () => {
     navigate(`/projects/${projectId}`);
   };
+
+const MAX_ALLOWED = 10000000; // e.g., 10 million
+
+const handleCurrencyChange = (e) => {
+  const { name, value } = e.target;
+  const rawValue = value.replace(/[^0-9.]/g, '');
+  const numeric = parseFloat(rawValue);
+
+  if (numeric > MAX_ALLOWED) return; // silently ignore or show error
+
+  const [integer, decimal] = rawValue.split('.');
+  const formattedInteger = parseInt(integer || '0').toLocaleString();
+
+  const formatted = decimal !== undefined
+    ? `${formattedInteger}.${decimal.slice(0, 2)}`
+    : formattedInteger;
+
+
+  setProjectData(prev => ({
+    ...prev,
+    [name]: formatted
+  }));
+};
+
 
   // Format date for input fields (YYYY-MM-DD)
   const formatDateForInput = (dateString) => {
@@ -133,15 +168,20 @@ const ProjectEdit = () => {
   }
 
   // Calculate contract price summary for display
-  const totalVariationCost = projectData.variations ? 
-    projectData.variations.reduce((total, variation) => {
+  const totalVariationCost = projectData.variations
+  ? projectData.variations.reduce((total, variation) => {
       if (variation.status === 'approved') {
-        return total + (variation.cost || 0);
+        const parsed = parseFloat(String(variation.cost || '0').replace(/,/g, ''));
+        return total + (isNaN(parsed) ? 0 : parsed);
       }
       return total;
-    }, 0) : 0;
+    }, 0)
+  : 0;
 
-  const currentContractPrice = (projectData.contractPrice || 0) + totalVariationCost;
+
+  const basePrice = parseFloat(String(projectData.contractPrice || '').replace(/,/g, '')) || 0;
+  const currentContractPrice = basePrice + totalVariationCost;
+
 
   return (
     <div>
@@ -226,16 +266,14 @@ const ProjectEdit = () => {
                     <label className="form-label">Original Contract Price *</label>
                     <div className="input-group">
                       <span className="input-group-text">$</span>
-                      <input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        className={`form-control ${formErrors.contractPrice ? 'is-invalid' : ''}`}
-                        name="contractPrice"
-                        value={projectData.contractPrice || ''}
-                        onChange={handleChange}
-                        required
-                      />
+                    <input
+                      type="text"
+                      name="contractPrice"
+                      className={`form-control ${formErrors.contractPrice ? 'is-invalid' : ''}`}
+                      value={projectData.contractPrice || ''}
+                      onChange={handleCurrencyChange}
+                    />
+
                       {formErrors.contractPrice && <div className="invalid-feedback">{formErrors.contractPrice}</div>}
                     </div>
                     <div className="form-text">

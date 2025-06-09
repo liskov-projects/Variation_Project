@@ -25,17 +25,26 @@ const VariationEdit = () => {
         if (currentProject && hasFetched) {
         findVariation();
         }
+        
     }, [currentProject, hasFetched]);
     
     // Find the requested variation in the current project
   const findVariation = () => {
     if (currentProject && currentProject.variations) {
       const foundVariation = currentProject.variations.find(v => v._id === variationId);
-      if (foundVariation) {
-        setVariationData({...foundVariation});
-      }
+    if (foundVariation) {
+      const formattedCost = foundVariation.cost
+        ? parseFloat(foundVariation.cost).toLocaleString()
+        : '';
+
+      setVariationData({
+        ...foundVariation,
+        cost: formattedCost, // set cost as formatted string
+      });
     }
-  };
+  }
+};
+
 
   // When current project changes, find the variation again
   useEffect(() => {
@@ -98,7 +107,8 @@ const VariationEdit = () => {
     // Only send cost, not newContractPrice - the backend will calculate it
     const formattedData = {
       ...variationData,
-      cost: parseFloat(variationData.cost),
+      cost: parseFloat(variationData.cost.replace(/,/g, '')),
+
       // Ensure dateCreated is a valid ISO string
       dateCreated: new Date(variationData.dateCreated).toISOString()
     };
@@ -146,21 +156,61 @@ const VariationEdit = () => {
 
   // Calculate projected contract price after this variation
   const currentContractPriceValue = currentProject.currentContractPrice || currentProject.contractPrice || 0;
+
+  const sanitizedCost = parseFloat((variationData.cost || '0').replace(/,/g, ''));
+
   
   // Calculate what the contract price will be with this variation's cost
-  const calculateProjectedPrice = () => {
-    // If this variation is already approved, we need to calculate without its current cost first
-    // Then add the new cost to see the projected value
-    if (variationData.status === 'approved') {
-      const priceWithoutThisVariation = currentContractPriceValue - (variationData.cost || 0);
-      return priceWithoutThisVariation + parseFloat(variationData.cost || 0);
-    } else {
-      // If not approved, just add the cost to current contract price
-      return currentContractPriceValue + parseFloat(variationData.cost || 0);
-    }
-  };
+const calculateProjectedPrice = () => {
+  const sanitizedCost = parseFloat((variationData.cost || '0').replace(/,/g, ''));
+  
+  if (variationData.status === 'approved') {
+    const priceWithoutThisVariation = currentContractPriceValue - sanitizedCost;
+    return priceWithoutThisVariation + sanitizedCost;
+  } else {
+    return currentContractPriceValue + sanitizedCost;
+  }
+};
+
+
+
 
   const projectedContractPrice = calculateProjectedPrice();
+
+  const handleCostChange = (e) => {
+  const { name, value } = e.target;
+
+  // Remove all non-digit and non-dot characters
+  const rawValue = value.replace(/[^0-9.]/g, '');
+
+  // Split into integer and decimal parts
+  const [integer, decimal] = rawValue.split('.');
+
+  // Format integer part with commas
+  const formattedInteger = (integer || '0').replace(/^0+(?!$)/, ''); // remove leading zeros
+  const withCommas = parseInt(formattedInteger || '0').toLocaleString();
+
+  // Recombine with decimal (up to 2 places)
+  const formatted = decimal !== undefined
+    ? `${withCommas}.${decimal.slice(0, 2)}`
+    : withCommas;
+
+  setVariationData(prev => ({
+    ...prev,
+    [name]: formatted
+  }));
+
+  if (formErrors[name]) {
+    setFormErrors(prev => ({
+      ...prev,
+      [name]: ''
+    }));
+  }
+};
+
+
+  
+  
 
   return (
     <div>
@@ -274,14 +324,14 @@ const VariationEdit = () => {
                       <div className="input-group">
                         <span className="input-group-text">$</span>
                         <input
-                          type="number"
-                          step="0.01"
-                          className={`form-control ${formErrors.cost ? 'is-invalid' : ''}`}
-                          name="cost"
-                          value={variationData.cost || ''}
-                          onChange={handleChange}
-                          required
+                            type="text"
+                            className={`form-control ${formErrors.cost ? 'is-invalid' : ''}`}
+                            name="cost"
+                            value={variationData.cost || ''}
+                            onChange={handleCostChange}
+                            required
                         />
+
                         {formErrors.cost && <div className="invalid-feedback">{formErrors.cost}</div>}
                       </div>
                       <div className="form-text">

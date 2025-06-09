@@ -75,6 +75,35 @@ const ProjectCreate = ()=>{
         return Object.keys(errors).length === 0;
       }
 
+        const handleCurrencyChange = (e) => {
+        const { name, value } = e.target;
+
+        // Remove non-numeric characters except dot
+        const rawValue = value.replace(/[^0-9.]/g, '');
+
+        // Split into integer and decimal
+       const [integer, decimal] = rawValue.split('.');
+       const formattedInteger = (integer || '0').replace(/^0+(?!$)/, '');
+       const withCommas = parseInt(formattedInteger || '0').toLocaleString();
+
+       // Recombine with decimal (if any)
+       const formatted =
+        decimal !== undefined ? `${withCommas}.${decimal.slice(0, 2)}` : withCommas;
+
+      setProjectData((prev) => ({
+        ...prev,
+        [name]: formatted,
+      }));
+
+      if (formErrors[name]) {
+        setFormErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }));
+    }
+  };
+
+
       const handleSubmit=async(e)=>{
         e.preventDefault();
 
@@ -85,7 +114,7 @@ const ProjectCreate = ()=>{
         const projectWithUserId={
             ...projectData,
             userId,
-            contractPrice: parseFloat(projectData.contractPrice)  
+            contractPrice: parseFloat(projectData.contractPrice.replace(/,/g, ''))
         }
         if (projectWithUserId._id === '') {
             delete projectWithUserId._id;
@@ -159,15 +188,14 @@ const ProjectCreate = ()=>{
                         <div className="input-group">
                             <span className="input-group-text">$</span>
                             <input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            className={`form-control ${formErrors.contractPrice ? 'is-invalid' : ''}`}
-                            name="contractPrice"
-                            value={projectData.contractPrice || ''}
-                            onChange={handleChange}
-                            required
+                              type="text"
+                              className={`form-control ${formErrors.contractPrice ? 'is-invalid' : ''}`}
+                              name="contractPrice"
+                              value={projectData.contractPrice || ''}
+                              onChange={handleCurrencyChange}
+                              required
                             />
+
                             {formErrors.contractPrice && <div className="invalid-feedback">{formErrors.contractPrice}</div>}
                         </div>
                         <div className="form-text">This is the base contract price before any variations.</div>
