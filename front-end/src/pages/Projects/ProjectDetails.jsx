@@ -10,8 +10,7 @@ import VariationPDF from "./VariationPDF";
 const ProjectDetails = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
-  const { fetchProjectById, currentProject, loading, deleteVariation } =
-    useProject();
+  const { fetchProjectById, currentProject, loading, deleteVariation } = useProject();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [variationToDelete, setVariationToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -139,7 +138,9 @@ const ProjectDetails = () => {
       <div>
         <Header />
         <div className="d-flex justify-content-center align-items-center vh-100">
-          <div className="spinner-border text-primary" role="status">
+          <div
+            className="spinner-border text-primary"
+            role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
@@ -153,7 +154,9 @@ const ProjectDetails = () => {
         <Header />
         <div className="container py-4">
           <div className="alert alert-warning">Project not found</div>
-          <button className="btn btn-primary" onClick={handleBackToProjects}>
+          <button
+            className="btn btn-primary"
+            onClick={handleBackToProjects}>
             Back to Projects
           </button>
         </div>
@@ -169,18 +172,12 @@ const ProjectDetails = () => {
           <div className="d-flex align-items-center">
             <button
               className="btn btn-outline-secondary me-3"
-              onClick={handleBackToProjects}
-            >
+              onClick={handleBackToProjects}>
               <i className="bi bi-arrow-left"></i>
             </button>
             <h2 className="mb-0">{currentProject.projectName}</h2>
-            <span
-              className={`badge ms-3 ${getStatusBadgeClass(
-                currentProject.status
-              )}`}
-            >
-              {currentProject.status.charAt(0).toUpperCase() +
-                currentProject.status.slice(1)}
+            <span className={`badge ms-3 ${getStatusBadgeClass(currentProject.status)}`}>
+              {currentProject.status.charAt(0).toUpperCase() + currentProject.status.slice(1)}
             </span>
           </div>
           <div>
@@ -188,18 +185,18 @@ const ProjectDetails = () => {
               className="btn btn-outline-secondary me-2"
               onClick={handleRefresh}
               disabled={loading}
-              title="Refresh project data"
-            >
-              <i className={`bi bi-arrow-clockwise ${loading ? 'spin' : ''}`}></i>
+              title="Refresh project data">
+              <i className={`bi bi-arrow-clockwise ${loading ? "spin" : ""}`}></i>
             </button>
             <button
               className="btn btn-outline-primary me-2"
-              onClick={handleEditProject}
-            >
+              onClick={handleEditProject}>
               <i className="bi bi-pencil me-1"></i>
               Edit Project
             </button>
-            <button className="btn btn-primary" onClick={handleCreateVariation}>
+            <button
+              className="btn btn-primary"
+              onClick={handleCreateVariation}>
               <i className="bi bi-plus-lg me-1"></i>
               New Variation
             </button>
@@ -218,21 +215,15 @@ const ProjectDetails = () => {
                 <div className="ms-3 mb-3">
                   <div className="row mb-2">
                     <div className="col-md-4 fw-bold">Property Address:</div>
-                    <div className="col-md-8">
-                      {currentProject.propertyAddress}
-                    </div>
+                    <div className="col-md-8">{currentProject.propertyAddress}</div>
                   </div>
                   <div className="row mb-2">
                     <div className="col-md-4 fw-bold">Start Date:</div>
-                    <div className="col-md-8">
-                      {formatDate(currentProject.startDate)}
-                    </div>
+                    <div className="col-md-8">{formatDate(currentProject.startDate)}</div>
                   </div>
                   <div className="row mb-2">
                     <div className="col-md-4 fw-bold">Expected End:</div>
-                    <div className="col-md-8">
-                      {formatDate(currentProject.expectedEndDate)}
-                    </div>
+                    <div className="col-md-8">{formatDate(currentProject.expectedEndDate)}</div>
                   </div>
                   <div className="row">
                     <div className="col-md-4 fw-bold">Description:</div>
@@ -280,7 +271,9 @@ const ProjectDetails = () => {
                         <div className="col-md-6 fw-bold">Current Contract Price:</div>
                         <div className="col-md-6">
                           <span className="text-success fs-5">
-                            {formatCurrency(currentProject.currentContractPrice || currentProject.contractPrice)}
+                            {formatCurrency(
+                              currentProject.currentContractPrice || currentProject.contractPrice
+                            )}
                           </span>
                         </div>
                       </div>
@@ -291,9 +284,7 @@ const ProjectDetails = () => {
                       <>
                         <div className="row mb-2">
                           <div className="col-md-6 fw-bold">Total Variations:</div>
-                          <div className="col-md-6">
-                            {currentProject.variations.length}
-                          </div>
+                          <div className="col-md-6">{currentProject.variations.length}</div>
                         </div>
                         <div className="row mb-2">
                           <div className="col-md-6 fw-bold">Total Variation Cost:</div>
@@ -301,7 +292,7 @@ const ProjectDetails = () => {
                             <span className="text-info">
                               {formatCurrency(
                                 currentProject.variations.reduce((total, variation) => {
-                                  if (variation.status === 'approved') {
+                                  if (variation.status === "approved") {
                                     return total + (variation.cost || 0);
                                   }
                                   return total;
@@ -332,29 +323,25 @@ const ProjectDetails = () => {
               )}
               <button
                 className="btn btn-sm btn-primary"
-                onClick={handleCreateVariation}
-              >
+                onClick={handleCreateVariation}>
                 <i className="bi bi-plus-lg me-1"></i>
                 Add Variation
               </button>
             </div>
           </div>
           <div className="card-body">
-            {!currentProject.variations ||
-            currentProject.variations.length === 0 ? (
+            {!currentProject.variations || currentProject.variations.length === 0 ? (
               <div className="text-center py-4">
                 <i
                   className="bi bi-clipboard-plus"
-                  style={{ fontSize: "3rem", color: "#ccc" }}
-                ></i>
+                  style={{ fontSize: "3rem", color: "#ccc" }}></i>
                 <h5 className="mt-3">No Variations Yet</h5>
                 <p className="text-muted">
                   You haven't created any variations for this project yet.
                 </p>
                 <button
                   className="btn btn-primary mt-2"
-                  onClick={handleCreateVariation}
-                >
+                  onClick={handleCreateVariation}>
                   Create First Variation
                 </button>
               </div>
@@ -376,8 +363,7 @@ const ProjectDetails = () => {
                       <tr
                         key={variation._id}
                         onClick={() => handleViewVariation(variation._id)}
-                        style={{ cursor: "pointer" }}
-                      >
+                        style={{ cursor: "pointer" }}>
                         <td>
                           {variation.description
                             ? variation.description.length > 30
@@ -393,19 +379,18 @@ const ProjectDetails = () => {
                             : "No reason provided"}
                         </td>
                         <td>
-                          <span className={variation.status === 'approved' ? 'text-success fw-bold' : ''}>
+                          <span
+                            className={
+                              variation.status === "approved" ? "text-success fw-bold" : ""
+                            }>
                             {formatCurrency(variation.cost || 0)}
                           </span>
                         </td>
                         <td>{formatDate(variation.dateCreated)}</td>
                         <td>
                           <span
-                            className={`badge ${getVariationStatusBadgeClass(
-                              variation.status
-                            )}`}
-                          >
-                            {variation.status.charAt(0).toUpperCase() +
-                              variation.status.slice(1)}
+                            className={`badge ${getVariationStatusBadgeClass(variation.status)}`}>
+                            {variation.status.charAt(0).toUpperCase() + variation.status.slice(1)}
                           </span>
                           {/* {variation.status === 'approved' && variation.signedAt && (
                             <div>
@@ -416,24 +401,18 @@ const ProjectDetails = () => {
                           )} */}
                         </td>
                         <td className="d-flex gap-1">
-                          {variation.status !== 'approved' && (
+                          {variation.status !== "approved" && (
                             <button
                               className="btn btn-sm btn-outline-primary"
-                              onClick={(e) =>
-                                handleEditVariation(variation._id, e)
-                              }
-                              title="Edit variation"
-                            >
+                              onClick={(e) => handleEditVariation(variation._id, e)}
+                              title="Edit variation">
                               <i className="bi bi-pencil"></i>
                             </button>
                           )}
                           <button
                             className="btn btn-sm btn-outline-danger"
-                            onClick={(e) =>
-                              confirmDeleteVariation(variation, e)
-                            }
-                            title="Delete variation"
-                          >
+                            onClick={(e) => confirmDeleteVariation(variation, e)}
+                            title="Delete variation">
                             <i className="bi bi-trash"></i>
                           </button>
                           <PDFDownloadLink
@@ -446,8 +425,7 @@ const ProjectDetails = () => {
                             fileName={`variation-${variation._id}.pdf`}
                             className="btn btn-sm btn-outline-success"
                             onClick={(e) => e.stopPropagation()}
-                            title="Download PDF"
-                          >
+                            title="Download PDF">
                             {({ loading }) =>
                               loading ? (
                                 <i className="bi bi-download spin"></i>
@@ -472,8 +450,7 @@ const ProjectDetails = () => {
         <div
           className="modal show d-block"
           tabIndex="-1"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-        >
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -481,18 +458,22 @@ const ProjectDetails = () => {
                 <button
                   type="button"
                   className="btn-close"
-                  onClick={closeDeleteModal}
-                ></button>
+                  onClick={closeDeleteModal}></button>
               </div>
               <div className="modal-body">
                 <p>Are you sure you want to delete this variation?</p>
                 <p className="text-danger">This action cannot be undone.</p>
                 {variationToDelete && (
                   <div className="bg-light p-3 rounded">
-                    <strong>Variation:</strong> {variationToDelete.description}<br/>
-                    <strong>Cost:</strong> {formatCurrency(variationToDelete.cost)}<br/>
-                    <strong>Status:</strong> <span className={`badge ${getVariationStatusBadgeClass(variationToDelete.status)}`}>
-                      {variationToDelete.status.charAt(0).toUpperCase() + variationToDelete.status.slice(1)}
+                    <strong>Variation:</strong> {variationToDelete.description}
+                    <br />
+                    <strong>Cost:</strong> {formatCurrency(variationToDelete.cost)}
+                    <br />
+                    <strong>Status:</strong>{" "}
+                    <span
+                      className={`badge ${getVariationStatusBadgeClass(variationToDelete.status)}`}>
+                      {variationToDelete.status.charAt(0).toUpperCase() +
+                        variationToDelete.status.slice(1)}
                     </span>
                   </div>
                 )}
@@ -502,23 +483,20 @@ const ProjectDetails = () => {
                   type="button"
                   className="btn btn-secondary"
                   onClick={closeDeleteModal}
-                  disabled={deleteLoading}
-                >
+                  disabled={deleteLoading}>
                   Cancel
                 </button>
                 <button
                   type="button"
                   className="btn btn-danger"
                   onClick={handleDeleteVariation}
-                  disabled={deleteLoading}
-                >
+                  disabled={deleteLoading}>
                   {deleteLoading ? (
                     <>
                       <span
                         className="spinner-border spinner-border-sm me-2"
                         role="status"
-                        aria-hidden="true"
-                      ></span>
+                        aria-hidden="true"></span>
                       Deleting...
                     </>
                   ) : (
@@ -535,10 +513,14 @@ const ProjectDetails = () => {
         .spin {
           animation: spin 1s linear infinite;
         }
-        
+
         @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
         }
       `}</style>
     </div>
