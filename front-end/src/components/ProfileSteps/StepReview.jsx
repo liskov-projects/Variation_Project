@@ -1,5 +1,5 @@
-import React from 'react';
-import { useProfile } from '../../contexts/ProfileContext';
+import React from "react";
+import { useProfile } from "../../contexts/ProfileContext";
 
 const StepReview = () => {
   const { profileData } = useProfile();
@@ -7,7 +7,7 @@ const StepReview = () => {
   return (
     <div>
       <h4 className="mb-4">Review Your Information</h4>
-      
+
       <div className="card mb-4">
         <div className="card-header bg-light">
           <h5 className="mb-0">Builder Information</h5>
@@ -41,7 +41,7 @@ const StepReview = () => {
             <div className="col-md-4 fw-bold">Company:</div>
             <div className="col-md-8">{profileData.company}</div>
           </div>
-          {profileData.company === 'Yes' && (
+          {profileData.company === "Yes" && (
             <div className="row mb-3">
               <div className="col-md-4 fw-bold">Company Name:</div>
               <div className="col-md-8">{profileData.companyDetails.companyName}</div>
@@ -59,16 +59,18 @@ const StepReview = () => {
             <div className="col-md-4 fw-bold">Partnership:</div>
             <div className="col-md-8">{profileData.partnership}</div>
           </div>
-          
-          {profileData.partnership === 'Yes' && (
+
+          {profileData.partnership === "Yes" && (
             <>
               <div className="row mb-3">
                 <div className="col-md-4 fw-bold">Number of Partners:</div>
                 <div className="col-md-8">{profileData.numberOfPartners}</div>
               </div>
-              
+
               {profileData.partners.map((partner, index) => (
-                <div key={index} className="card mb-3">
+                <div
+                  key={index}
+                  className="card mb-3">
                   <div className="card-header">Partner {index + 1}</div>
                   <div className="card-body">
                     <div className="row mb-2">
@@ -94,7 +96,9 @@ const StepReview = () => {
         <div className="card-body">
           <div className="row mb-3">
             <div className="col-md-4 fw-bold">ACN:</div>
-            <div className="col-md-8">{profileData.companyDetails.acn ? profileData.companyDetails.acn : "N/A"}</div>
+            <div className="col-md-8">
+              {profileData.companyDetails.acn ? profileData.companyDetails.acn : "N/A"}
+            </div>
           </div>
           <div className="row mb-3">
             <div className="col-md-4 fw-bold">ABN:</div>
@@ -109,7 +113,8 @@ const StepReview = () => {
 
       <div className="alert alert-info">
         <i className="bi bi-info-circle me-2"></i>
-        Please review all information carefully. After submission, you'll still be able to edit your profile from your dashboard.
+        Please review all information carefully. After submission, you'll still be able to edit your
+        profile from your dashboard.
       </div>
     </div>
   );

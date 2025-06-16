@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@clerk/clerk-react';
-import axios from 'axios';
-import useFormStorage from '../hooks/useFormStorage';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
+import axios from "axios";
+import useFormStorage from "../hooks/useFormStorage";
 // import Header from '../components/Header';
-import Header from '../components/Header/index';
-import API_BASE_URL from '../api';
+import Header from "../components/Header/index";
+import API_BASE_URL from "../api";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -17,46 +17,46 @@ const UserProfile = () => {
   const { updateFormData } = useFormStorage();
   const [userInfo, setUserInfo] = useState({
     // Personal Information
-    fullName: '',
-    address: '',
-    email: '',
-    phonenumber: '',
-    dob: '',
-    gender: '',
-    
+    fullName: "",
+    address: "",
+    email: "",
+    phonenumber: "",
+    dob: "",
+    gender: "",
+
     // Company Information
-    company: 'No',
-    companyName: '',
-    
+    company: "No",
+    companyName: "",
+
     // Partnership Information
-    partnership: 'No',
-    numberOfPartners: '',
+    partnership: "No",
+    numberOfPartners: "",
     partners: [],
-    
+
     // Individual Information (Builder specific)
-    acn: '',
-    abn: '',
-    brn: '',
+    acn: "",
+    abn: "",
+    brn: "",
   });
 
   // Fetch user data on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       if (!userId) return;
-      
+
       setLoading(true);
       try {
         const token = await getToken();
         const response = await axios.get(`${API_BASE_URL}/api/user/${userId}`, {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
-        
+
         if (response.data && response.data.formData && response.data.formData.length > 0) {
           // Use the latest form data
           const latestFormData = response.data.formData[response.data.formData.length - 1];
-          setUserInfo(prevState => ({ ...prevState, ...latestFormData }));
+          setUserInfo((prevState) => ({ ...prevState, ...latestFormData }));
           updateFormData(latestFormData);
         }
       } catch (err) {
@@ -64,8 +64,8 @@ const UserProfile = () => {
           // User not found, probably first time setup
           // We keep the default empty state
         } else {
-          setError('Failed to load user data. Please try again later.');
-          console.error('Error fetching user data:', err);
+          setError("Failed to load user data. Please try again later.");
+          console.error("Error fetching user data:", err);
         }
       } finally {
         setLoading(false);
@@ -78,44 +78,46 @@ const UserProfile = () => {
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    setUserInfo(prevState => {
+
+    setUserInfo((prevState) => {
       const newState = {
         ...prevState,
-        [name]: value
+        [name]: value,
       };
-      
-      // If changing partnership status or number of partners, 
+
+      // If changing partnership status or number of partners,
       // update partners array here instead of in a separate effect
-      if (name === 'partnership' || name === 'numberOfPartners') {
+      if (name === "partnership" || name === "numberOfPartners") {
         // Only process partners if partnership is 'Yes' and numberOfPartners is a valid number
         if (
-          (name === 'partnership' && value === 'Yes' && prevState.numberOfPartners) ||
-          (name === 'numberOfPartners' && value && prevState.partnership === 'Yes')
+          (name === "partnership" && value === "Yes" && prevState.numberOfPartners) ||
+          (name === "numberOfPartners" && value && prevState.partnership === "Yes")
         ) {
-          const numPartners = parseInt(name === 'numberOfPartners' ? value : prevState.numberOfPartners);
+          const numPartners = parseInt(
+            name === "numberOfPartners" ? value : prevState.numberOfPartners
+          );
           let updatedPartners = [...(prevState.partners || [])];
-          
+
           // If we need more partners, add empty ones
           while (updatedPartners.length < numPartners) {
-            updatedPartners.push({ name: '', address: '' });
+            updatedPartners.push({ name: "", address: "" });
           }
-          
+
           // If we need fewer partners, remove excess ones
           if (updatedPartners.length > numPartners) {
             updatedPartners = updatedPartners.slice(0, numPartners);
           }
-          
+
           newState.partners = updatedPartners;
         }
-        
+
         // If partnership is set to 'No', clear partners
-        if (name === 'partnership' && value === 'No') {
+        if (name === "partnership" && value === "No") {
           newState.partners = [];
-          newState.numberOfPartners = '';
+          newState.numberOfPartners = "";
         }
       }
-      
+
       return newState;
     });
   };
@@ -124,13 +126,13 @@ const UserProfile = () => {
   const handlePartnerChange = (index, field, value) => {
     const updatedPartners = [...(userInfo.partners || [])];
     if (!updatedPartners[index]) {
-      updatedPartners[index] = { name: '', address: '' };
+      updatedPartners[index] = { name: "", address: "" };
     }
     updatedPartners[index][field] = value;
-    
-    setUserInfo(prevState => ({
+
+    setUserInfo((prevState) => ({
       ...prevState,
-      partners: updatedPartners
+      partners: updatedPartners,
     }));
   };
 
@@ -143,27 +145,27 @@ const UserProfile = () => {
 
     // Validate ACN and ABN
     if (userInfo.acn && userInfo.acn.toString().length !== 9) {
-      setError('ACN must be exactly 9 digits');
+      setError("ACN must be exactly 9 digits");
       setSaveLoading(false);
       return;
     }
 
     if (userInfo.abn && userInfo.abn.toString().length !== 11) {
-      setError('ABN must be exactly 11 digits');
+      setError("ABN must be exactly 11 digits");
       setSaveLoading(false);
       return;
     }
 
     try {
       const token = await getToken();
-      
+
       // Check if user already exists
       let userExists = false;
       try {
         const checkResponse = await axios.get(`${API_BASE_URL}/api/user/${userId}`, {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
         userExists = checkResponse.status === 200;
       } catch (err) {
@@ -173,38 +175,46 @@ const UserProfile = () => {
       let response;
       if (userExists) {
         // Update existing user
-        response = await axios.put(`${API_BASE_URL}/api/user/${userId}`, {
-          userId,
-          email: userInfo.email,
-          formData: userInfo
-        }, {
-          headers: {
-            Authorization: `Bearer ${token}`
+        response = await axios.put(
+          `${API_BASE_URL}/api/user/${userId}`,
+          {
+            userId,
+            email: userInfo.email,
+            formData: userInfo,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
       } else {
         // Create new user
-        response = await axios.post(`${API_BASE_URL}/api/forms/submit`, {
-          userId,
-          email: userInfo.email,
-          formData: userInfo
-        }, {
-          headers: {
-            Authorization: `Bearer ${token}`
+        response = await axios.post(
+          `${API_BASE_URL}/api/forms/submit`,
+          {
+            userId,
+            email: userInfo.email,
+            formData: userInfo,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
       }
 
       setSuccess(true);
       updateFormData(userInfo);
-      
+
       // Show success message for 2 seconds then redirect
       setTimeout(() => {
-        navigate('/welcome');
+        navigate("/welcome");
       }, 2000);
     } catch (err) {
-      setError('Failed to update profile. Please try again later.');
-      console.error('Error updating profile:', err);
+      setError("Failed to update profile. Please try again later.");
+      console.error("Error updating profile:", err);
     } finally {
       setSaveLoading(false);
     }
@@ -214,8 +224,12 @@ const UserProfile = () => {
     return (
       <div>
         <Header />
-        <div className="d-flex justify-content-center align-items-center" style={{ height: "calc(100vh - 56px)" }}>
-          <div className="spinner-border text-primary" role="status">
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: "calc(100vh - 56px)" }}>
+          <div
+            className="spinner-border text-primary"
+            role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
@@ -235,8 +249,10 @@ const UserProfile = () => {
               </div>
               <div className="card-body">
                 {error && <div className="alert alert-danger">{error}</div>}
-                {success && <div className="alert alert-success">Profile updated successfully!</div>}
-                
+                {success && (
+                  <div className="alert alert-success">Profile updated successfully!</div>
+                )}
+
                 <form onSubmit={handleSubmit}>
                   {/* Personal Information Section */}
                   <h4 className="mb-3 border-bottom pb-2">Builder Information</h4>
@@ -246,7 +262,7 @@ const UserProfile = () => {
                       type="text"
                       className="form-control"
                       name="fullName"
-                      value={userInfo.fullName || ''}
+                      value={userInfo.fullName || ""}
                       onChange={handleChange}
                       required
                     />
@@ -257,7 +273,7 @@ const UserProfile = () => {
                       type="text"
                       className="form-control"
                       name="address"
-                      value={userInfo.address || ''}
+                      value={userInfo.address || ""}
                       onChange={handleChange}
                       required
                     />
@@ -268,7 +284,7 @@ const UserProfile = () => {
                       type="email"
                       className="form-control"
                       name="email"
-                      value={userInfo.email || ''}
+                      value={userInfo.email || ""}
                       onChange={handleChange}
                       required
                     />
@@ -279,7 +295,7 @@ const UserProfile = () => {
                       type="text"
                       className="form-control"
                       name="phonenumber"
-                      value={userInfo.phonenumber || ''}
+                      value={userInfo.phonenumber || ""}
                       onChange={handleChange}
                       required
                     />
@@ -297,11 +313,15 @@ const UserProfile = () => {
                           name="company"
                           id="companyYes"
                           value="Yes"
-                          checked={userInfo.company === 'Yes'}
+                          checked={userInfo.company === "Yes"}
                           onChange={handleChange}
                           required
                         />
-                        <label className="form-check-label" htmlFor="companyYes">Yes</label>
+                        <label
+                          className="form-check-label"
+                          htmlFor="companyYes">
+                          Yes
+                        </label>
                       </div>
                       <div className="form-check form-check-inline">
                         <input
@@ -310,23 +330,27 @@ const UserProfile = () => {
                           name="company"
                           id="companyNo"
                           value="No"
-                          checked={userInfo.company === 'No'}
+                          checked={userInfo.company === "No"}
                           onChange={handleChange}
                           required
                         />
-                        <label className="form-check-label" htmlFor="companyNo">No</label>
+                        <label
+                          className="form-check-label"
+                          htmlFor="companyNo">
+                          No
+                        </label>
                       </div>
                     </div>
                   </div>
 
-                  {userInfo.company === 'Yes' && (
+                  {userInfo.company === "Yes" && (
                     <div className="mb-3">
                       <label className="form-label">Company Name *</label>
                       <input
                         type="text"
                         className="form-control"
                         name="companyName"
-                        value={userInfo.companyName || ''}
+                        value={userInfo.companyName || ""}
                         onChange={handleChange}
                         required
                       />
@@ -345,11 +369,15 @@ const UserProfile = () => {
                           name="partnership"
                           id="partnershipYes"
                           value="Yes"
-                          checked={userInfo.partnership === 'Yes'}
+                          checked={userInfo.partnership === "Yes"}
                           onChange={handleChange}
                           required
                         />
-                        <label className="form-check-label" htmlFor="partnershipYes">Yes</label>
+                        <label
+                          className="form-check-label"
+                          htmlFor="partnershipYes">
+                          Yes
+                        </label>
                       </div>
                       <div className="form-check form-check-inline">
                         <input
@@ -358,16 +386,20 @@ const UserProfile = () => {
                           name="partnership"
                           id="partnershipNo"
                           value="No"
-                          checked={userInfo.partnership === 'No'}
+                          checked={userInfo.partnership === "No"}
                           onChange={handleChange}
                           required
                         />
-                        <label className="form-check-label" htmlFor="partnershipNo">No</label>
+                        <label
+                          className="form-check-label"
+                          htmlFor="partnershipNo">
+                          No
+                        </label>
                       </div>
                     </div>
                   </div>
 
-                  {userInfo.partnership === 'Yes' && (
+                  {userInfo.partnership === "Yes" && (
                     <div className="mb-4">
                       <div className="mb-3">
                         <label className="form-label">Number of Partners *</label>
@@ -375,40 +407,47 @@ const UserProfile = () => {
                           type="number"
                           className="form-control"
                           name="numberOfPartners"
-                          value={userInfo.numberOfPartners || ''}
+                          value={userInfo.numberOfPartners || ""}
                           onChange={handleChange}
                           min="1"
                           required
                         />
                       </div>
-                      
-                      {userInfo.partners && userInfo.partners.map((partner, index) => (
-                        <div key={index} className="card mb-3 border-light bg-light">
-                          <div className="card-body">
-                            <h5 className="card-title">Partner {index + 1}</h5>
-                            <div className="mb-2">
-                              <label className="form-label">Name *</label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={partner.name || ''}
-                                onChange={(e) => handlePartnerChange(index, 'name', e.target.value)}
-                                required
-                              />
-                            </div>
-                            <div className="mb-2">
-                              <label className="form-label">Address *</label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={partner.address || ''}
-                                onChange={(e) => handlePartnerChange(index, 'address', e.target.value)}
-                                required
-                              />
+
+                      {userInfo.partners &&
+                        userInfo.partners.map((partner, index) => (
+                          <div
+                            key={index}
+                            className="card mb-3 border-light bg-light">
+                            <div className="card-body">
+                              <h5 className="card-title">Partner {index + 1}</h5>
+                              <div className="mb-2">
+                                <label className="form-label">Name *</label>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={partner.name || ""}
+                                  onChange={(e) =>
+                                    handlePartnerChange(index, "name", e.target.value)
+                                  }
+                                  required
+                                />
+                              </div>
+                              <div className="mb-2">
+                                <label className="form-label">Address *</label>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={partner.address || ""}
+                                  onChange={(e) =>
+                                    handlePartnerChange(index, "address", e.target.value)
+                                  }
+                                  required
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                   )}
 
@@ -420,7 +459,7 @@ const UserProfile = () => {
                       type="number"
                       className="form-control"
                       name="acn"
-                      value={userInfo.acn || ''}
+                      value={userInfo.acn || ""}
                       onChange={handleChange}
                       required
                       pattern="[0-9]{9}"
@@ -434,7 +473,7 @@ const UserProfile = () => {
                       type="number"
                       className="form-control"
                       name="abn"
-                      value={userInfo.abn || ''}
+                      value={userInfo.abn || ""}
                       onChange={handleChange}
                       required
                       pattern="[0-9]{11}"
@@ -448,7 +487,7 @@ const UserProfile = () => {
                       type="text"
                       className="form-control"
                       name="brn"
-                      value={userInfo.brn || ''}
+                      value={userInfo.brn || ""}
                       onChange={handleChange}
                       required
                     />
@@ -458,16 +497,14 @@ const UserProfile = () => {
                     <button
                       type="button"
                       className="btn btn-secondary"
-                      onClick={() => navigate('/welcome')}
-                    >
+                      onClick={() => navigate("/welcome")}>
                       Cancel
                     </button>
                     <button
                       type="submit"
                       className="btn btn-primary"
-                      disabled={saveLoading}
-                    >
-                      {saveLoading ? 'Saving...' : 'Save Changes'}
+                      disabled={saveLoading}>
+                      {saveLoading ? "Saving..." : "Save Changes"}
                     </button>
                   </div>
                 </form>

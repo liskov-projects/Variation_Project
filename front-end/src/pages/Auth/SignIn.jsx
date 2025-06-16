@@ -1,8 +1,8 @@
 // pages/Auth/SignIn.jsx
-import React, { useEffect } from 'react';
-import { SignIn as ClerkSignIn } from '@clerk/clerk-react';
-import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useEffect } from "react";
+import { SignIn as ClerkSignIn } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 // Add this CSS to your component
 const customStyles = `
@@ -26,16 +26,16 @@ const SignIn = () => {
 
   const handleSignUp = () => {
     console.log("Sign up button clicked - navigating to /sign-up");
-    navigate('/sign-up');
+    navigate("/sign-up");
   };
-  
+
   // Add effect to inject the CSS
   useEffect(() => {
     // Create a style element
-    const styleElement = document.createElement('style');
+    const styleElement = document.createElement("style");
     styleElement.innerHTML = customStyles;
     document.head.appendChild(styleElement);
-    
+
     // Cleanup
     return () => {
       document.head.removeChild(styleElement);
@@ -45,25 +45,28 @@ const SignIn = () => {
   return (
     <div className="d-flex flex-column min-vh-100 justify-content-center align-items-center bg-light">
       <div className="text-center mb-4">
-        <h1 className="display-5 fw-bold" style={{ color: '#2C3E50' }}>
+        <h1
+          className="display-5 fw-bold"
+          style={{ color: "#2C3E50" }}>
           Variation Project
         </h1>
         <p className="lead">Sign in to your account</p>
       </div>
-      
-      <div className="card shadow-sm" style={{ width: '100%', maxWidth: '450px' }}>
+
+      <div
+        className="card shadow-sm"
+        style={{ width: "100%", maxWidth: "450px" }}>
         <div className="card-body p-4">
-          <ClerkSignIn 
+          <ClerkSignIn
             signUpUrl="/sign-up"
             appearance={{
               layout: {
                 socialButtonsPlacement: "bottom",
                 socialButtonsVariant: "iconButton",
-                termsPageUrl: "https://clerk.com/terms"
+                termsPageUrl: "https://clerk.com/terms",
               },
               elements: {
-                formButtonPrimary: 
-                  "bg-blue-500 hover:bg-blue-600 text-white w-full",
+                formButtonPrimary: "bg-blue-500 hover:bg-blue-600 text-white w-full",
                 card: "shadow-xl rounded-lg p-6",
                 headerTitle: "text-2xl font-bold text-center text-gray-900",
                 headerSubtitle: "text-center text-gray-500",
@@ -74,25 +77,23 @@ const SignIn = () => {
               },
             }}
           />
-          
+
           {/* Add this extra manual sign-up button */}
           <div className="text-center mt-3">
             <p>Don't have an account?</p>
-            <button 
+            <button
               className="btn btn-outline-primary"
-              onClick={handleSignUp}
-            >
+              onClick={handleSignUp}>
               Sign up here
             </button>
           </div>
         </div>
       </div>
-      
+
       <div className="mt-4">
         <button
           className="btn btn-link text-secondary"
-          onClick={() => navigate('/')}
-        >
+          onClick={() => navigate("/")}>
           Back to Home
         </button>
       </div>

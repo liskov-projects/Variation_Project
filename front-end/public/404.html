@@ -1,14 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Redirecting...</title>
     <script>
       // Store the URL path to redirect to after hitting the index page
-      sessionStorage.setItem('redirectPath', 
-        window.location.pathname + window.location.search + window.location.hash);
+      sessionStorage.setItem(
+        "redirectPath",
+        window.location.pathname + window.location.search + window.location.hash
+      );
       // Redirect to index
-      window.location.replace('/');
+      window.location.replace("/");
     </script>
   </head>
   <body>

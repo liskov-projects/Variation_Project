@@ -1,31 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 const useFormStorage = () => {
   const [formData, setFormData] = useState(() => {
-    const savedData = localStorage.getItem('formData');
+    const savedData = localStorage.getItem("formData");
     return savedData ? JSON.parse(savedData) : {};
   });
 
   const [currentStep, setCurrentStep] = useState(() => {
-    const savedStep = localStorage.getItem('currentStep');
+    const savedStep = localStorage.getItem("currentStep");
     return savedStep ? parseInt(savedStep) : 1;
   });
 
   useEffect(() => {
-    localStorage.setItem('formData', JSON.stringify(formData));
-    localStorage.setItem('currentStep', currentStep.toString());
+    localStorage.setItem("formData", JSON.stringify(formData));
+    localStorage.setItem("currentStep", currentStep.toString());
   }, [formData, currentStep]);
 
   const updateFormData = (newData) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      ...newData
+      ...newData,
     }));
   };
 
   const clearFormData = () => {
-    localStorage.removeItem('formData');
-    localStorage.removeItem('currentStep');
+    localStorage.removeItem("formData");
+    localStorage.removeItem("currentStep");
     setFormData({});
     setCurrentStep(1);
   };
@@ -35,7 +35,7 @@ const useFormStorage = () => {
     currentStep,
     setCurrentStep,
     updateFormData,
-    clearFormData
+    clearFormData,
   };
 };
 

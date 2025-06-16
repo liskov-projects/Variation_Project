@@ -22,6 +22,7 @@ This application digitizes the process, making it easier to create, submit, trac
 ## 🛠️ Problem Solved
 
 Traditional variation form processes in construction involve:
+
 - Manual paperwork that's time-consuming to create
 - Difficult to track across projects
 - Prone to errors and miscommunication
@@ -29,6 +30,7 @@ Traditional variation form processes in construction involve:
 - Delays in approval processes
 
 The Variation Project solves these issues by:
+
 1. **Simplifying Creation**: Templates and digital forms make creation quick and easy
 2. **Standardizing Format**: All forms follow industry-standard templates
 3. **Centralizing Records**: All variations are stored in one accessible location
@@ -39,6 +41,7 @@ The Variation Project solves these issues by:
 ## 💻 Tech Stack
 
 ### Frontend
+
 - **React**: JavaScript library for building user interfaces
 - **Context API**: For state management
 - **Bootstrap 5**: For responsive UI components
@@ -46,12 +49,14 @@ The Variation Project solves these issues by:
 - **Axios**: For API requests
 
 ### Backend
+
 - **Node.js**: JavaScript runtime
 - **Express**: Web framework for Node.js
 - **MongoDB**: NoSQL database (MongoDB Atlas cloud)
 - **Mongoose**: MongoDB object modeling
 
 ### Authentication
+
 - **Clerk**: For user authentication and management
 
 ## 🏗️ Project Structure
@@ -66,6 +71,7 @@ The application follows a modern architecture with:
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js (v16+)
 - MongoDB account (or local MongoDB)
 - Clerk account (for authentication)
@@ -73,43 +79,51 @@ The application follows a modern architecture with:
 ### Installation
 
 1. Clone the repository
+
 ```bash
 git clone https://github.com/yourusername/variation-project.git
 cd variation-project
 ```
 
 2. Install dependencies for backend
+
 ```bash
 cd back-end
 npm install
 ```
 
 3. Install dependencies for frontend
+
 ```bash
 cd ../front-end
 npm install
 ```
 
 4. Set up environment variables
+
    - Create a `.env` file in the `back-end` directory with:
+
    ```
    MONGO_URI=your_mongodb_connection_string
    PORT=5000
    ```
-   
+
    - Create a `.env` file in the `front-end` directory with:
+
    ```
    REACT_APP_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
    REACT_APP_API_URL=http://localhost:5001
    ```
 
 5. Start the backend server
+
 ```bash
 cd back-end
 npm run dev
 ```
 
 6. Start the frontend application
+
 ```bash
 cd front-end
 npm start

@@ -1,5 +1,5 @@
-import { requireAuth } from '@clerk/express';
-import { config } from 'dotenv';
+import { requireAuth } from "@clerk/express";
+import { config } from "dotenv";
 
 config();
 

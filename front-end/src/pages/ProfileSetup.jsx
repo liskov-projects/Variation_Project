@@ -12,14 +12,8 @@ import Header from "../components/Header/index";
 const ProfileSetup = () => {
   const navigate = useNavigate();
   const [formError, setFormError] = React.useState(null);
-  const {
-    currentStep,
-    setCurrentStep,
-    saveProfile,
-    loading,
-    isProfileComplete,
-    profileData,
-  } = useProfile();
+  const { currentStep, setCurrentStep, saveProfile, loading, isProfileComplete, profileData } =
+    useProfile();
 
   // Redirect if profile is already complete
   useEffect(() => {
@@ -78,20 +72,16 @@ const ProfileSetup = () => {
     }
 
     if (step === 2) {
-   
       if (profileData.company === "Yes") {
-        if (profileData.companyDetails.acn.toString().length !== 9)
-          return "ACN must be 9 digits";
+        if (profileData.companyDetails.acn.toString().length !== 9) return "ACN must be 9 digits";
 
-        if (!profileData.companyDetails.companyName) 
-          return "Company name is required";
+        if (!profileData.companyDetails.companyName) return "Company name is required";
       }
     }
 
     if (step === 3) {
       if (!profileData.abn) return "ABN is required";
-      if (profileData.abn.toString().length !== 11)
-        return "ABN must be 11 digits";
+      if (profileData.abn.toString().length !== 11) return "ABN must be 11 digits";
 
       if (!profileData.brn) return "Builder Registration  is required";
     }
@@ -110,7 +100,9 @@ const ProfileSetup = () => {
       <div>
         <Header />
         <div className="d-flex justify-content-center align-items-center vh-100">
-          <div className="spinner-border text-primary" role="status">
+          <div
+            className="spinner-border text-primary"
+            role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
@@ -138,8 +130,7 @@ const ProfileSetup = () => {
                   <button
                     type="button"
                     className="btn btn-secondary"
-                    onClick={handlePrevious}
-                  >
+                    onClick={handlePrevious}>
                     Previous
                   </button>
                 )}
@@ -147,13 +138,8 @@ const ProfileSetup = () => {
                   type="button"
                   className="btn btn-primary ms-auto"
                   onClick={handleNext}
-                  disabled={loading}
-                >
-                  {loading
-                    ? "Processing..."
-                    : currentStep < 4
-                    ? "Next"
-                    : "Complete Profile"}
+                  disabled={loading}>
+                  {loading ? "Processing..." : currentStep < 4 ? "Next" : "Complete Profile"}
                 </button>
               </div>
             </div>

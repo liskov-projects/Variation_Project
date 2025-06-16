@@ -1,14 +1,14 @@
-import React from 'react';
-import { useProfile } from '../contexts/ProfileContext';
+import React from "react";
+import { useProfile } from "../contexts/ProfileContext";
 
 const FormProgress = () => {
   const { currentStep, setCurrentStep } = useProfile();
 
   const steps = [
-    { number: 1, label: 'Builder Information' },
-    { number: 2, label: 'Company & Partnership' },
-    { number: 3, label: 'Individual Information' },
-    { number: 4, label: 'Review & Submit' }
+    { number: 1, label: "Builder Information" },
+    { number: 2, label: "Company & Partnership" },
+    { number: 3, label: "Individual Information" },
+    { number: 4, label: "Review & Submit" },
   ];
 
   const handleStepClick = (stepNumber) => {
@@ -19,7 +19,9 @@ const FormProgress = () => {
   };
 
   return (
-    <div className="sidebar bg-light border-end p-4" style={{ width: '280px', minHeight: '100vh' }}>
+    <div
+      className="sidebar bg-light border-end p-4"
+      style={{ width: "280px", minHeight: "100vh" }}>
       <h4 className="mb-4">Profile Setup</h4>
       <div className="d-flex flex-column gap-3">
         {steps.map((step) => {
@@ -33,23 +35,21 @@ const FormProgress = () => {
               onClick={() => handleStepClick(step.number)}
               className={`
                 d-flex align-items-center p-3 rounded 
-                ${isActive ? 'bg-primary text-white' : 'bg-white'} 
-                ${isClickable ? 'cursor-pointer' : 'opacity-50'}
+                ${isActive ? "bg-primary text-white" : "bg-white"} 
+                ${isClickable ? "cursor-pointer" : "opacity-50"}
               `}
-              style={{ cursor: isClickable ? 'pointer' : 'not-allowed' }}
-            >
+              style={{ cursor: isClickable ? "pointer" : "not-allowed" }}>
               <div
                 className={`
                   step-number me-3 rounded-circle d-flex align-items-center justify-content-center
-                  ${isCompleted ? 'bg-success text-white' : ''}
+                  ${isCompleted ? "bg-success text-white" : ""}
                 `}
-                style={{ 
-                  width: '30px', 
-                  height: '30px', 
-                  border: '2px solid currentColor'
-                }}
-              >
-                {isCompleted ? '✓' : step.number}
+                style={{
+                  width: "30px",
+                  height: "30px",
+                  border: "2px solid currentColor",
+                }}>
+                {isCompleted ? "✓" : step.number}
               </div>
               <span>{step.label}</span>
             </div>
