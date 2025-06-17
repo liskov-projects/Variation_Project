@@ -1,0 +1,23 @@
+
+# to build use: 
+# docker-compose -p variation up --build
+
+services:
+  frontend:
+    build: 
+    # fonlder we're building the image from
+      context: ../front-end
+    # the Dockerfile to run for the build | not needed unless using a custom Dockerfile
+      dockerfile: Dockerfile.dev 
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    environment:
+      - REACT_APP_API_URL
+      - REACT_APP_CLERK_PUBLISHABLE_KEY
+    volumes:
+      - ../front-end:/app
+      - /app/node_modules
+    # depends_on:
+    #   - backend
