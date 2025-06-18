@@ -20,8 +20,9 @@ const Header = () => {
   return (
     <header className="bg-dark text-white py-3">
       <div className="container d-flex justify-content-between align-items-center">
-        <div className="d-flex align-items-center">
-          <h1 className="h3 mb-0" style={{ cursor: 'pointer' }} onClick={() => handleNavigate('/')}>
+        <div className="d-flex align-items-center" onClick={() => handleNavigate('/')} style={{ cursor: 'pointer' }}>
+          <img src={process.env.PUBLIC_URL + '/logo.png'} alt="logo" className="mr-2" style={{ height: '30px' }} />
+          <h1 className="h3 mb-0" style={{ fontSize: '20px' }}>
             Variation Project
           </h1>
         </div>
