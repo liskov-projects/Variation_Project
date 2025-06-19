@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "../contexts/ProfileContext";
 import StepOne from "../components/ProfileSteps/StepOne";
@@ -11,7 +11,8 @@ import Header from "../components/Header/index";
 
 const ProfileSetup = () => {
   const navigate = useNavigate();
-  const [formError, setFormError] = React.useState(null);
+  const [formError, setFormError] = useState(null);
+  const [isCompleted, setIsCompleted] = useState([false,false,false,false]);
   const {
     currentStep,
     setCurrentStep,
@@ -50,6 +51,14 @@ const ProfileSetup = () => {
       setFormError(validationError);
       console.log(formError);
       return;
+    }
+    else {
+      setIsCompleted(prev => {
+        const updated = [...prev]; 
+        updated[currentStep - 1] = true;
+        return updated;
+      });
+      console.log(isCompleted);
     }
 
     setFormError(null); // Clear any previous errors
@@ -121,7 +130,7 @@ const ProfileSetup = () => {
     <div>
       <Header />
       <div className="d-flex">
-        <FormProgress currentStep={currentStep} />
+        <FormProgress isCompleted={isCompleted} validateStep={validateStep}/>
         <div className="flex-grow-1 p-4">
           {formError && <div className="alert alert-danger">{formError}</div>}
 

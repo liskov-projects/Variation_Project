@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useProfile } from '../contexts/ProfileContext';
 
-const FormProgress = () => {
-  const { currentStep, setCurrentStep } = useProfile();
-
+const FormProgress = (isCompleted, validateStep) => {
+  const { currentStep, setCurrentStep, profileData } = useProfile();
+  const [completedStep, setCompletedStep] = useState(1);
+  const [error, setError] = useState("");
   const steps = [
     { number: 1, label: 'Builder Information' },
     { number: 2, label: 'Company & Partnership' },
@@ -13,19 +14,23 @@ const FormProgress = () => {
 
   const handleStepClick = (stepNumber) => {
     // Only allow navigation to completed steps or the current step
-    if (stepNumber <= currentStep) {
+    // const errMsg = validateStep(stepNumber, profileData);
+    if (stepNumber <= completedStep) {
       setCurrentStep(stepNumber);
     }
+    if (completedStep < currentStep)
+      setCompletedStep(currentStep);
+    // setError(errMsg);
   };
 
   return (
     <div className="sidebar bg-light border-end p-4" style={{ width: '280px', minHeight: '100vh' }}>
       <h4 className="mb-4">Profile Setup</h4>
       <div className="d-flex flex-column gap-3">
-        {steps.map((step) => {
+        {/* {error && <div>{error}</div>} */}
+        {steps.map((step, index) => {
           const isActive = currentStep === step.number;
-          const isCompleted = step.number < currentStep;
-          const isClickable = step.number <= currentStep;
+          const isClickable = step.number <= completedStep;
 
           return (
             <div
@@ -41,7 +46,7 @@ const FormProgress = () => {
               <div
                 className={`
                   step-number me-3 rounded-circle d-flex align-items-center justify-content-center
-                  ${isCompleted ? 'bg-success text-white' : ''}
+                  ${isCompleted[index] && 'bg-success text-white'}
                 `}
                 style={{ 
                   width: '30px', 
@@ -49,7 +54,7 @@ const FormProgress = () => {
                   border: '2px solid currentColor'
                 }}
               >
-                {isCompleted ? '✓' : step.number}
+                {isCompleted[index] ? '✓' : step.number}
               </div>
               <span>{step.label}</span>
             </div>
