@@ -88,11 +88,10 @@ const ProfileSetup = () => {
         if (profileData.companyDetails.acn.toString().length !== 9)
           return "ACN must be 9 digits";
 
-        if (!profileData.companyDetails.companyName) 
+        if (!profileData.companyDetails.companyName)
           return "Company name is required";
       }
-      if (profileData.businessType === "Individual")
-      {
+      if (profileData.businessType === "Individual") {
         if (!profileData.abn) return "ABN is required";
         if (profileData.abn.toString().length !== 11)
           return "ABN must be 11 digits";
@@ -108,6 +107,7 @@ const ProfileSetup = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
+    setFormError(null); // Clear any previous errors
   };
 
   if (loading) {
