@@ -8,9 +8,9 @@ const StepThree = () => {
   const { profileData } = useProfile();
 
   const renderContent = () => {
-    if (profileData["company"] === "Yes")
+    if (profileData["businessType"] === "Company")
       return <CompanyInfo />;
-    else if (profileData["partnership"] === "Yes")
+    else if (profileData["businessType"] === "Partnership")
       return <PartnershipInfo />;
     else
       return <IndividualInfo />;
