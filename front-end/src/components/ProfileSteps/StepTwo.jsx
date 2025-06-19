@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useProfile } from "../../contexts/ProfileContext";
+import CustomRadioButton from "./CustomRadioButton";
 
 const StepTwo = () => {
   const { profileData, updateProfile } = useProfile();
@@ -35,39 +36,25 @@ const StepTwo = () => {
         marginBottom: "1rem",
       }}
     >
-      <label>
-        <input
-          style={{ marginRight: "0.5rem" }}
-          type="radio"
-          name="GroupSelection"
-          value="Company"
-          checked={selected === "Company"}
-          onChange={(e) => setSelected(e.target.value)}
-        />
-        Company
-      </label>
-      <label>
-        <input
-          style={{ marginRight: "0.5rem" }}
-          type="radio"
-          name="GroupSelection"
-          value="Partnership"
-          checked={selected === "Partnership"}
-          onChange={(e) => setSelected(e.target.value)}
-        />
-        Partnership
-      </label>
-      <label>
-        <input
-          style={{ marginRight: "0.5rem" }}
-          type="radio"
-          name="GroupSelection"
-          value="Individual"
-          checked={selected === "Individual"}
-          onChange={(e) => setSelected(e.target.value)}
-        />
-        Individual
-      </label>
+      {/*  NEW: Company*/}
+      <CustomRadioButton
+        selected={selected}
+        setSelected={setSelected}
+        option={"Company"}
+      />
+      {/* Partnership */}
+      <CustomRadioButton
+        selected={selected}
+        setSelected={setSelected}
+        option={"Partnership"}
+      />
+
+      {/* Individual */}
+      <CustomRadioButton
+        selected={selected}
+        setSelected={setSelected}
+        option={"Individual"}
+      />
     </div>
   );
 
