@@ -1,28 +1,43 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useProfile } from "../../contexts/ProfileContext";
 
 const StepTwo = () => {
+  const { profileData, updateProfile } = useProfile();
   //  NEW:
-  const [selected, setSelected] = useState("");
-  const { profileData, updateProfile, updatePartner } = useProfile();
+  const [selected, setSelected] = useState(() => {
+    if (profileData.businessType) return profileData.businessType;
+    if (profileData.company === "Yes") return "Company";
+    if (profileData.partnership === "Yes") return "Partnership";
+    return "";
+  });
 
+  // REVIEW: direct mutation of state | also happens in other files
   if (profileData.companyDetails?.acn) {
     profileData.company = "Yes";
   }
 
+  //  NEW:
   useEffect(() => {
-    updateProfile({ 
+    updateProfile({
       businessType: selected,
       company: selected === "Company" ? "Yes" : "No",
-      partnership: selected === "Partnership" ? "Yes" : "No"
+      partnership: selected === "Partnership" ? "Yes" : "No",
     });
-  }, [selected])
+  }, [selected]);
 
   const radios = (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", marginTop: "1rem", marginBottom: "1rem" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "1.5rem",
+        marginTop: "1rem",
+        marginBottom: "1rem",
+      }}
+    >
       <label>
         <input
-          style={{ marginRight: '0.5rem' }}
+          style={{ marginRight: "0.5rem" }}
           type="radio"
           name="GroupSelection"
           value="Company"
@@ -33,21 +48,18 @@ const StepTwo = () => {
       </label>
       <label>
         <input
-          style={{ marginRight: '0.5rem' }}
+          style={{ marginRight: "0.5rem" }}
           type="radio"
           name="GroupSelection"
           value="Partnership"
           checked={selected === "Partnership"}
-          onChange={(e) => {
-            setSelected(e.target.value);
-            updateProfile({ partnership: "Yes" });
-          }}
+          onChange={(e) => setSelected(e.target.value)}
         />
         Partnership
       </label>
       <label>
         <input
-          style={{ marginRight: '0.5rem' }}
+          style={{ marginRight: "0.5rem" }}
           type="radio"
           name="GroupSelection"
           value="Individual"
@@ -67,4 +79,3 @@ const StepTwo = () => {
 };
 
 export default StepTwo;
-
