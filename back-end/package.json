@@ -7,8 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "migrate": "node migrations/run-migration.js",
-    "migrate:run": "node migrations/run-migration.js --confirm"
+    "migrate": "node migrations/migration2.js",
+    "migrate:run": "node migrations/migration2.js up",
+    "migrate:validate": "node migrations/migration2.js validate",
+    "migrate:clean": "node migrations/migration2.js clean-old-fields"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +23,7 @@
     "express": "^4.21.2",
     "mongodb": "^6.13.0",
     "mongoose": "^8.10.0",
+    "multer": "^2.0.1",
     "nodemailer": "^6.10.1"
   },
   "devDependencies": {

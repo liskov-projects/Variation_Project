@@ -18,7 +18,8 @@ app.use(cors({
     : 'http://localhost:3000'
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // For logo uploads
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Connect to MongoDB
 connectDB();
