@@ -155,7 +155,7 @@ const calculateProjectedContractPrice = (variationCost) => {
                 const result = await addVariation(projectId, formattedData);
 
                 if (result.success) {
-                  navigate(`/projects/${projectId}`, replace=true);
+                  navigate(`/projects/${projectId}`, { replace: true });
                 }
               };
 
