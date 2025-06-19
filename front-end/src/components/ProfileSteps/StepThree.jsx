@@ -1,35 +1,24 @@
 import React from 'react';
 import { useProfile } from '../../contexts/ProfileContext';
+import CompanyInfo from './BusinessType/CompanyInfo';
+import PartnershipInfo from './BusinessType/PartnershipInfo';
+import IndividualInfo from './BusinessType/IndividualInfo';
 
 const StepThree = () => {
-  const { profileData, updateProfile } = useProfile();
+  const { profileData } = useProfile();
+
+  const renderContent = () => {
+    if (profileData["company"] === "Yes")
+      return <CompanyInfo />;
+    else if (profileData["partnership"] === "Yes")
+      return <PartnershipInfo />;
+    else
+      return <IndividualInfo />;
+  };
 
   return (
     <div>
-      <h4 className="mb-3">Individual (Default) Information</h4>
-      
-      <div className="mb-3">
-        <label className="form-label">ABN (11 digits) *</label>
-        <input
-          type="number"
-          className="form-control"
-          value={profileData.abn || ''}
-          onChange={(e) => updateProfile({ abn: e.target.value })}
-          required
-        />
-        <small className="text-muted">Must be exactly 11 digits</small>
-      </div>
-      
-      <div className="mb-3">
-        <label className="form-label">Builder Registration # *</label>
-        <input
-          type="text"
-          className="form-control"
-          value={profileData.brn || ''}
-          onChange={(e) => updateProfile({ brn: e.target.value })}
-          required
-        />
-      </div>
+      {renderContent()}
     </div>
   );
 };

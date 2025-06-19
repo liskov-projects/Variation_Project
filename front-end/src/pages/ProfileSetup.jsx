@@ -78,22 +78,27 @@ const ProfileSetup = () => {
     }
 
     if (step === 2) {
-   
-      if (profileData.company === "Yes") {
+      const allowedTypes = ["Company", "Partnership", "Individual"];
+      if (!allowedTypes.includes(profileData.businessType))
+        return "Business type is required";
+    }
+
+    if (step === 3) {
+      if (profileData.businessType === "Company") {
         if (profileData.companyDetails.acn.toString().length !== 9)
           return "ACN must be 9 digits";
 
         if (!profileData.companyDetails.companyName) 
           return "Company name is required";
       }
-    }
+      if (profileData.businessType === "Individual")
+      {
+        if (!profileData.abn) return "ABN is required";
+        if (profileData.abn.toString().length !== 11)
+          return "ABN must be 11 digits";
 
-    if (step === 3) {
-      if (!profileData.abn) return "ABN is required";
-      if (profileData.abn.toString().length !== 11)
-        return "ABN must be 11 digits";
-
-      if (!profileData.brn) return "Builder Registration  is required";
+        if (!profileData.brn) return "Builder Registration  is required";
+      }
     }
 
     return null;
