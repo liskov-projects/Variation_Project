@@ -1,9 +1,9 @@
-import React from 'react';
+import { useState } from 'react';
 import { useProfile } from '../contexts/ProfileContext';
 
-const FormProgress = () => {
+const FormProgress = ({ isCompleted }) => {
   const { currentStep, setCurrentStep } = useProfile();
-
+  const [completedStep, setCompletedStep] = useState(1);
   const steps = [
     { number: 1, label: 'Builder Information' },
     { number: 2, label: 'Company & Partnership' },
@@ -13,20 +13,21 @@ const FormProgress = () => {
 
   const handleStepClick = (stepNumber) => {
     // Only allow navigation to completed steps or the current step
-    if (stepNumber <= currentStep) {
+    if (stepNumber <= completedStep) {
       setCurrentStep(stepNumber);
     }
+    if (completedStep < currentStep)
+      setCompletedStep(currentStep);
   };
 
   return (
     <div className="sidebar bg-light border-end p-4" style={{ width: '280px', minHeight: '100vh' }}>
       <h4 className="mb-4">Profile Setup</h4>
       <div className="d-flex flex-column gap-3">
-        {steps.map((step) => {
+        {steps.map((step, index) => {
           const isActive = currentStep === step.number;
-          const isCompleted = step.number < currentStep;
-          const isClickable = step.number <= currentStep;
-
+          const isClickable = step.number <= completedStep;
+          console.log(step, "completed : ", isCompleted[index]);
           return (
             <div
               key={step.number}
@@ -34,14 +35,13 @@ const FormProgress = () => {
               className={`
                 d-flex align-items-center p-3 rounded 
                 ${isActive ? 'bg-primary text-white' : 'bg-white'} 
-                ${isClickable ? 'cursor-pointer' : 'opacity-50'}
+                ${isClickable ? 'cursor-pointer' : 'opacity-50 not-allowed'}
               `}
-              style={{ cursor: isClickable ? 'pointer' : 'not-allowed' }}
             >
               <div
                 className={`
                   step-number me-3 rounded-circle d-flex align-items-center justify-content-center
-                  ${isCompleted ? 'bg-success text-white' : ''}
+                  ${isCompleted[index] && 'bg-success text-white'}
                 `}
                 style={{ 
                   width: '30px', 
@@ -49,7 +49,7 @@ const FormProgress = () => {
                   border: '2px solid currentColor'
                 }}
               >
-                {isCompleted ? '✓' : step.number}
+                {isCompleted[index] ? '✓' : step.number}
               </div>
               <span>{step.label}</span>
             </div>
