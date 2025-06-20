@@ -18,6 +18,22 @@ export class Project {
       this.userId = data.userId || '';
       this.createdAt = data.createdAt || new Date().toISOString();
       this.updatedAt = data.updatedAt || new Date().toISOString();
+      //  NEW: judging by database update branch from Poorvith
+      this.hasArchiectPm= data.hasArchiectPm || false; // start off as flse?
+      this.architectPmCompanyName = data.architectPmCompanyName || "";
+      this.architectPmContactName = data.architectPmContactName || "";
+      this.architectPmAddress = data.architectPmAddress || "";
+      this.architectPmPhone = data.architectPmPhone || "";
+      this.architectPmEmail = data.architectPmEmail || "";
+      //
+      this.hasSurveyor = data.hasSurveyor; // should always be true?
+      this.surveyorCompanyName = data.surveyorCompanyName || "";
+      this.surveyorContactName = data.surveyorContactName || "";
+      this.surveyorAddress = data.surveyorAddress || "";
+      this.surveyorPhone = data.surveyorPhone || "";
+      this.surveyorEmail = data.surveyorEmail || "";
+      
+
     }
   }
   
