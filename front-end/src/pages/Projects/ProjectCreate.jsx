@@ -350,16 +350,16 @@ const ProjectCreate = () => {
                     <input
                       type="text"
                       className={`form-control ${
-                        formErrors.clientName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
+                        formErrors.architectPmCompanyName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
                       }`}
-                      name="clientName"
-                      value={projectData.clientName || ""}
+                      name="architectPmCompanyName"
+                      value={projectData.architectPmCompanyName || ""}
                       onChange={handleChange}
                       required
                     />
-                    {formErrors.clientName && (
+                    {formErrors.architectPmCompanyName && (
                       <div className="invalid-feedback">
-                        {formErrors.clientName}
+                        {formErrors.architectPmCompanyName}
                       </div>
                     )}
                   </div>
@@ -368,16 +368,16 @@ const ProjectCreate = () => {
                     <input
                       type="text"
                       className={`form-control ${
-                        formErrors.clientName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
+                        formErrors.architectPmContactName ? "is-invalid" : ""
                       }`}
-                      name="clientName"
-                      value={projectData.clientName || ""}
+                      name="architectPmContactName"
+                      value={projectData.architectPmContactName || ""}
                       onChange={handleChange}
                       required
                     />
-                    {formErrors.clientName && (
+                    {formErrors.architectPmContactName && (
                       <div className="invalid-feedback">
-                        {formErrors.clientName}
+                        {formErrors.architectPmContactName}
                       </div>
                     )}
                   </div>
@@ -386,16 +386,16 @@ const ProjectCreate = () => {
                     <input
                       type="text"
                       className={`form-control ${
-                        formErrors.clientName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
+                        formErrors.architectPmAddress ? "is-invalid" : ""
                       }`}
-                      name="clientName"
-                      value={projectData.clientName || ""}
+                      name="architectPmAddress"
+                      value={projectData.architectPmAddress || ""}
                       onChange={handleChange}
                       required
                     />
-                    {formErrors.clientName && (
+                    {formErrors.architectPmAddress && (
                       <div className="invalid-feedback">
-                        {formErrors.clientName}
+                        {formErrors.architectPmAddress}
                       </div>
                     )}
                   </div>
@@ -404,16 +404,16 @@ const ProjectCreate = () => {
                     <input
                       type="text"
                       className={`form-control ${
-                        formErrors.clientPhone ? "is-invalid" : ""
+                        formErrors.architectPmPhone ? "is-invalid" : ""
                       }`}
-                      name="clientPhone"
-                      value={projectData.clientPhone || ""}
+                      name="architectPmPhone"
+                      value={projectData.architectPmPhone || ""}
                       onChange={handleChange}
                       required
                     />
-                    {formErrors.clientPhone && (
+                    {formErrors.architectPmPhone && (
                       <div className="invalid-feedback">
-                        {formErrors.clientPhone}
+                        {formErrors.architectPmPhone}
                       </div>
                     )}
                   </div>
@@ -423,16 +423,16 @@ const ProjectCreate = () => {
                     <input
                       type="email"
                       className={`form-control ${
-                        formErrors.clientEmail ? "is-invalid" : ""
+                        formErrors.architectPmEmail ? "is-invalid" : ""
                       }`}
-                      name="clientEmail"
-                      value={projectData.clientEmail || ""}
+                      name="architectPmEmail"
+                      value={projectData.architectPmEmail || ""}
                       onChange={handleChange}
                       required
                     />
-                    {formErrors.clientEmail && (
+                    {formErrors.architectPmEmail && (
                       <div className="invalid-feedback">
-                        {formErrors.clientEmail}
+                        {formErrors.architectPmEmail}
                       </div>
                     )}
                   </div>
@@ -446,16 +446,16 @@ const ProjectCreate = () => {
                     <input
                       type="text"
                       className={`form-control ${
-                        formErrors.clientName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
+                        formErrors.surveyorCompanyName ? "is-invalid" : ""
                       }`}
-                      name="clientName"
-                      value={projectData.clientName || ""}
+                      name="surveyorCompanyName"
+                      value={projectData.surveyorCompanyName || ""}
                       onChange={handleChange}
                       required
                     />
-                    {formErrors.clientName && (
+                    {formErrors.surveyorCompanyName && (
                       <div className="invalid-feedback">
-                        {formErrors.clientName}
+                        {formErrors.surveyorCompanyName}
                       </div>
                     )}
                   </div>
@@ -464,16 +464,16 @@ const ProjectCreate = () => {
                     <input
                       type="text"
                       className={`form-control ${
-                        formErrors.clientName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
+                        formErrors.surveyorContactName ? "is-invalid" : ""
                       }`}
-                      name="clientName"
-                      value={projectData.clientName || ""}
+                      name="surveyorContactName"
+                      value={projectData.surveyorContactName || ""}
                       onChange={handleChange}
                       required
                     />
-                    {formErrors.clientName && (
+                    {formErrors.surveyorContactName && (
                       <div className="invalid-feedback">
-                        {formErrors.clientName}
+                        {formErrors.surveyorContactName}
                       </div>
                     )}
                   </div>
@@ -482,16 +482,16 @@ const ProjectCreate = () => {
                     <input
                       type="text"
                       className={`form-control ${
-                        formErrors.clientName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
+                        formErrors.surveyorAddress ? "is-invalid" : ""
                       }`}
-                      name="clientName"
-                      value={projectData.clientName || ""}
+                      name="surveyorAddress"
+                      value={projectData.surveyorAddress || ""}
                       onChange={handleChange}
                       required
                     />
-                    {formErrors.clientName && (
+                    {formErrors.surveyorAddress && (
                       <div className="invalid-feedback">
-                        {formErrors.clientName}
+                        {formErrors.surveyorAddress}
                       </div>
                     )}
                   </div>
@@ -500,16 +500,16 @@ const ProjectCreate = () => {
                     <input
                       type="text"
                       className={`form-control ${
-                        formErrors.clientPhone ? "is-invalid" : ""
+                        formErrors.surveyorPhone ? "is-invalid" : ""
                       }`}
-                      name="clientPhone"
-                      value={projectData.clientPhone || ""}
+                      name="surveyorPhone"
+                      value={projectData.surveyorPhone || ""}
                       onChange={handleChange}
                       required
                     />
-                    {formErrors.clientPhone && (
+                    {formErrors.surveyorPhone && (
                       <div className="invalid-feedback">
-                        {formErrors.clientPhone}
+                        {formErrors.surveyorPhone}
                       </div>
                     )}
                   </div>
@@ -519,16 +519,16 @@ const ProjectCreate = () => {
                     <input
                       type="email"
                       className={`form-control ${
-                        formErrors.clientEmail ? "is-invalid" : ""
+                        formErrors.surveyorEmail ? "is-invalid" : ""
                       }`}
-                      name="clientEmail"
-                      value={projectData.clientEmail || ""}
+                      name="surveyorEmail"
+                      value={projectData.surveyorEmail || ""}
                       onChange={handleChange}
                       required
                     />
-                    {formErrors.clientEmail && (
+                    {formErrors.surveyorEmail && (
                       <div className="invalid-feedback">
-                        {formErrors.clientEmail}
+                        {formErrors.surveyorEmail}
                       </div>
                     )}
                   </div>
