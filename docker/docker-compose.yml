@@ -25,3 +25,25 @@ services:
       - /app/node_modules
     # depends_on:
     #   - backend
+  backend:
+    build:
+      context: ../back-end
+      dockerfile: Dockerfile.dev
+    ports: 
+      - "5000:5000"
+    env_file:
+      - .env.local
+    environment:
+      - PORT: ${BACKEND_PORT}
+      - MONGO_URI: ${MONGO_URI}
+      - CLERK_PUBLISHABLE_KEY: ${CLERK_PUBLISHABLE_KEY}
+      - CLERK_SECRET_KEY: ${CLERK_SECRET_KEY}
+      # prob change later? check .env.local
+      - VARIATION_EMAIL: ${VARIATION_EMAIL}
+      - VARIATION_PASSWORD: ${VARIATION_PASSWORD}
+      #
+    volumes:
+      - ../back-end:/app
+      - /app/node_modules
+    # depends_on:
+    #   - prob MongoDB
