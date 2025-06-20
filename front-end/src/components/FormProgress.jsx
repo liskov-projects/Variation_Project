@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useProfile } from '../contexts/ProfileContext';
 
-const FormProgress = (isCompleted, validateStep) => {
-  const { currentStep, setCurrentStep, profileData } = useProfile();
+const FormProgress = ({ isCompleted }) => {
+  const { currentStep, setCurrentStep } = useProfile();
   const [completedStep, setCompletedStep] = useState(1);
-  const [error, setError] = useState("");
   const steps = [
     { number: 1, label: 'Builder Information' },
     { number: 2, label: 'Company & Partnership' },
@@ -14,24 +13,21 @@ const FormProgress = (isCompleted, validateStep) => {
 
   const handleStepClick = (stepNumber) => {
     // Only allow navigation to completed steps or the current step
-    // const errMsg = validateStep(stepNumber, profileData);
     if (stepNumber <= completedStep) {
       setCurrentStep(stepNumber);
     }
     if (completedStep < currentStep)
       setCompletedStep(currentStep);
-    // setError(errMsg);
   };
 
   return (
     <div className="sidebar bg-light border-end p-4" style={{ width: '280px', minHeight: '100vh' }}>
       <h4 className="mb-4">Profile Setup</h4>
       <div className="d-flex flex-column gap-3">
-        {/* {error && <div>{error}</div>} */}
         {steps.map((step, index) => {
           const isActive = currentStep === step.number;
           const isClickable = step.number <= completedStep;
-
+          console.log(step, "completed : ", isCompleted[index]);
           return (
             <div
               key={step.number}
@@ -39,9 +35,8 @@ const FormProgress = (isCompleted, validateStep) => {
               className={`
                 d-flex align-items-center p-3 rounded 
                 ${isActive ? 'bg-primary text-white' : 'bg-white'} 
-                ${isClickable ? 'cursor-pointer' : 'opacity-50'}
+                ${isClickable ? 'cursor-pointer' : 'opacity-50 not-allowed'}
               `}
-              style={{ cursor: isClickable ? 'pointer' : 'not-allowed' }}
             >
               <div
                 className={`
