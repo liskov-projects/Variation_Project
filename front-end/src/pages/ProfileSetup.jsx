@@ -12,7 +12,7 @@ import Header from "../components/Header/index";
 const ProfileSetup = () => {
   const navigate = useNavigate();
   const [formError, setFormError] = useState(null);
-  const [isCompleted, setIsCompleted] = useState([false,false,false,false]);
+  const [isCompleted, setIsCompleted] = useState([false, false, false, false]);
   const {
     currentStep,
     setCurrentStep,
@@ -47,21 +47,22 @@ const ProfileSetup = () => {
 
   // helper function: used in multiple places
   const changeCompletedState = (step, value) => {
-    setIsCompleted(prev => {
-      const updated = [...prev]; 
+    setIsCompleted((prev) => {
+      const updated = [...prev];
       updated[step - 1] = value;
       return updated;
     });
-  }
+  };
 
   const handleNext = async () => {
     const validationError = validateStep(currentStep, profileData);
     if (validationError) {
       setFormError(validationError);
+      changeCompletedState(currentStep, false);
+
       console.log(formError);
       return;
-    }
-    else {
+    } else {
       // helper function
       changeCompletedState(currentStep, true);
     }
@@ -83,36 +84,35 @@ const ProfileSetup = () => {
 
   // Validate form data for each step
   const validateStep = (step, profileData) => {
-    let errMsg = null;
     // changed if to switch
-    switch(step) {
+    switch (step) {
       case 1:
-        if (!profileData.fullName) errMsg = "Full name is required";
-        if (!profileData.address) errMsg = "Address is required";
+        if (!profileData.fullName) return "Full name is required";
+        if (!profileData.address) return "Address is required";
         if (!profileData.email || !profileData.email.includes("@"))
-          errMsg = "A valid email is required";
-        if (!profileData.phoneNumber) errMsg = "Phone number is required";
+          return "A valid email is required";
+        if (!profileData.phoneNumber) return "Phone number is required";
         break;
       case 2:
         if (profileData.company === "Yes") {
-          console.log("profile data: ", profileData);
+          // console.log("profile data: ", profileData);
           if (profileData.companyDetails.acn.toString().length !== 9)
-            errMsg = "ACN must be 9 digits";
+            return "ACN must be 9 digits";
 
-          if (!profileData.companyDetails.companyName) 
-            errMsg = "Company name is required";
+          if (!profileData.companyDetails.companyName)
+            return "Company name is required";
         }
         break;
       case 3:
-        if (!profileData.abn) errMsg = "ABN is required";
+        if (!profileData.abn) return "ABN is required";
         if (profileData.abn.toString().length !== 11)
-          errMsg = "ABN must be 11 digits";
-        if (!profileData.brn) errMsg = "Builder Registration  is required";
+          return "ABN must be 11 digits";
+        if (!profileData.brn) return "Builder Registration  is required";
         break;
+      default:
+        return null;
     }
-    // helper function
-    if (errMsg) changeCompletedState(step, false);
-    return errMsg;
+    return;
   };
 
   const handlePrevious = () => {
@@ -138,7 +138,7 @@ const ProfileSetup = () => {
     <div>
       <Header />
       <div className="d-flex">
-        <FormProgress isCompleted={isCompleted}/>
+        <FormProgress isCompleted={isCompleted} />
         <div className="flex-grow-1 p-4">
           {formError && <div className="alert alert-danger">{formError}</div>}
 
