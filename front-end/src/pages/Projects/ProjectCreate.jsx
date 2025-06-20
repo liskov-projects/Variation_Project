@@ -341,6 +341,101 @@ const ProjectCreate = () => {
                       </div>
                     )}
                   </div>
+                  {/*NEW: Architect / Project Manager section */}
+                  <h4 className="mb-3 mt-4 border-bottom pb-2">
+                    Architect / Project Manager Information
+                  </h4>
+                  <div className="mb-3">
+                    <label className="form-label">Company Name *</label>
+                    <input
+                      type="text"
+                      className={`form-control ${
+                        formErrors.clientName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
+                      }`}
+                      name="clientName"
+                      value={projectData.clientName || ""}
+                      onChange={handleChange}
+                      required
+                    />
+                    {formErrors.clientName && (
+                      <div className="invalid-feedback">
+                        {formErrors.clientName}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Contact Name *</label>
+                    <input
+                      type="text"
+                      className={`form-control ${
+                        formErrors.clientName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
+                      }`}
+                      name="clientName"
+                      value={projectData.clientName || ""}
+                      onChange={handleChange}
+                      required
+                    />
+                    {formErrors.clientName && (
+                      <div className="invalid-feedback">
+                        {formErrors.clientName}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Address *</label>
+                    <input
+                      type="text"
+                      className={`form-control ${
+                        formErrors.clientName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
+                      }`}
+                      name="clientName"
+                      value={projectData.clientName || ""}
+                      onChange={handleChange}
+                      required
+                    />
+                    {formErrors.clientName && (
+                      <div className="invalid-feedback">
+                        {formErrors.clientName}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label"> Phone *</label>
+                    <input
+                      type="text"
+                      className={`form-control ${
+                        formErrors.clientPhone ? "is-invalid" : ""
+                      }`}
+                      name="clientPhone"
+                      value={projectData.clientPhone || ""}
+                      onChange={handleChange}
+                      required
+                    />
+                    {formErrors.clientPhone && (
+                      <div className="invalid-feedback">
+                        {formErrors.clientPhone}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label"> Email *</label>
+                    <input
+                      type="email"
+                      className={`form-control ${
+                        formErrors.clientEmail ? "is-invalid" : ""
+                      }`}
+                      name="clientEmail"
+                      value={projectData.clientEmail || ""}
+                      onChange={handleChange}
+                      required
+                    />
+                    {formErrors.clientEmail && (
+                      <div className="invalid-feedback">
+                        {formErrors.clientEmail}
+                      </div>
+                    )}
+                  </div>
 
                   {/*NEW: Surveyor section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">
@@ -438,101 +533,6 @@ const ProjectCreate = () => {
                     )}
                   </div>
 
-                  {/*NEW: Architect / Project Manager section */}
-                  <h4 className="mb-3 mt-4 border-bottom pb-2">
-                    Surveyor Information
-                  </h4>
-                  <div className="mb-3">
-                    <label className="form-label">Company Name *</label>
-                    <input
-                      type="text"
-                      className={`form-control ${
-                        formErrors.clientName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
-                      }`}
-                      name="clientName"
-                      value={projectData.clientName || ""}
-                      onChange={handleChange}
-                      required
-                    />
-                    {formErrors.clientName && (
-                      <div className="invalid-feedback">
-                        {formErrors.clientName}
-                      </div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Contact Name *</label>
-                    <input
-                      type="text"
-                      className={`form-control ${
-                        formErrors.clientName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
-                      }`}
-                      name="clientName"
-                      value={projectData.clientName || ""}
-                      onChange={handleChange}
-                      required
-                    />
-                    {formErrors.clientName && (
-                      <div className="invalid-feedback">
-                        {formErrors.clientName}
-                      </div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Address *</label>
-                    <input
-                      type="text"
-                      className={`form-control ${
-                        formErrors.clientName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
-                      }`}
-                      name="clientName"
-                      value={projectData.clientName || ""}
-                      onChange={handleChange}
-                      required
-                    />
-                    {formErrors.clientName && (
-                      <div className="invalid-feedback">
-                        {formErrors.clientName}
-                      </div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label"> Phone *</label>
-                    <input
-                      type="text"
-                      className={`form-control ${
-                        formErrors.clientPhone ? "is-invalid" : ""
-                      }`}
-                      name="clientPhone"
-                      value={projectData.clientPhone || ""}
-                      onChange={handleChange}
-                      required
-                    />
-                    {formErrors.clientPhone && (
-                      <div className="invalid-feedback">
-                        {formErrors.clientPhone}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="form-label"> Email *</label>
-                    <input
-                      type="email"
-                      className={`form-control ${
-                        formErrors.clientEmail ? "is-invalid" : ""
-                      }`}
-                      name="clientEmail"
-                      value={projectData.clientEmail || ""}
-                      onChange={handleChange}
-                      required
-                    />
-                    {formErrors.clientEmail && (
-                      <div className="invalid-feedback">
-                        {formErrors.clientEmail}
-                      </div>
-                    )}
-                  </div>
                   {/*  */}
                   <div className="d-flex justify-content-between mt-4">
                     <button
