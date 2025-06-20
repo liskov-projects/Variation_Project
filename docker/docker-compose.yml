@@ -14,7 +14,9 @@ services:
     env_file:
       - .env.local
     environment:
+    # this is needed since we're using CRA
       - HOST=0.0.0.0
+      # if unspecified will be pushed out by the .env.local
       - PORT=3000
       - REACT_APP_API_URL
       - REACT_APP_CLERK_PUBLISHABLE_KEY
