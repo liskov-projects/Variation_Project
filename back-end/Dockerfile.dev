@@ -1,0 +1,17 @@
+# copy base image
+FROM node:lts
+
+WORKDIR /app
+
+COPY package.json ./
+
+RUN npm install
+
+COPY . . 
+# REVIEW:
+EXPOSE ${BACKEND_PORT}
+
+CMD ["npm", "run", "dev"]
+
+# TODO:
+# do we need an auxiliary binary
