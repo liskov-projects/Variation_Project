@@ -1,7 +1,5 @@
 
-# to build use: 
-# docker-compose -p variation up --build
-
+# path for .env/.env.local is read relative to docker-compose
 services:
   frontend:
     build: 
@@ -11,36 +9,37 @@ services:
       dockerfile: Dockerfile.dev 
     ports:
       - "3000:3000"
+      #  will change for prod
     env_file:
-      - .env.local
+      - .env
     environment:
     # this is needed since we're using CRA
-      - HOST=0.0.0.0
+      HOST: 0.0.0.0
       # if unspecified will be pushed out by the .env.local
-      - PORT=3000
-      - REACT_APP_API_URL
-      - REACT_APP_CLERK_PUBLISHABLE_KEY
+      PORT: 3000
+      REACT_APP_API_URL: ${REACT_APP_API_URL}
+      REACT_APP_CLERK_PUBLISHABLE_KEY: ${REACT_APP_CLERK_PUBLISHABLE_KEY}
     volumes:
       - ../front-end:/app
       - /app/node_modules
-    # depends_on:
-    #   - backend
+    depends_on:
+      - backend
   backend:
     build:
       context: ../back-end
       dockerfile: Dockerfile.dev
     ports: 
-      - "5000:5000"
+      - "5001:5001"
     env_file:
-      - .env.local
+    #  will change for prod
+      - .env
     environment:
-      - PORT: ${BACKEND_PORT}
-      - MONGO_URI: ${MONGO_URI}
-      - CLERK_PUBLISHABLE_KEY: ${CLERK_PUBLISHABLE_KEY}
-      - CLERK_SECRET_KEY: ${CLERK_SECRET_KEY}
+      MONGO_URI: ${MONGO_URI}
+      CLERK_PUBLISHABLE_KEY: ${CLERK_PUBLISHABLE_KEY}
+      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY}
       # prob change later? check .env.local
-      - VARIATION_EMAIL: ${VARIATION_EMAIL}
-      - VARIATION_PASSWORD: ${VARIATION_PASSWORD}
+      VARIATION_EMAIL: ${VARIATION_EMAIL}
+      VARIATION_PASSWORD: ${VARIATION_PASSWORD}
       #
     volumes:
       - ../back-end:/app

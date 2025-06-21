@@ -9,7 +9,7 @@ RUN npm install
 
 COPY . . 
 # REVIEW:
-EXPOSE 5001
+EXPOSE ${BACKEND_PORT}
 
 CMD ["npm", "run", "dev"]
 
