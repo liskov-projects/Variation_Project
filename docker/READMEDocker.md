@@ -4,14 +4,19 @@
 
 ## To run the app in Docker:
 
+_I'd recommend getting docker desktop - it's easier to inspect containers and controll what you've got running_
+
 1. remove the node_modules directory, if it is still there when you try to star container there'll be problems
 
 ```
     rm -rf front-end/node_modules
 ```
 
-2. in terminal cd /docker
-3. run the command:
+2. make sure .env is in docker directory and REMOVE .env from the back-end & front-end
+
+3. in terminal cd /docker
+
+4. run the command:
 
 ```
    docker-compose -p variations up --build
