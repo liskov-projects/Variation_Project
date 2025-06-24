@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useProfile } from "../contexts/ProfileContext";
-
+import validateStep from "../utils/stepsValidator";
 const FormProgress = ({ isCompleted }) => {
   const { currentStep, setCurrentStep } = useProfile();
   // OLD:
   // const [completedStep, setCompletedStep] = useState(1);
+  // NEW:
+  const { profileData } = useProfile();
+
   const steps = [
     { number: 1, label: "Builder Information" },
     { number: 2, label: "Company & Partnership" },
@@ -43,7 +46,10 @@ const FormProgress = ({ isCompleted }) => {
           return (
             <div
               key={step.number}
-              onClick={() => isClickable && setCurrentStep(step.number)}
+              onClick={() => {
+                isClickable && setCurrentStep(step.number);
+                validateStep(step, profileData);
+              }}
               className={`
                 d-flex align-items-center p-3 rounded 
                 ${isActive ? "bg-primary text-white" : "bg-white"} 
