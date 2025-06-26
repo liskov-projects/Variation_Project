@@ -1,14 +1,14 @@
-import React from 'react';
-import { useClerk, SignedIn, SignedOut } from '@clerk/clerk-react';
-import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React from "react";
+import { useClerk, SignedIn, SignedOut } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Header = () => {
   const { signOut } = useClerk();
   const navigate = useNavigate();
 
   const handleSignOut = () => {
-    signOut({ redirectUrl: '/' });
+    signOut({ redirectUrl: "/" });
   };
 
   return (
@@ -19,24 +19,21 @@ const Header = () => {
         </div>
         <div className="d-flex align-items-center">
           <SignedIn>
-            <button 
-              className="btn btn-outline-light me-2" 
-              onClick={() => navigate('/profile')}
-            >
+            <button
+              className="btn btn-outline-light me-2"
+              onClick={() => navigate("/profile")}>
               My Profile
             </button>
-            <button 
-              className="btn btn-outline-light" 
-              onClick={handleSignOut}
-            >
+            <button
+              className="btn btn-outline-light"
+              onClick={handleSignOut}>
               Sign Out
             </button>
           </SignedIn>
           <SignedOut>
-            <button 
-              className="btn btn-outline-light" 
-              onClick={() => navigate('/sign-in')}
-            >
+            <button
+              className="btn btn-outline-light"
+              onClick={() => navigate("/sign-in")}>
               Sign In
             </button>
           </SignedOut>

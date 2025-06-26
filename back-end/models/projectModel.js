@@ -1,8 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const signatureSchema = new mongoose.Schema({
-
-});
+const signatureSchema = new mongoose.Schema({});
 
 
 const architectProjectManagerSchema = new mongoose.Schema({
@@ -319,17 +317,17 @@ projectSchema.methods.getSurveyorForSignoff = function() {
 };
 
 // Helper method to find a variation by its signature token
-projectSchema.statics.findVariationByToken=async function(token){
+projectSchema.statics.findVariationByToken = async function (token) {
   if (!token) return null;
-  const project=await this.findOne({
-    'variations.signatureToken':token,
-    'variations.signatureTokenExpiresAt':{$gt:new Date()}
+  const project = await this.findOne({
+    "variations.signatureToken": token,
+    "variations.signatureTokenExpiresAt": { $gt: new Date() },
   });
 
   if (!project) return null;
-  const variation=project.variations.find(v=>v.signatureToken===token)
-  return {project,variation}
-}
+  const variation = project.variations.find((v) => v.signatureToken === token);
+  return { project, variation };
+};
 
 // Method to calculate current contract price (updated for credit variations)
 projectSchema.methods.calculateCurrentContractPrice = function() {
@@ -341,7 +339,7 @@ projectSchema.methods.calculateCurrentContractPrice = function() {
     }
     return total;
   }, 0);
-  
+
   this.currentContractPrice = this.contractPrice + totalVariationCost;
   return this.currentContractPrice;
 };
@@ -360,8 +358,8 @@ projectSchema.methods.calculateCurrentEndDate = function() {
 };
 
 // Pre-save middleware to automatically update current contract price
-projectSchema.pre('save', function(next) {
-  if (this.isModified('variations') || this.isModified('contractPrice')) {
+projectSchema.pre("save", function (next) {
+  if (this.isModified("variations") || this.isModified("contractPrice")) {
     this.calculateCurrentContractPrice();
   }
   
@@ -372,6 +370,6 @@ projectSchema.pre('save', function(next) {
   next();
 });
 
-const Project = mongoose.model('Project', projectSchema);
+const Project = mongoose.model("Project", projectSchema);
 
 export default Project;
