@@ -1,7 +1,7 @@
-import React from "react";
-import { useProfile } from "../../contexts/ProfileContext";
+import React from 'react';
+import { useProfile } from '../../../contexts/ProfileContext';
 
-const StepThree = () => {
+const IndividualInfo = () => {
   const { profileData, updateProfile } = useProfile();
 
   return (
@@ -34,4 +34,4 @@ const StepThree = () => {
   );
 };
 
-export default StepThree;
+export default IndividualInfo;

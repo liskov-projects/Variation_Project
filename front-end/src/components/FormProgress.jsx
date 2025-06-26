@@ -11,13 +11,8 @@ const FormProgress = ({ isCompleted, changeCompletedState }) => {
 
   const steps = [
     { number: 1, label: "Builder Information" },
-    { number: 2, label: "Company & Partnership" },
-    { number: 3, label: "Individual Information" },
-    { number: 4, label: "Review & Submit" },
-    { number: 1, label: "Builder Information" },
-    { number: 2, label: "Company & Partnership" },
-    { number: 3, label: "Individual Information" },
-    { number: 4, label: "Review & Submit" },
+    { number: 2, label: "Business Type" },
+    { number: 3, label: "Review & Submit" },
   ];
 
   // //  OLD:
@@ -66,14 +61,14 @@ const FormProgress = ({ isCompleted, changeCompletedState }) => {
               className={`
                 d-flex align-items-center p-3 rounded 
                 ${isActive ? "bg-primary text-white" : "bg-white"} 
-                ${isClickable ? "cursor-pointer" : "opacity-50 not-allowed"}
+                ${isClickable ? "cursor-pointer" : "opacity-50"}
               `}
-              style={{ pointerEvents: isClickable ? "auto" : "none" }}
+              style={{ cursor: isClickable ? "pointer" : "not-allowed" }}
             >
               <div
                 className={`
                   step-number me-3 rounded-circle d-flex align-items-center justify-content-center
-                  ${completed && "bg-success text-white"}
+                  ${isCompleted ? "bg-success text-white" : ""}
                 `}
                 style={{
                   width: "30px",
@@ -81,7 +76,7 @@ const FormProgress = ({ isCompleted, changeCompletedState }) => {
                   border: "2px solid currentColor",
                 }}
               >
-                {completed ? "✓" : step.number}
+                {isCompleted ? "✓" : step.number}
               </div>
               <span>{step.label}</span>
             </div>

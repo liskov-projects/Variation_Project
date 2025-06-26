@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useProfile } from "../contexts/ProfileContext";
 import StepOne from "../components/ProfileSteps/StepOne";
 import StepTwo from "../components/ProfileSteps/StepTwo";
-import StepThree from "../components/ProfileSteps/StepThree";
 import StepReview from "../components/ProfileSteps/StepReview";
 import FormProgress from "../components/FormProgress";
+
 // import Header from '../components/Header';
 import Header from "../components/Header/index";
 //  NEW:
@@ -39,9 +39,8 @@ const ProfileSetup = () => {
       case 2:
         return <StepTwo />;
       case 3:
-        return <StepThree />;
-      case 4:
         return <StepReview />;
+
       default:
         return <StepOne />;
     }
@@ -121,6 +120,7 @@ const ProfileSetup = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
+    setFormError(null); // Clear any previous errors
   };
 
   if (loading) {
