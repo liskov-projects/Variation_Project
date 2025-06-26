@@ -36,22 +36,25 @@ const profileSchema = new mongoose.Schema(
         type: String,
         required: [true, "Phone number is required"],
       },
-      company: {
+      
+      businessType: {
         type: String,
-        enum: ["Yes", "No"],
-        required: [true, "Company status is required"],
+        enum: ['individual', 'company', 'partnership'],
+        required: [true, 'Business type is required']
       },
+      
+      // Company details - only required if businessType is 'company'
       companyDetails: {
         companyName: {
           type: String,
           required: function () {
-            return this.profileData.company === "Yes";
-          },
+            return this.profileData.businessType === 'company';
+          }
         },
         acn: {
           type: String,
           required: function () {
-            return this.profileData.company === "Yes";
+            return this.profileData.businessType === 'company';
           },
           validate: {
             validator: function (v) {
@@ -62,18 +65,27 @@ const profileSchema = new mongoose.Schema(
           },
         },
       },
-      partnership: {
-        type: String,
-        enum: ["Yes", "No"],
-        required: [true, "Partnership status is required"],
-      },
+      
+      // Partnership details - only required if businessType is 'partnership'
       numberOfPartners: {
         type: String,
-        required: function () {
-          return this.profileData.partnership === "Yes";
-        },
+        required: function() {
+          return this.profileData.businessType === 'partnership';
+        }
       },
-      partners: [partnerSchema],
+      partners: {
+        type: [partnerSchema],
+        validate: {
+          validator: function(partners) {
+            // Only validate if businessType is partnership
+            if (this.profileData.businessType === 'partnership') {
+              return partners && partners.length > 0;
+            }
+            return true;
+          },
+          message: 'At least one partner is required for partnerships'
+        }
+      },
 
       abn: {
         type: String,
@@ -87,8 +99,13 @@ const profileSchema = new mongoose.Schema(
       },
       brn: {
         type: String,
-        required: [true, "Builder registration number is required"],
+        required: [true, 'Builder registration number is required']
       },
+      
+      logo: {
+        type: String, // Base64 encoded image or file path/URL
+        default: null
+      }
     },
     profileSetupComplete: {
       type: Boolean,
