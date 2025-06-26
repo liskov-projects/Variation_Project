@@ -150,10 +150,11 @@ const VariationCreate = () => {
 
     const result = await addVariation(projectId, formattedData);
 
-    if (result.success) {
-      navigate(`/projects/${projectId}`, (replace = true));
-    }
-  };
+                if (result.success) {
+                  navigate(`/projects/${projectId}`, { replace: true });
+                }
+              };
+
 
   const handleCancel = () => {
     navigate(`/projects/${projectId}`);
