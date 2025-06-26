@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "../contexts/ProfileContext";
 import StepOne from "../components/ProfileSteps/StepOne";
@@ -8,12 +8,21 @@ import StepReview from "../components/ProfileSteps/StepReview";
 import FormProgress from "../components/FormProgress";
 // import Header from '../components/Header';
 import Header from "../components/Header/index";
+//  NEW:
+import validateStep from "../utils/stepsValidator";
 
 const ProfileSetup = () => {
   const navigate = useNavigate();
-  const [formError, setFormError] = React.useState(null);
-  const { currentStep, setCurrentStep, saveProfile, loading, isProfileComplete, profileData } =
-    useProfile();
+  const [formError, setFormError] = useState(null);
+  const [isCompleted, setIsCompleted] = useState([false, false, false, false]);
+  const {
+    currentStep,
+    setCurrentStep,
+    saveProfile,
+    loading,
+    isProfileComplete,
+    profileData,
+  } = useProfile();
 
   // Redirect if profile is already complete
   useEffect(() => {
@@ -38,12 +47,26 @@ const ProfileSetup = () => {
     }
   };
 
+  // helper function: used in multiple places
+  const changeCompletedState = (step, value) => {
+    setIsCompleted((prev) => {
+      const updated = [...prev];
+      updated[step - 1] = value;
+      return updated;
+    });
+  };
+
   const handleNext = async () => {
     const validationError = validateStep(currentStep, profileData);
     if (validationError) {
       setFormError(validationError);
+      changeCompletedState(currentStep, false);
+
       console.log(formError);
       return;
+    } else {
+      // helper function
+      changeCompletedState(currentStep, true);
     }
 
     setFormError(null); // Clear any previous errors
@@ -61,33 +84,38 @@ const ProfileSetup = () => {
     }
   };
 
-  // Validate form data for each step
-  const validateStep = (step, profileData) => {
-    if (step === 1) {
-      if (!profileData.fullName) return "Full name is required";
-      if (!profileData.address) return "Address is required";
-      if (!profileData.email || !profileData.email.includes("@"))
-        return "A valid email is required";
-      if (!profileData.phoneNumber) return "Phone number is required";
-    }
+  // // Validate form data for each step
+  // const validateStep = (step, profileData) => {
+  //   // changed if to switch
+  //   switch (step) {
+  //     case 1:
+  //       if (!profileData.fullName) return "Full name is required";
+  //       if (!profileData.address) return "Address is required";
+  //       if (!profileData.email || !profileData.email.includes("@"))
+  //         return "A valid email is required";
+  //       if (!profileData.phoneNumber) return "Phone number is required";
+  //       break;
+  //     case 2:
+  //       if (profileData.company === "Yes") {
+  //         // console.log("profile data: ", profileData);
+  //         if (profileData.companyDetails.acn.toString().length !== 9)
+  //           return "ACN must be 9 digits";
 
-    if (step === 2) {
-      if (profileData.company === "Yes") {
-        if (profileData.companyDetails.acn.toString().length !== 9) return "ACN must be 9 digits";
-
-        if (!profileData.companyDetails.companyName) return "Company name is required";
-      }
-    }
-
-    if (step === 3) {
-      if (!profileData.abn) return "ABN is required";
-      if (profileData.abn.toString().length !== 11) return "ABN must be 11 digits";
-
-      if (!profileData.brn) return "Builder Registration  is required";
-    }
-
-    return null;
-  };
+  //         if (!profileData.companyDetails.companyName)
+  //           return "Company name is required";
+  //       }
+  //       break;
+  //     case 3:
+  //       if (!profileData.abn) return "ABN is required";
+  //       if (profileData.abn.toString().length !== 11)
+  //         return "ABN must be 11 digits";
+  //       if (!profileData.brn) return "Builder Registration  is required";
+  //       break;
+  //     default:
+  //       return null;
+  //   }
+  //   return;
+  // };
 
   const handlePrevious = () => {
     if (currentStep > 1) {
@@ -114,7 +142,10 @@ const ProfileSetup = () => {
     <div>
       <Header />
       <div className="d-flex">
-        <FormProgress currentStep={currentStep} />
+        <FormProgress
+          isCompleted={isCompleted}
+          changeCompletedState={changeCompletedState}
+        />
         <div className="flex-grow-1 p-4">
           {formError && <div className="alert alert-danger">{formError}</div>}
 
