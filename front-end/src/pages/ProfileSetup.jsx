@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useProfile } from "../contexts/ProfileContext";
 import StepOne from "../components/ProfileSteps/StepOne";
 import StepTwo from "../components/ProfileSteps/StepTwo";
-import StepThree from "../components/ProfileSteps/StepThree";
 import StepReview from "../components/ProfileSteps/StepReview";
 import FormProgress from "../components/FormProgress";
 
@@ -37,9 +36,8 @@ const ProfileSetup = () => {
       case 2:
         return <StepTwo />;
       case 3:
-        return <StepThree />;
-      case 4:
         return <StepReview />;
+
       default:
         return <StepOne />;
     }
