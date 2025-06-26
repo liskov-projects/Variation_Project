@@ -68,7 +68,7 @@ const FormProgress = ({ isCompleted, changeCompletedState }) => {
               <div
                 className={`
                   step-number me-3 rounded-circle d-flex align-items-center justify-content-center
-                  ${isCompleted ? "bg-success text-white" : ""}
+                  ${completed ? "bg-success text-white" : ""}
                 `}
                 style={{
                   width: "30px",
@@ -76,7 +76,7 @@ const FormProgress = ({ isCompleted, changeCompletedState }) => {
                   border: "2px solid currentColor",
                 }}
               >
-                {isCompleted ? "✓" : step.number}
+                {completed ? "✓" : step.number}
               </div>
               <span>{step.label}</span>
             </div>
