@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
@@ -35,7 +35,7 @@ const ProjectVariation = () => {
         console.error("Error fetching project or finding variation:", error);
       }
       fetchAndFindVariation();
-    }, [projectId]);
+    }}, [projectId]);
 
     useEffect(() => {
       if (showConfirmModal) {

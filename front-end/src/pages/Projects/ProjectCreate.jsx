@@ -1,22 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@clerk/clerk-react";
-import { useProject } from "../../contexts/ProjectContext";
-import Header from "../../components/Header/index";
-import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const ProjectCreate = () => {
-  const navigate = useNavigate();
-  const { userId } = useAuth();
-  const { createProject, loading, error, createEmptyProject } = useProject();
-  const [projectData, setProjectData] = useState(createEmptyProject());
-  const [formErrors, setFormErrors] = useState({});
+
 const ProjectCreate = () => {
   const navigate = useNavigate();
   const { userId } = useAuth();
