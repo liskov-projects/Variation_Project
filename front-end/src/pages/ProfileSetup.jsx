@@ -128,7 +128,9 @@ const ProfileSetup = () => {
       <div>
         <Header />
         <div className="d-flex justify-content-center align-items-center vh-100">
-          <div className="spinner-border text-primary" role="status">
+          <div
+            className="spinner-border text-primary"
+            role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
@@ -159,8 +161,7 @@ const ProfileSetup = () => {
                   <button
                     type="button"
                     className="btn btn-secondary"
-                    onClick={handlePrevious}
-                  >
+                    onClick={handlePrevious}>
                     Previous
                   </button>
                 )}
@@ -168,13 +169,8 @@ const ProfileSetup = () => {
                   type="button"
                   className="btn btn-primary ms-auto"
                   onClick={handleNext}
-                  disabled={loading}
-                >
-                  {loading
-                    ? "Processing..."
-                    : currentStep < 4
-                    ? "Next"
-                    : "Complete Profile"}
+                  disabled={loading}>
+                  {loading ? "Processing..." : currentStep < 4 ? "Next" : "Complete Profile"}
                 </button>
               </div>
             </div>

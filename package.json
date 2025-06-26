@@ -1,0 +1,23 @@
+{
+  "name": "variation_project",
+  "version": "1.0.0",
+  "description": "A modern web application designed to simplify the creation, management, and tracking of construction variation forms for builders and clients.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liskov-projects/Variation_Project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liskov-projects/Variation_Project/issues"
+  },
+  "homepage": "https://github.com/liskov-projects/Variation_Project#readme",
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  }
+}

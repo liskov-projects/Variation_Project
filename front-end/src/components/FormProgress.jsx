@@ -14,6 +14,10 @@ const FormProgress = ({ isCompleted, changeCompletedState }) => {
     { number: 2, label: "Company & Partnership" },
     { number: 3, label: "Individual Information" },
     { number: 4, label: "Review & Submit" },
+    { number: 1, label: "Builder Information" },
+    { number: 2, label: "Company & Partnership" },
+    { number: 3, label: "Individual Information" },
+    { number: 4, label: "Review & Submit" },
   ];
 
   // //  OLD:
