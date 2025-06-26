@@ -16,6 +16,7 @@ export const ProfileProvider = ({ children }) => {
     address: "",
     email: "",
     phoneNumber: "",
+    logo: "",
 
     // Company Information
     company: "No",

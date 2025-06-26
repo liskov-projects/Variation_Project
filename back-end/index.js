@@ -5,6 +5,7 @@ import { config } from "dotenv";
 import profileRoutes from "./routes/profileRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import connectDB from "./config/dbStarter.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
 
 // Load environment variables
 config();
@@ -29,6 +30,9 @@ connectDB();
 // Routes
 app.use("/api/profile", profileRoutes);
 app.use("/api/projects", projectRoutes);
+
+app.use("/api/upload", uploadRoutes);
+
 
 // Root route
 app.get("/", (req, res) => {

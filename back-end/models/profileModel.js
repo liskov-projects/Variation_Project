@@ -36,6 +36,11 @@ const profileSchema = new mongoose.Schema(
         type: String,
         required: [true, "Phone number is required"],
       },
+      logo: {
+        type: String,
+        required: false, // Logo is optional
+        trim: true,
+      },
       company: {
         type: String,
         enum: ["Yes", "No"],
