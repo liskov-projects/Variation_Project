@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useProfile } from "../../contexts/ProfileContext";
 import CustomRadioButton from "./CustomRadioButton";
+//  NEW:
+import CompanyInfo from "./BusinessType/CompanyInfo";
+import PartnershipInfo from "./BusinessType/PartnershipInfo";
+import IndividualInfo from "./BusinessType/IndividualInfo";
 
 const StepTwo = () => {
   const { profileData, updateProfile } = useProfile();
@@ -26,41 +30,52 @@ const StepTwo = () => {
     });
   }, [selected]);
 
-  const radios = (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1.5rem",
-        marginTop: "1rem",
-        marginBottom: "1rem",
-      }}
-    >
-      {/*  NEW: Company*/}
-      <CustomRadioButton
-        selected={selected}
-        setSelected={setSelected}
-        option={"Company"}
-      />
-      {/* Partnership */}
-      <CustomRadioButton
-        selected={selected}
-        setSelected={setSelected}
-        option={"Partnership"}
-      />
+  // NEW: mergins step 2 & 3
+  const renderContent = () => {
+    if (selected === "Company") return <CompanyInfo />;
+    else if (selected === "Partnership") return <PartnershipInfo />;
+    else return <IndividualInfo />;
+  };
 
-      {/* Individual */}
-      <CustomRadioButton
-        selected={selected}
-        setSelected={setSelected}
-        option={"Individual"}
-      />
-    </div>
+  const radios = (
+    <>
+      <h4>Select business type</h4>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "1.5rem",
+          marginTop: "1rem",
+          marginBottom: "1rem",
+        }}
+      >
+        {/*  NEW: Company*/}
+        <CustomRadioButton
+          selected={selected}
+          setSelected={setSelected}
+          option={"Company"}
+        />
+        {/* Partnership */}
+        <CustomRadioButton
+          selected={selected}
+          setSelected={setSelected}
+          option={"Partnership"}
+        />
+
+        {/* Individual */}
+        <CustomRadioButton
+          selected={selected}
+          setSelected={setSelected}
+          option={"Individual"}
+        />
+      </div>
+    </>
   );
 
   return (
     <div>
       <div>{radios}</div>
+      <div>{renderContent()}</div>
     </div>
   );
 };
