@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProfile } from "../contexts/ProfileContext";
 import validateStep from "../utils/stepsValidator";
-const FormProgress = ({ isCompleted }) => {
+
+const FormProgress = ({ isCompleted, changeCompletedState }) => {
   const { currentStep, setCurrentStep } = useProfile();
   // OLD:
   // const [completedStep, setCompletedStep] = useState(1);
@@ -24,7 +25,15 @@ const FormProgress = ({ isCompleted }) => {
   //   if (completedStep < currentStep)
   //     setCompletedStep(currentStep);
   // };
+
   //  NEW:
+  // will remove the green tick if the step form is not completed
+  useEffect(() => {
+    const error = validateStep(currentStep, profileData);
+    changeCompletedState(currentStep, !error);
+  }, [profileData]);
+
+  // helper func
   const checkClickableStep = (stepNumber) => {
     if (stepNumber === currentStep) return true;
     return isCompleted.slice(0, stepNumber - 1).every(Boolean);

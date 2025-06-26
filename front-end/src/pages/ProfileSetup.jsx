@@ -140,7 +140,10 @@ const ProfileSetup = () => {
     <div>
       <Header />
       <div className="d-flex">
-        <FormProgress isCompleted={isCompleted} />
+        <FormProgress
+          isCompleted={isCompleted}
+          changeCompletedState={changeCompletedState}
+        />
         <div className="flex-grow-1 p-4">
           {formError && <div className="alert alert-danger">{formError}</div>}
 
