@@ -1,8 +1,13 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { useProfile } from "../contexts/ProfileContext";
+import validateStep from "../utils/stepsValidator";
 
-const FormProgress = () => {
+const FormProgress = ({ isCompleted, changeCompletedState }) => {
   const { currentStep, setCurrentStep } = useProfile();
+  // OLD:
+  // const [completedStep, setCompletedStep] = useState(1);
+  // NEW:
+  const { profileData } = useProfile();
 
   const steps = [
     { number: 1, label: "Builder Information" },
@@ -10,11 +15,27 @@ const FormProgress = () => {
     { number: 3, label: "Review & Submit" },
   ];
 
-  const handleStepClick = (stepNumber) => {
-    // Only allow navigation to completed steps or the current step
-    if (stepNumber <= currentStep) {
-      setCurrentStep(stepNumber);
-    }
+  // //  OLD:
+  // const handleStepClick = (stepNumber) => {
+  //   // Only allow navigation to completed steps or the current step
+  //   if (stepNumber <= completedStep) {
+  //     setCurrentStep(stepNumber);
+  //   }
+  //   if (completedStep < currentStep)
+  //     setCompletedStep(currentStep);
+  // };
+
+  //  NEW:
+  // will remove the green tick if the step form is not completed
+  useEffect(() => {
+    const error = validateStep(currentStep, profileData);
+    changeCompletedState(currentStep, !error);
+  }, [profileData]);
+
+  // helper func
+  const checkClickableStep = (stepNumber) => {
+    if (stepNumber === currentStep) return true;
+    return isCompleted.slice(0, stepNumber - 1).every(Boolean);
   };
 
   return (
@@ -24,15 +45,19 @@ const FormProgress = () => {
     >
       <h4 className="mb-4">Profile Setup</h4>
       <div className="d-flex flex-column gap-3">
-        {steps.map((step) => {
+        {steps.map((step, index) => {
           const isActive = currentStep === step.number;
-          const isCompleted = step.number < currentStep;
-          const isClickable = step.number <= currentStep;
+          const isClickable = checkClickableStep(step.number);
+          const completed = isCompleted[index];
 
+          // console.log(step, "completed : ", isCompleted[index]);
           return (
             <div
               key={step.number}
-              onClick={() => handleStepClick(step.number)}
+              onClick={() => {
+                isClickable && setCurrentStep(step.number);
+                validateStep(step, profileData);
+              }}
               className={`
                 d-flex align-items-center p-3 rounded 
                 ${isActive ? "bg-primary text-white" : "bg-white"} 
