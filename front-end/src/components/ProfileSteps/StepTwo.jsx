@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
 import { useProfile } from "../../contexts/ProfileContext";
 import CustomRadioButton from "./CustomRadioButton";
-//  NEW:
 import CompanyInfo from "./BusinessType/CompanyInfo";
 import PartnershipInfo from "./BusinessType/PartnershipInfo";
 import IndividualInfo from "./BusinessType/IndividualInfo";
 
 const StepTwo = () => {
   const { profileData, updateProfile } = useProfile();
-  //  NEW:
   const [selected, setSelected] = useState(() => {
     if (profileData.businessType) return profileData.businessType;
     if (profileData.company === "Yes") return "Company";
@@ -21,7 +19,7 @@ const StepTwo = () => {
     profileData.company = "Yes";
   }
 
-  //  NEW:
+
   useEffect(() => {
     updateProfile({
       businessType: selected,
@@ -30,7 +28,7 @@ const StepTwo = () => {
     });
   }, [selected]);
 
-  // NEW: mergins step 2 & 3
+
   const renderContent = () => {
     if (selected === "Company") return <CompanyInfo />;
     else if (selected === "Partnership") return <PartnershipInfo />;

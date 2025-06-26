@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useProfile } from "../contexts/ProfileContext";
 import validateStep from "../utils/stepsValidator";
 
 const FormProgress = ({ isCompleted, changeCompletedState }) => {
   const { currentStep, setCurrentStep } = useProfile();
-  // OLD:
-  // const [completedStep, setCompletedStep] = useState(1);
-  // NEW:
+
   const { profileData } = useProfile();
 
   const steps = [
@@ -15,17 +13,7 @@ const FormProgress = ({ isCompleted, changeCompletedState }) => {
     { number: 3, label: "Review & Submit" },
   ];
 
-  // //  OLD:
-  // const handleStepClick = (stepNumber) => {
-  //   // Only allow navigation to completed steps or the current step
-  //   if (stepNumber <= completedStep) {
-  //     setCurrentStep(stepNumber);
-  //   }
-  //   if (completedStep < currentStep)
-  //     setCompletedStep(currentStep);
-  // };
 
-  //  NEW:
   // will remove the green tick if the step form is not completed
   useEffect(() => {
     const error = validateStep(currentStep, profileData);
