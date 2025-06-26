@@ -4,7 +4,19 @@ import { useAuth } from "@clerk/clerk-react";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
+import { useProject } from "../../contexts/ProjectContext";
+import Header from "../../components/Header/index";
+import "bootstrap/dist/css/bootstrap.min.css";
 
+const ProjectCreate = () => {
+  const navigate = useNavigate();
+  const { userId } = useAuth();
+  const { createProject, loading, error, createEmptyProject } = useProject();
+  const [projectData, setProjectData] = useState(createEmptyProject());
+  const [formErrors, setFormErrors] = useState({});
 const ProjectCreate = () => {
   const navigate = useNavigate();
   const { userId } = useAuth();
@@ -294,6 +306,7 @@ const ProjectCreate = () => {
                       }`}
                       name="clientName"
                       value={projectData.clientName || ""}
+                      value={projectData.clientName || ""}
                       onChange={handleChange}
                       required
                     />
@@ -312,6 +325,7 @@ const ProjectCreate = () => {
                         formErrors.clientEmail ? "is-invalid" : ""
                       }`}
                       name="clientEmail"
+                      value={projectData.clientEmail || ""}
                       value={projectData.clientEmail || ""}
                       onChange={handleChange}
                       required
@@ -539,15 +553,13 @@ const ProjectCreate = () => {
                       type="button"
                       className="btn btn-secondary"
                       onClick={handleCancel}
-                      disabled={loading}
-                    >
+                      disabled={loading}>
                       Cancel
                     </button>
                     <button
                       type="submit"
                       className="btn btn-primary"
-                      disabled={loading}
-                    >
+                      disabled={loading}>
                       {loading ? (
                         <>
                           <span

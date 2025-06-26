@@ -1,10 +1,10 @@
 // backend/index.js
-import express from 'express';
-import cors from 'cors';
-import { config } from 'dotenv';
-import profileRoutes from './routes/profileRoutes.js';
-import projectRoutes from './routes/projectRoutes.js';
-import connectDB from './config/dbStarter.js';
+import express from "express";
+import cors from "cors";
+import { config } from "dotenv";
+import profileRoutes from "./routes/profileRoutes.js";
+import projectRoutes from "./routes/projectRoutes.js";
+import connectDB from "./config/dbStarter.js";
 
 // Load environment variables
 config();
@@ -12,32 +12,36 @@ config();
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? 'https://variation-front-end.onrender.com'
-    : 'http://localhost:3000'
-}));
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://variation-front-end.onrender.com"
+        : "http://localhost:3000",
+  })
+);
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // For logo uploads
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Connect to MongoDB
 connectDB();
 
 // Routes
-app.use('/api/profile', profileRoutes);
-app.use('/api/projects',projectRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/projects", projectRoutes);
 
 // Root route
-app.get('/', (req, res) => {
-  res.send('API is running...');
+app.get("/", (req, res) => {
+  res.send("API is running...");
 });
 
 // Error handler for middleware and routes
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
-    message: 'Server Error',
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+    message: "Server Error",
+    error: process.env.NODE_ENV === "development" ? err.message : "Something went wrong",
   });
 });
 
