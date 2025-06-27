@@ -295,7 +295,6 @@ const ProjectCreate = () => {
                       }`}
                       name="clientName"
                       value={projectData.clientName || ""}
-                      value={projectData.clientName || ""}
                       onChange={handleChange}
                       required
                     />
@@ -314,7 +313,6 @@ const ProjectCreate = () => {
                         formErrors.clientEmail ? "is-invalid" : ""
                       }`}
                       name="clientEmail"
-                      value={projectData.clientEmail || ""}
                       value={projectData.clientEmail || ""}
                       onChange={handleChange}
                       required
@@ -358,7 +356,7 @@ const ProjectCreate = () => {
                       name="architectPmCompanyName"
                       value={projectData.architectPmCompanyName || ""}
                       onChange={handleChange}
-                      required
+                    
                     />
                     {formErrors.architectPmCompanyName && (
                       <div className="invalid-feedback">
@@ -376,7 +374,7 @@ const ProjectCreate = () => {
                       name="architectPmContactName"
                       value={projectData.architectPmContactName || ""}
                       onChange={handleChange}
-                      required
+                    
                     />
                     {formErrors.architectPmContactName && (
                       <div className="invalid-feedback">
@@ -394,7 +392,7 @@ const ProjectCreate = () => {
                       name="architectPmAddress"
                       value={projectData.architectPmAddress || ""}
                       onChange={handleChange}
-                      required
+                    
                     />
                     {formErrors.architectPmAddress && (
                       <div className="invalid-feedback">
@@ -412,7 +410,7 @@ const ProjectCreate = () => {
                       name="architectPmPhone"
                       value={projectData.architectPmPhone || ""}
                       onChange={handleChange}
-                      required
+                    
                     />
                     {formErrors.architectPmPhone && (
                       <div className="invalid-feedback">
@@ -431,7 +429,7 @@ const ProjectCreate = () => {
                       name="architectPmEmail"
                       value={projectData.architectPmEmail || ""}
                       onChange={handleChange}
-                      required
+                    
                     />
                     {formErrors.architectPmEmail && (
                       <div className="invalid-feedback">
@@ -444,6 +442,17 @@ const ProjectCreate = () => {
                   <h4 className="mb-3 mt-4 border-bottom pb-2">
                     Surveyor Information
                   </h4>
+                  {/* <div>
+                    <label htmlFor="yes">
+Yes
+                    <input type="radio" value={projectData.hasSurveyor || "yes"} name="surveyorChoice"  id="yes" checked={hasSurveyor==="yes"} onChange={(e) => {setSurveyor(e.target.value)}}/>
+                    </label>
+                      <label htmlFor="no">
+No
+                    <input type="radio" value={projectData.hasSurveyor || "no"} name="surveyorChoice"  id="no" checked={hasSurveyor==="no"} onChange={(e) => {setSurveyor(e.target.value)}}/>
+                    </label>
+                  </div> */}
+
                   <div className="mb-3">
                     <label className="form-label">Company Name *</label>
                     <input

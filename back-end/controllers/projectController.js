@@ -102,17 +102,17 @@ export const createProject = async (req, res) => {
     }
 
     // Surveyor validation - must answer the question
-    if (req.body.surveyor?.hasSurveyor === undefined) {
-      return res.status(400).json({
-        message: 'Surveyor status must be specified (yes/no)'
-      });
-    }
+    // if (req.body.surveyor?.hasSurveyor === undefined) {
+    //   return res.status(400).json({
+    //     message: 'Surveyor status must be specified (yes/no)'
+    //   });
+    // }
 
-    if (req.body.surveyor?.hasSurveyor && !req.body.surveyor.details?.contactName) {
-      return res.status(400).json({
-        message: 'Surveyor details are required when surveyor is engaged'
-      });
-    }
+    // if (req.body.surveyor?.hasSurveyor && !req.body.surveyor.details?.contactName) {
+    //   return res.status(400).json({
+    //     message: 'Surveyor details are required when surveyor is engaged'
+    //   });
+    // }
 
     // Create the project
     const newProject = new Project(req.body);

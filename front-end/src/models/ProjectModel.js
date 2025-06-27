@@ -26,7 +26,7 @@ export class Project {
       this.architectPmPhone = data.architectPmPhone || "";
       this.architectPmEmail = data.architectPmEmail || "";
       //
-      this.hasSurveyor = data.hasSurveyor; // should always be true?
+      this.hasSurveyor = true; 
       this.surveyorCompanyName = data.surveyorCompanyName || "";
       this.surveyorContactName = data.surveyorContactName || "";
       this.surveyorAddress = data.surveyorAddress || "";

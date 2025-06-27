@@ -6,39 +6,39 @@ const signatureSchema = new mongoose.Schema({});
 const architectProjectManagerSchema = new mongoose.Schema({
   hasArchitect: {
     type: Boolean,
-    required: [true, 'Architect status is required'],
+    // required: [true, 'Architect status is required'],
     default: false
   },
   details: {
     companyName: {
       type: String,
-      required: function() {
-        return this.hasArchitect;
-      }
+      // required: function() {
+      //   return this.hasArchitect;
+      // }
     },
     contactName: {
       type: String,
-      required: function() {
-        return this.hasArchitect;
-      }
+      // required: function() {
+      //   return this.hasArchitect;
+      // }
     },
     address: {
       type: String,
-      required: function() {
-        return this.hasArchitect;
-      }
+      // required: function() {
+      //   return this.hasArchitect;
+      // }
     },
     phone: {
       type: String,
-      required: function() {
-        return this.hasArchitect;
-      }
+      // required: function() {
+      //   return this.hasArchitect;
+      // }
     },
     email: {
       type: String,
-      required: function() {
-        return this.hasArchitect;
-      },
+      // required: function() {
+      //   return this.hasArchitect;
+      // },
       match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address']
     }
   }
@@ -48,8 +48,8 @@ const architectProjectManagerSchema = new mongoose.Schema({
 const surveyorSchema = new mongoose.Schema({
   hasSurveyor: {
     type: Boolean,
-    required: [true, 'Surveyor status is required'],
-    default: false
+    // required: [true, 'Surveyor status is required'],
+    default: true
   },
   details: {
     companyName: {
