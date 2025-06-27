@@ -82,7 +82,7 @@ export const createProfile = async (req, res) => {
 
     // Validate Company details if business type is Company
     if (profileData.businessType === 'Company') {
-      if (!profileData.CompanyDetails?.CompanyName) {
+      if (!profileData.companyDetails?.companyName) {
         return res.status(400).json({
           message: 'Company name is required when business type is Company'
         });

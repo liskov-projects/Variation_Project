@@ -44,8 +44,8 @@ const profileSchema = new mongoose.Schema(
       },
       
       // Company details - only required if businessType is 'Company'
-      CompanyDetails: {
-        CompanyName: {
+      companyDetails: {
+        companyName: {
           type: String,
           required: function () {
             return this.profileData.businessType === 'Company';
