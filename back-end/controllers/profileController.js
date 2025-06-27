@@ -74,36 +74,36 @@ export const createProfile = async (req, res) => {
     }
 
     // TASK 1: Validate business type and related fields
-    if (!profileData.businessType || !['individual', 'company', 'partnership'].includes(profileData.businessType)) {
+    if (!profileData.businessType || !['Individual', 'Company', 'Partnership'].includes(profileData.businessType)) {
       return res.status(400).json({
-        message: 'Business type must be individual, company, or partnership'
+        message: 'Business type must be Individual, Company, or Partnership'
       });
     }
 
-    // Validate company details if business type is company
-    if (profileData.businessType === 'company') {
-      if (!profileData.companyDetails?.companyName) {
+    // Validate Company details if business type is Company
+    if (profileData.businessType === 'Company') {
+      if (!profileData.CompanyDetails?.CompanyName) {
         return res.status(400).json({
-          message: 'Company name is required when business type is company'
+          message: 'Company name is required when business type is Company'
         });
       }
-      if (profileData.companyDetails?.acn && profileData.companyDetails?.acn.toString().length !== 9) {
+      if (profileData.CompanyDetails?.acn && profileData.CompanyDetails?.acn.toString().length !== 9) {
         return res.status(400).json({
           message: 'ACN must be exactly 9 digits'
         });
       }
     }
 
-    // Validate partnership details if business type is partnership
-    if (profileData.businessType === 'partnership') {
+    // Validate Partnership details if business type is Partnership
+    if (profileData.businessType === 'Partnership') {
       if (!profileData.numberOfPartners) {
         return res.status(400).json({
-          message: 'Number of partners is required when business type is partnership'
+          message: 'Number of partners is required when business type is Partnership'
         });
       }
       if (!profileData.partners || profileData.partners.length === 0) {
         return res.status(400).json({
-          message: 'At least one partner is required when business type is partnership'
+          message: 'At least one partner is required when business type is Partnership'
         });
       }
     }
@@ -171,36 +171,36 @@ export const updateProfile = async (req, res) => {
     }
 
     // TASK 1: Validate business type and related fields
-    if (profileData.businessType && !['individual', 'company', 'partnership'].includes(profileData.businessType)) {
+    if (profileData.businessType && !['Individual', 'Company', 'Partnership'].includes(profileData.businessType)) {
       return res.status(400).json({
-        message: 'Business type must be individual, company, or partnership'
+        message: 'Business type must be Individual, Company, or Partnership'
       });
     }
 
-    // Validate company details if business type is company
-    if (profileData.businessType === 'company') {
-      if (!profileData.companyDetails?.companyName) {
+    // Validate Company details if business type is Company
+    if (profileData.businessType === 'Company') {
+      if (!profileData.CompanyDetails?.CompanyName) {
         return res.status(400).json({
-          message: 'Company name is required when business type is company'
+          message: 'Company name is required when business type is Company'
         });
       }
-      if (profileData.companyDetails?.acn && profileData.companyDetails?.acn.toString().length !== 9) {
+      if (profileData.CompanyDetails?.acn && profileData.CompanyDetails?.acn.toString().length !== 9) {
         return res.status(400).json({
           message: 'ACN must be exactly 9 digits'
         });
       }
     }
 
-    // Validate partnership details if business type is partnership
-    if (profileData.businessType === 'partnership') {
+    // Validate Partnership details if business type is Partnership
+    if (profileData.businessType === 'Partnership') {
       if (!profileData.numberOfPartners) {
         return res.status(400).json({
-          message: 'Number of partners is required when business type is partnership'
+          message: 'Number of partners is required when business type is Partnership'
         });
       }
       if (!profileData.partners || profileData.partners.length === 0) {
         return res.status(400).json({
-          message: 'At least one partner is required when business type is partnership'
+          message: 'At least one partner is required when business type is Partnership'
         });
       }
     }

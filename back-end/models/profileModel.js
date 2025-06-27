@@ -39,22 +39,22 @@ const profileSchema = new mongoose.Schema(
       
       businessType: {
         type: String,
-        enum: ['individual', 'company', 'partnership'],
+        enum: ['Individual', 'Company', 'Partnership'],
         required: [true, 'Business type is required']
       },
       
-      // Company details - only required if businessType is 'company'
-      companyDetails: {
-        companyName: {
+      // Company details - only required if businessType is 'Company'
+      CompanyDetails: {
+        CompanyName: {
           type: String,
           required: function () {
-            return this.profileData.businessType === 'company';
+            return this.profileData.businessType === 'Company';
           }
         },
         acn: {
           type: String,
           required: function () {
-            return this.profileData.businessType === 'company';
+            return this.profileData.businessType === 'Company';
           },
           validate: {
             validator: function (v) {
@@ -66,40 +66,48 @@ const profileSchema = new mongoose.Schema(
         },
       },
       
-      // Partnership details - only required if businessType is 'partnership'
+      // Partnership details - only required if businessType is 'Partnership'
       numberOfPartners: {
         type: String,
         required: function() {
-          return this.profileData.businessType === 'partnership';
+          return this.profileData.businessType === 'Partnership';
         }
       },
       partners: {
         type: [partnerSchema],
         validate: {
           validator: function(partners) {
-            // Only validate if businessType is partnership
-            if (this.profileData.businessType === 'partnership') {
+            // Only validate if businessType is Partnership
+            if (this.profileData.businessType === 'Partnership') {
               return partners && partners.length > 0;
             }
             return true;
           },
-          message: 'At least one partner is required for partnerships'
+          message: 'At least one partner is required for Partnerships'
         }
       },
 
       abn: {
         type: String,
-        required: [true, "ABN is required"],
+        required: function () {
+          return this.profileData.businessType === 'Individual';
+        },
         validate: {
           validator: function (v) {
-            return v.length === 11;
+            // Only validate if the field is provided and businessType is Individual
+            if (this.profileData.businessType !== 'Individual') {
+              return true; // Skip validation for non-Individual types
+            }
+            return v && v.length === 11;
           },
           message: "ABN must be exactly 11 digits",
         },
       },
       brn: {
         type: String,
-        required: [true, 'Builder registration number is required']
+        required: function () {
+          return this.profileData.businessType === 'Individual';
+        },
       },
       
       logo: {
