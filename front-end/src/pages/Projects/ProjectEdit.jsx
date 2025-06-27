@@ -11,7 +11,7 @@ const ProjectEdit = () => {
   const [projectData, setProjectData] = useState(null);
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
-
+  console.log(currentProject)
   // Fetch project data
   useEffect(() => {
     if (projectId) {

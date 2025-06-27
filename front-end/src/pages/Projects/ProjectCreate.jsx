@@ -2,15 +2,15 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import { useProject } from "../../contexts/ProjectContext";
+import { Project } from "../../models/ProjectModel"; // Import the Project model
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
-
 
 const ProjectCreate = () => {
   const navigate = useNavigate();
   const { userId } = useAuth();
-  const { createProject, loading, error, createEmptyProject } = useProject();
-  const [projectData, setProjectData] = useState(createEmptyProject());
+  const { createProject, loading, error } = useProject();
+  const [projectData, setProjectData] = useState(new Project()); // Use Project model
   const [formErrors, setFormErrors] = useState({});
   const [architectpmSelected, setArchitectpmSelected] = useState('No');
 
@@ -28,6 +28,64 @@ const ProjectCreate = () => {
       ...prev,
       [name]: value,
     }));
+
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
+
+  // Handle architect selection change
+  const handleArchitectSelection = (value) => {
+    setArchitectpmSelected(value);
+    
+    // Update the project data using the Project model method
+    const newProject = new Project(projectData);
+    newProject.updateArchitect(value === "Yes", newProject.architect.details);
+    setProjectData(newProject);
+  };
+
+  // Handle architect details change
+  const handleArchitectChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Extract the field name (remove 'architectPm' prefix)
+    const fieldName = name.replace('architectPm', '').toLowerCase();
+    const mappedFieldName = fieldName === 'companyname' ? 'companyName' : 
+                            fieldName === 'contactname' ? 'contactName' : fieldName;
+
+    const newProject = new Project(projectData);
+    newProject.updateArchitect(architectpmSelected === "Yes", {
+      ...newProject.architect.details,
+      [mappedFieldName]: value
+    });
+    setProjectData(newProject);
+
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
+
+  // Handle surveyor details change
+  const handleSurveyorChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Extract the field name (remove 'surveyor' prefix)
+    const fieldName = name.replace('surveyor', '').toLowerCase();
+    const mappedFieldName = fieldName === 'companyname' ? 'companyName' : 
+                            fieldName === 'contactname' ? 'contactName' : fieldName;
+
+    const newProject = new Project(projectData);
+    newProject.updateSurveyor(true, { // Surveyor is always true by default
+      ...newProject.surveyor.details,
+      [mappedFieldName]: value
+    });
+    setProjectData(newProject);
 
     if (formErrors[name]) {
       setFormErrors((prev) => ({
@@ -55,6 +113,42 @@ const ProjectCreate = () => {
         errors[field] = "This field is required";
       }
     });
+
+    // Validate surveyor fields (always required)
+    if (!projectData.surveyor.details.companyName) {
+      errors.surveyorCompanyName = "Surveyor company name is required";
+    }
+    if (!projectData.surveyor.details.contactName) {
+      errors.surveyorContactName = "Surveyor contact name is required";
+    }
+    if (!projectData.surveyor.details.address) {
+      errors.surveyorAddress = "Surveyor address is required";
+    }
+    if (!projectData.surveyor.details.phone) {
+      errors.surveyorPhone = "Surveyor phone is required";
+    }
+    if (!projectData.surveyor.details.email) {
+      errors.surveyorEmail = "Surveyor email is required";
+    }
+
+    // Validate architect fields (only if architect is selected)
+    if (architectpmSelected === "Yes") {
+      if (!projectData.architect.details.companyName) {
+        errors.architectPmCompanyName = "Architect company name is required";
+      }
+      if (!projectData.architect.details.contactName) {
+        errors.architectPmContactName = "Architect contact name is required";
+      }
+      if (!projectData.architect.details.address) {
+        errors.architectPmAddress = "Architect address is required";
+      }
+      if (!projectData.architect.details.phone) {
+        errors.architectPmPhone = "Architect phone is required";
+      }
+      if (!projectData.architect.details.email) {
+        errors.architectPmEmail = "Architect email is required";
+      }
+    }
 
     if (
       projectData.clientEmail &&
@@ -121,15 +215,24 @@ const ProjectCreate = () => {
       return;
     }
 
-    const projectWithUserId = {
+    // Create a new Project instance to ensure all transformations are applied
+    const projectInstance = new Project({
       ...projectData,
       userId,
-      contractPrice: parseFloat(projectData.contractPrice.replace(/,/g, "")),
-    };
-    if (projectWithUserId._id === "") {
-      delete projectWithUserId._id;
+      contractPrice: parseFloat(projectData.contractPrice.toString().replace(/,/g, "")),
+    });
+
+    // Use the toBackendFormat method to get the correctly structured data
+    const backendData = projectInstance.toBackendFormat();
+    
+    // Remove _id if it's empty
+    if (backendData._id === "") {
+      delete backendData._id;
     }
-    const result = await createProject(projectWithUserId);
+
+    console.log("Sending to backend:", backendData);
+
+    const result = await createProject(backendData);
 
     if (result.success) {
       navigate(`/projects/${result.data._id}`);
@@ -344,7 +447,7 @@ const ProjectCreate = () => {
                     )}
                   </div>
 
-                  {/*NEW: Surveyor section */}
+                  {/* Surveyor section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">
                     Surveyor Information (Required)
                   </h4>
@@ -356,8 +459,8 @@ const ProjectCreate = () => {
                         formErrors.surveyorCompanyName ? "is-invalid" : ""
                       }`}
                       name="surveyorCompanyName"
-                      value={projectData.surveyorCompanyName || ""}
-                      onChange={handleChange}
+                      value={projectData.surveyor.details.companyName || ""}
+                      onChange={handleSurveyorChange}
                       required
                     />
                     {formErrors.surveyorCompanyName && (
@@ -374,8 +477,8 @@ const ProjectCreate = () => {
                         formErrors.surveyorContactName ? "is-invalid" : ""
                       }`}
                       name="surveyorContactName"
-                      value={projectData.surveyorContactName || ""}
-                      onChange={handleChange}
+                      value={projectData.surveyor.details.contactName || ""}
+                      onChange={handleSurveyorChange}
                       required
                     />
                     {formErrors.surveyorContactName && (
@@ -392,8 +495,8 @@ const ProjectCreate = () => {
                         formErrors.surveyorAddress ? "is-invalid" : ""
                       }`}
                       name="surveyorAddress"
-                      value={projectData.surveyorAddress || ""}
-                      onChange={handleChange}
+                      value={projectData.surveyor.details.address || ""}
+                      onChange={handleSurveyorChange}
                       required
                     />
                     {formErrors.surveyorAddress && (
@@ -403,15 +506,15 @@ const ProjectCreate = () => {
                     )}
                   </div>
                   <div className="mb-3">
-                    <label className="form-label"> Phone *</label>
+                    <label className="form-label">Phone *</label>
                     <input
                       type="text"
                       className={`form-control ${
                         formErrors.surveyorPhone ? "is-invalid" : ""
                       }`}
                       name="surveyorPhone"
-                      value={projectData.surveyorPhone || ""}
-                      onChange={handleChange}
+                      value={projectData.surveyor.details.phone || ""}
+                      onChange={handleSurveyorChange}
                       required
                     />
                     {formErrors.surveyorPhone && (
@@ -422,15 +525,15 @@ const ProjectCreate = () => {
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label"> Email *</label>
+                    <label className="form-label">Email *</label>
                     <input
                       type="email"
                       className={`form-control ${
                         formErrors.surveyorEmail ? "is-invalid" : ""
                       }`}
                       name="surveyorEmail"
-                      value={projectData.surveyorEmail || ""}
-                      onChange={handleChange}
+                      value={projectData.surveyor.details.email || ""}
+                      onChange={handleSurveyorChange}
                       required
                     />
                     {formErrors.surveyorEmail && (
@@ -440,9 +543,7 @@ const ProjectCreate = () => {
                     )}
                   </div>
 
-
-
-                  {/*NEW: Architect / Project Manager section */}
+                  {/* Architect / Project Manager section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">
                     Architect / Project Manager Information
                   </h4>
@@ -458,7 +559,7 @@ const ProjectCreate = () => {
                           id="architectYes" 
                           value="Yes"
                           checked={architectpmSelected === "Yes"} 
-                          onChange={(e) => {setArchitectpmSelected(e.target.value)}}
+                          onChange={(e) => handleArchitectSelection(e.target.value)}
                         />
                         <label className="form-check-label" htmlFor="architectYes">
                           Yes
@@ -472,7 +573,7 @@ const ProjectCreate = () => {
                           id="architectNo" 
                           value="No"
                           checked={architectpmSelected === "No"} 
-                          onChange={(e) => {setArchitectpmSelected(e.target.value)}}
+                          onChange={(e) => handleArchitectSelection(e.target.value)}
                         />
                         <label className="form-check-label" htmlFor="architectNo">
                           No
@@ -491,8 +592,8 @@ const ProjectCreate = () => {
                             formErrors.architectPmCompanyName ? "is-invalid" : ""
                           }`}
                           name="architectPmCompanyName"
-                          value={projectData.architectPmCompanyName || ""}
-                          onChange={handleChange}
+                          value={projectData.architect.details.companyName || ""}
+                          onChange={handleArchitectChange}
                         />
                         {formErrors.architectPmCompanyName && (
                           <div className="invalid-feedback">
@@ -509,8 +610,8 @@ const ProjectCreate = () => {
                             formErrors.architectPmContactName ? "is-invalid" : ""
                           }`}
                           name="architectPmContactName"
-                          value={projectData.architectPmContactName || ""}
-                          onChange={handleChange}
+                          value={projectData.architect.details.contactName || ""}
+                          onChange={handleArchitectChange}
                         />
                         {formErrors.architectPmContactName && (
                           <div className="invalid-feedback">
@@ -527,8 +628,8 @@ const ProjectCreate = () => {
                             formErrors.architectPmAddress ? "is-invalid" : ""
                           }`}
                           name="architectPmAddress"
-                          value={projectData.architectPmAddress || ""}
-                          onChange={handleChange}
+                          value={projectData.architect.details.address || ""}
+                          onChange={handleArchitectChange}
                         />
                         {formErrors.architectPmAddress && (
                           <div className="invalid-feedback">
@@ -545,8 +646,8 @@ const ProjectCreate = () => {
                             formErrors.architectPmPhone ? "is-invalid" : ""
                           }`}
                           name="architectPmPhone"
-                          value={projectData.architectPmPhone || ""}
-                          onChange={handleChange}
+                          value={projectData.architect.details.phone || ""}
+                          onChange={handleArchitectChange}
                         />
                         {formErrors.architectPmPhone && (
                           <div className="invalid-feedback">
@@ -563,8 +664,8 @@ const ProjectCreate = () => {
                             formErrors.architectPmEmail ? "is-invalid" : ""
                           }`}
                           name="architectPmEmail"
-                          value={projectData.architectPmEmail || ""}
-                          onChange={handleChange}
+                          value={projectData.architect.details.email || ""}
+                          onChange={handleArchitectChange}
                         />
                         {formErrors.architectPmEmail && (
                           <div className="invalid-feedback">
@@ -574,9 +675,7 @@ const ProjectCreate = () => {
                       </div>
                     </>
                   )}
-                  
 
-                  {/*  */}
                   <div className="d-flex justify-content-between mt-4">
                     <button
                       type="button"

@@ -50,6 +50,7 @@ export const ProjectProvider = ({ children }) => {
 
       // Only update if the data is different to avoid unnecessary re-renders
       if (!currentProject || currentProject._id !== response.data._id) {
+        // console.log("+++++++++++++++++++++++++++++", response.data)
         setCurrentProject(response.data);
       }
 
@@ -67,7 +68,7 @@ export const ProjectProvider = ({ children }) => {
     if (!isSignedIn || !userId) return { success: false, error: "User not authenticated" };
     setLoading(true);
     setError(null);
-
+console.log("ProjectContext - Sending data:", projectData);
     try {
       const token = await getToken();
       const response = await axios.post(
