@@ -12,6 +12,7 @@ const ProjectCreate = () => {
   const { createProject, loading, error, createEmptyProject } = useProject();
   const [projectData, setProjectData] = useState(createEmptyProject());
   const [formErrors, setFormErrors] = useState({});
+  const [architectpmSelected, setArchitectpmSelected] = useState('No');
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
@@ -284,7 +285,7 @@ const ProjectCreate = () => {
 
                   {/* Client Information Section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">
-                    Client Information
+                    Client Information (Required)
                   </h4>
                   <div className="mb-3">
                     <label className="form-label">Client Name *</label>
@@ -342,117 +343,11 @@ const ProjectCreate = () => {
                       </div>
                     )}
                   </div>
-                  {/*NEW: Architect / Project Manager section */}
-                  <h4 className="mb-3 mt-4 border-bottom pb-2">
-                    Architect / Project Manager Information
-                  </h4>
-                  <div className="mb-3">
-                    <label className="form-label">Company Name *</label>
-                    <input
-                      type="text"
-                      className={`form-control ${
-                        formErrors.architectPmCompanyName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
-                      }`}
-                      name="architectPmCompanyName"
-                      value={projectData.architectPmCompanyName || ""}
-                      onChange={handleChange}
-                    
-                    />
-                    {formErrors.architectPmCompanyName && (
-                      <div className="invalid-feedback">
-                        {formErrors.architectPmCompanyName}
-                      </div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Contact Name *</label>
-                    <input
-                      type="text"
-                      className={`form-control ${
-                        formErrors.architectPmContactName ? "is-invalid" : ""
-                      }`}
-                      name="architectPmContactName"
-                      value={projectData.architectPmContactName || ""}
-                      onChange={handleChange}
-                    
-                    />
-                    {formErrors.architectPmContactName && (
-                      <div className="invalid-feedback">
-                        {formErrors.architectPmContactName}
-                      </div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Address *</label>
-                    <input
-                      type="text"
-                      className={`form-control ${
-                        formErrors.architectPmAddress ? "is-invalid" : ""
-                      }`}
-                      name="architectPmAddress"
-                      value={projectData.architectPmAddress || ""}
-                      onChange={handleChange}
-                    
-                    />
-                    {formErrors.architectPmAddress && (
-                      <div className="invalid-feedback">
-                        {formErrors.architectPmAddress}
-                      </div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label"> Phone *</label>
-                    <input
-                      type="text"
-                      className={`form-control ${
-                        formErrors.architectPmPhone ? "is-invalid" : ""
-                      }`}
-                      name="architectPmPhone"
-                      value={projectData.architectPmPhone || ""}
-                      onChange={handleChange}
-                    
-                    />
-                    {formErrors.architectPmPhone && (
-                      <div className="invalid-feedback">
-                        {formErrors.architectPmPhone}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="form-label"> Email *</label>
-                    <input
-                      type="email"
-                      className={`form-control ${
-                        formErrors.architectPmEmail ? "is-invalid" : ""
-                      }`}
-                      name="architectPmEmail"
-                      value={projectData.architectPmEmail || ""}
-                      onChange={handleChange}
-                    
-                    />
-                    {formErrors.architectPmEmail && (
-                      <div className="invalid-feedback">
-                        {formErrors.architectPmEmail}
-                      </div>
-                    )}
-                  </div>
 
                   {/*NEW: Surveyor section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">
-                    Surveyor Information
+                    Surveyor Information (Required)
                   </h4>
-                  {/* <div>
-                    <label htmlFor="yes">
-Yes
-                    <input type="radio" value={projectData.hasSurveyor || "yes"} name="surveyorChoice"  id="yes" checked={hasSurveyor==="yes"} onChange={(e) => {setSurveyor(e.target.value)}}/>
-                    </label>
-                      <label htmlFor="no">
-No
-                    <input type="radio" value={projectData.hasSurveyor || "no"} name="surveyorChoice"  id="no" checked={hasSurveyor==="no"} onChange={(e) => {setSurveyor(e.target.value)}}/>
-                    </label>
-                  </div> */}
-
                   <div className="mb-3">
                     <label className="form-label">Company Name *</label>
                     <input
@@ -544,6 +439,142 @@ No
                       </div>
                     )}
                   </div>
+
+
+
+                  {/*NEW: Architect / Project Manager section */}
+                  <h4 className="mb-3 mt-4 border-bottom pb-2">
+                    Architect / Project Manager Information
+                  </h4>
+
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">Do you have an Architect / Project Manager? *</label>
+                    <div className="d-flex gap-4 mt-2">
+                      <div className="form-check">
+                        <input 
+                          className="form-check-input" 
+                          type="radio" 
+                          name="architectChoice" 
+                          id="architectYes" 
+                          value="Yes"
+                          checked={architectpmSelected === "Yes"} 
+                          onChange={(e) => {setArchitectpmSelected(e.target.value)}}
+                        />
+                        <label className="form-check-label" htmlFor="architectYes">
+                          Yes
+                        </label>
+                      </div>
+                      <div className="form-check">
+                        <input 
+                          className="form-check-input" 
+                          type="radio" 
+                          name="architectChoice" 
+                          id="architectNo" 
+                          value="No"
+                          checked={architectpmSelected === "No"} 
+                          onChange={(e) => {setArchitectpmSelected(e.target.value)}}
+                        />
+                        <label className="form-check-label" htmlFor="architectNo">
+                          No
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {architectpmSelected === 'Yes' && (
+                    <>
+                      <div className="mb-3">
+                        <label className="form-label">Company Name *</label>
+                        <input
+                          type="text"
+                          className={`form-control ${
+                            formErrors.architectPmCompanyName ? "is-invalid" : ""
+                          }`}
+                          name="architectPmCompanyName"
+                          value={projectData.architectPmCompanyName || ""}
+                          onChange={handleChange}
+                        />
+                        {formErrors.architectPmCompanyName && (
+                          <div className="invalid-feedback">
+                            {formErrors.architectPmCompanyName}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="mb-3">
+                        <label className="form-label">Contact Name *</label>
+                        <input
+                          type="text"
+                          className={`form-control ${
+                            formErrors.architectPmContactName ? "is-invalid" : ""
+                          }`}
+                          name="architectPmContactName"
+                          value={projectData.architectPmContactName || ""}
+                          onChange={handleChange}
+                        />
+                        {formErrors.architectPmContactName && (
+                          <div className="invalid-feedback">
+                            {formErrors.architectPmContactName}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="mb-3">
+                        <label className="form-label">Address *</label>
+                        <input
+                          type="text"
+                          className={`form-control ${
+                            formErrors.architectPmAddress ? "is-invalid" : ""
+                          }`}
+                          name="architectPmAddress"
+                          value={projectData.architectPmAddress || ""}
+                          onChange={handleChange}
+                        />
+                        {formErrors.architectPmAddress && (
+                          <div className="invalid-feedback">
+                            {formErrors.architectPmAddress}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="mb-3">
+                        <label className="form-label">Phone *</label>
+                        <input
+                          type="text"
+                          className={`form-control ${
+                            formErrors.architectPmPhone ? "is-invalid" : ""
+                          }`}
+                          name="architectPmPhone"
+                          value={projectData.architectPmPhone || ""}
+                          onChange={handleChange}
+                        />
+                        {formErrors.architectPmPhone && (
+                          <div className="invalid-feedback">
+                            {formErrors.architectPmPhone}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="mb-3">
+                        <label className="form-label">Email *</label>
+                        <input
+                          type="email"
+                          className={`form-control ${
+                            formErrors.architectPmEmail ? "is-invalid" : ""
+                          }`}
+                          name="architectPmEmail"
+                          value={projectData.architectPmEmail || ""}
+                          onChange={handleChange}
+                        />
+                        {formErrors.architectPmEmail && (
+                          <div className="invalid-feedback">
+                            {formErrors.architectPmEmail}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                  
 
                   {/*  */}
                   <div className="d-flex justify-content-between mt-4">
