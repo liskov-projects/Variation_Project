@@ -230,8 +230,6 @@ const ProjectCreate = () => {
       delete backendData._id;
     }
 
-    console.log("Sending to backend:", backendData);
-
     const result = await createProject(backendData);
 
     if (result.success) {
