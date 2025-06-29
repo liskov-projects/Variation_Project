@@ -102,7 +102,7 @@ const ProfileEdit = () => {
                   {/* Company Section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">Company Details</h4>
                   <div className="mb-3">
-                    <label className="form-label">Company Y/N *</label>
+                    <label className="form-label">Company Y/N </label>
                     <div>
                       <div className="form-check form-check-inline">
                         <input

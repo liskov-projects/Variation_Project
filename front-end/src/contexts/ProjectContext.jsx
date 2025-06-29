@@ -67,7 +67,6 @@ export const ProjectProvider = ({ children }) => {
     if (!isSignedIn || !userId) return { success: false, error: "User not authenticated" };
     setLoading(true);
     setError(null);
-
     try {
       const token = await getToken();
       const response = await axios.post(

@@ -11,14 +11,13 @@ const StepTwo = () => {
     if (profileData.businessType) return profileData.businessType;
     if (profileData.company === "Yes") return "Company";
     if (profileData.partnership === "Yes") return "Partnership";
-    return "";
+    return "Individual";
   });
 
   // REVIEW: direct mutation of state | also happens in other files
   if (profileData.companyDetails?.acn) {
     profileData.company = "Yes";
   }
-
 
   useEffect(() => {
     updateProfile({
@@ -28,10 +27,10 @@ const StepTwo = () => {
     });
   }, [selected]);
 
-
   const renderContent = () => {
     if (selected === "Company") return <CompanyInfo />;
     else if (selected === "Partnership") return <PartnershipInfo />;
+    else if (selected === "Individual") return <IndividualInfo />;
     else return <IndividualInfo />;
   };
 
