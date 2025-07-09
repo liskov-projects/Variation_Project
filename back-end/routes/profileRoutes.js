@@ -7,8 +7,14 @@ import {
   deleteLogo
 } from '../controllers/profileController.js';
 import clerkMiddleware from '../middleware/auth.js';
+import upload from '../middleware/uploadLogoMiddleWare.js';
 
 const router = express.Router();
+router.use((req, res, next) => {
+  console.log("Incoming request:", req.method, req.originalUrl,req.file);
+  next();
+});
+
 
 // All routes are protected with Clerk authentication
 router.use(clerkMiddleware);
@@ -20,7 +26,7 @@ router.route('/:userId').put(updateProfile);
 
 // NEW: Logo management routes (Task 5)
 router.route('/:userId/logo')
-  .post(uploadLogo)   // Upload logo
+  .post(upload.single('logo'), uploadLogo) // Upload logo
   .delete(deleteLogo); // Delete logo
 
 export default router;
