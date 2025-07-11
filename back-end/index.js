@@ -45,6 +45,9 @@ app.use((err, req, res, next) => {
   });
 });
 
+// This line is what makes /uploads publicly accessible,temporarily used for logo.
+app.use("/uploads", express.static("uploads"));
+
 // Start server
 const PORT = 5001;
 app.listen(PORT, () => {

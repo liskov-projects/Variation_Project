@@ -3,13 +3,14 @@ import { useProfile } from "../../contexts/ProfileContext";
 import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
 import API_BASE_URL from "../../api"; // Adjust the import path as necessary
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const StepOne = ({ setFormError }) => {
   const { profileData, updateProfile } = useProfile();
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const { getToken, userId } = useAuth();
+  const fileInputRef = useRef(null);
 
   const handleLogoUpload = async (e) => {
     const file = e.target.files[0];
@@ -36,8 +37,8 @@ const StepOne = ({ setFormError }) => {
       const logoURL = response.data.logo; // Assuming the response contains the logo URL
       // if (!response.ok) throw new Error(response.data.message || "Upload failed");
       console.log("Logo uploaded successfully:", logoURL);
-
-      updateProfile({ logo: logoURL });
+      const fullURL = `${API_BASE_URL}/${logoURL.replace(/^\/?/, "")}`;
+      updateProfile({ logo: fullURL });
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -50,8 +51,16 @@ const StepOne = ({ setFormError }) => {
     console.log("Updated profileData:", profileData);
   }, [profileData]);
 
+  useEffect(() => {
+    console.log("Updated profileData:", profileData);
+  }, [profileData]);
+
   const handleLogoRemove = () => {
-    updateProfile({ logo: "" });
+    updateProfile({ logo: "", logoPath: "" });
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = null;
+    }
   };
 
   const validateEmailOnBlur = () => {
@@ -63,7 +72,6 @@ const StepOne = ({ setFormError }) => {
   return (
     <div>
       <h4 className="mb-3">Builder Information</h4>
-
       <div className="mb-3">
         <label className="form-label">Builder Name *</label>
         <input
@@ -123,6 +131,7 @@ const StepOne = ({ setFormError }) => {
           className="form-control"
           accept="image/*"
           onChange={handleLogoUpload}
+          ref={fileInputRef}
         />
         {uploading && <small className="text-muted">Uploading...</small>}
         {error && <div className="text-danger">{error}</div>}
