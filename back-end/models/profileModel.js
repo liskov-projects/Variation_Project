@@ -39,7 +39,7 @@ const profileSchema = new mongoose.Schema(
       
       businessType: {
         type: String,
-        enum: ['individual', 'company', 'partnership'],
+        enum: ['Individual', 'Company', 'Partnership'],
         required: [true, 'Business type is required']
       },
       
