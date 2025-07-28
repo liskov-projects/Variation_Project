@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import VariationPDF from "./VariationPDF"; 
+import { useProfile } from "../../contexts/ProfileContext";
 
 
 
@@ -20,6 +21,7 @@ const ProjectVariation = () => {
     const [alertType, setAlertType] = useState('success'); // 'success', 'error', 'info'
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const { profileData } = useProfile();
 
 
 
@@ -625,7 +627,7 @@ const ProjectVariation = () => {
             )}
             <PDFDownloadLink
               document={
-                <VariationPDF project={currentProject} variation={variation} />
+                <VariationPDF project={currentProject} variation={variation} profile={profileData}/>
               }
               fileName={`variation-${variation._id}.pdf`}
               className="btn btn-danger"
