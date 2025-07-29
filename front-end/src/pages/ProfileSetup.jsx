@@ -67,7 +67,7 @@ const ProfileSetup = () => {
 
     setFormError(null); // Clear any previous errors
 
-    if (currentStep < 4) {
+    if (currentStep < 3) {
       // For steps 1-3, just save progress and move to next step
       // await saveProfile(false);
       setCurrentStep(currentStep + 1);
@@ -134,7 +134,7 @@ const ProfileSetup = () => {
                   className="btn btn-primary ms-auto"
                   onClick={handleNext}
                   disabled={loading}>
-                  {loading ? "Processing..." : currentStep < 4 ? "Next" : "Complete Profile"}
+                  {loading ? "Processing..." : currentStep < 3 ? "Next" : "Complete Profile"}
                 </button>
               </div>
             </div>
