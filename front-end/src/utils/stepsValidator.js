@@ -28,11 +28,7 @@ export default function validateStep(step, profileData) {
           if (!partner.name) return `Partner ${i + 1} name is required`;
           if (!partner.address) return `Partner ${i + 1} address is required`;
         }
-      }
-      break;
-      
-    case 3:
-      if (profileData.businessType === "Individual") {
+      } else if (profileData.businessType === "Individual") {
         if (!profileData.abn) return "ABN is required";
         if (profileData.abn.toString().length !== 11)
           return "ABN must be 11 digits";
@@ -40,6 +36,7 @@ export default function validateStep(step, profileData) {
       }
       // Note: ABN/BRN only required for Individual business type
       break;
+
       
     default:
       return null;
