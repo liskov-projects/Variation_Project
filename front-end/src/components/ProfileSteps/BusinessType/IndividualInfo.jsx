@@ -6,7 +6,7 @@ const IndividualInfo = () => {
 
   return (
     <div>
-      <h4 className="mb-3">Individual (Default) Information</h4>
+      <h4 className="mb-3">Individual Information</h4>
 
       <div className="mb-3">
         <label className="form-label">ABN (11 digits) *</label>
