@@ -11,37 +11,6 @@ const PartnershipInfo = () => {
     <div>
       {/* Partnership Section */}
       <h4 className="mb-3 mt-4">Partnership Information</h4>
-      <div className="mb-3">
-        <label className="form-label">Partnership Y/N *</label>
-        <div>
-          <div className="form-check form-check-inline">
-            <input
-              type="radio"
-              className="form-check-input"
-              id="partnershipYes"
-              checked={profileData.partnership === "Yes"}
-              onChange={() => updateProfile({ partnership: "Yes" })}
-              required
-            />
-            <label className="form-check-label" htmlFor="partnershipYes">
-              Yes
-            </label>
-          </div>
-          <div className="form-check form-check-inline">
-            <input
-              type="radio"
-              className="form-check-input"
-              id="partnershipNo"
-              checked={profileData.partnership === "No"}
-              onChange={() => updateProfile({ partnership: "No" })}
-              required
-            />
-            <label className="form-check-label" htmlFor="partnershipNo">
-              No
-            </label>
-          </div>
-        </div>
-      </div>
 
       {profileData.partnership === "Yes" && (
         <div className="mb-3">

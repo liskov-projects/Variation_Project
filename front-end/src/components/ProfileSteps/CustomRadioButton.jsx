@@ -1,4 +1,13 @@
+import { useProfile } from "../../contexts/ProfileContext";
+
 export default function CustomRadioButton({ selected, setSelected, option }) {
+  const { updateProfile } = useProfile();
+
+  let businessFields;
+  if (option === 'Individual') businessFields = { company: "No", companyDetails: {companyName: "", acn: ""}, partnership: "No", numberOfPartners: "", partners: [] };
+  if (option === 'Company') businessFields = { abn: "", brn: "", company: "Yes", partnership: "No", numberOfPartners: "", partners: []  };
+  if (option === 'Partnership') businessFields = { abn: "", brn: "", company: "No", companyDetails: {companyName: "", acn: ""}, partnership: "Yes" };
+
   return (
     <button
       className={`btn btn-outline-success btn-lg d-flex align-items-center justify-content-center${
@@ -6,7 +15,10 @@ export default function CustomRadioButton({ selected, setSelected, option }) {
       }`}
       style={{ minHeight: "80px", position: "relative", minWidth: "160px" }}
       type="button"
-      onClick={() => setSelected(option)}
+      onClick={() => {
+        setSelected(option)
+        updateProfile(businessFields)
+      }}
     >
       <div>
         <i className="bi bi-person-check fs-3 d-block mb-2"></i>
