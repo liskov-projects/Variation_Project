@@ -46,6 +46,12 @@ const StepTwo = () => {
           marginBottom: "1rem",
         }}
       >
+        {/* Individual */}
+        <CustomRadioButton
+          selected={selected}
+          setSelected={setSelected}
+          option={"Individual"}
+        />
         {/*  NEW: Company*/}
         <CustomRadioButton
           selected={selected}
@@ -59,12 +65,6 @@ const StepTwo = () => {
           option={"Partnership"}
         />
 
-        {/* Individual */}
-        <CustomRadioButton
-          selected={selected}
-          setSelected={setSelected}
-          option={"Individual"}
-        />
       </div>
     </>
   );
