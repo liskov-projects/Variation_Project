@@ -4,7 +4,7 @@ export default function CustomRadioButton({ selected, setSelected, option }) {
       className={`btn btn-outline-success btn-lg d-flex align-items-center justify-content-center${
         selected === option ? " active" : ""
       }`}
-      style={{ minHeight: "80px", position: "relative" }}
+      style={{ minHeight: "80px", position: "relative", minWidth: "160px" }}
       type="button"
       onClick={() => setSelected(option)}
     >
