@@ -12,14 +12,8 @@ const ProfileSetup = () => {
   const navigate = useNavigate();
   const [formError, setFormError] = useState(null);
   const [isCompleted, setIsCompleted] = useState([false, false, false, false]);
-  const {
-    currentStep,
-    setCurrentStep,
-    saveProfile,
-    loading,
-    isProfileComplete,
-    profileData,
-  } = useProfile();
+  const { currentStep, setCurrentStep, saveProfile, loading, isProfileComplete, profileData } =
+    useProfile();
 
   // Redirect if profile is already complete
   useEffect(() => {
