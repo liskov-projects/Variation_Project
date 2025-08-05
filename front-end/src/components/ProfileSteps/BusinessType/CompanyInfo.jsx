@@ -1,5 +1,4 @@
 import { useProfile } from "../../../contexts/ProfileContext";
-import { useEffect } from "react";
 
 const CompanyInfo = () => {
   const { profileData, updateProfile } = useProfile();
@@ -14,6 +13,7 @@ const CompanyInfo = () => {
           <label className="form-label">Company Name *</label>
           <input
             type="text"
+            placeholder="ABC Construction Pty Ltd"
             className="form-control"
             value={profileData.companyDetails?.companyName || ""}
             onChange={(e) =>
@@ -34,6 +34,7 @@ const CompanyInfo = () => {
           <label className="form-label">ACN *</label>
           <input
             type="number"
+            placeholder="123456789"
             className="form-control"
             value={profileData.companyDetails?.acn || ""}
             onChange={(e) =>

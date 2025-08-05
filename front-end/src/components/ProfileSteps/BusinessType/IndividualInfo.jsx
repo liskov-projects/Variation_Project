@@ -12,6 +12,7 @@ const IndividualInfo = () => {
         <label className="form-label">ABN (11 digits) *</label>
         <input
           type="number"
+          placeholder='0123456789'
           className="form-control"
           value={profileData.abn || ""}
           onChange={(e) => updateProfile({ abn: e.target.value })}
@@ -24,6 +25,7 @@ const IndividualInfo = () => {
         <label className="form-label">Builder Registration # *</label>
         <input
           type="text"
+          placeholder='1234567'
           className="form-control"
           value={profileData.brn || ""}
           onChange={(e) => updateProfile({ brn: e.target.value })}
