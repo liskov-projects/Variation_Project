@@ -1,9 +1,14 @@
 import React from "react";
 import { useProfile } from "../../contexts/ProfileContext";
-import validateStep from "../../utils/stepsValidator";
 
-const StepOne = () => {
+const StepOne = ({ setFormError }) => {
   const { profileData, updateProfile } = useProfile();
+
+  const validateEmailOnBlur = () => {
+    setFormError("")
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(profileData.email)) setFormError("A valid email is required");
+  }
 
   return (
     <div>
@@ -40,7 +45,7 @@ const StepOne = () => {
           placeholder="john.doe@email.com"
           className="form-control"
           value={profileData.email || ""}
-          onBlur={() => validateStep}
+          onBlur={validateEmailOnBlur}
           onChange={(e) => updateProfile({ email: e.target.value })}
           required
         />

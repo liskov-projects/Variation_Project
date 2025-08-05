@@ -26,7 +26,7 @@ const ProfileSetup = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <StepOne />;
+        return <StepOne setFormError={setFormError} />;
       case 2:
         return <StepTwo />;
       case 3:
