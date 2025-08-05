@@ -4,7 +4,9 @@ export default function validateStep(step, profileData) {
     case 1:
       if (!profileData.fullName) return "Full name is required";
       if (!profileData.address) return "Address is required";
-      if (!profileData.email || !profileData.email.includes("@"))
+      // Validate email string against regex pattern
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!profileData.email || !emailRegex.test(profileData.email))
         return "A valid email is required";
       if (!profileData.phoneNumber) return "Phone number is required";
       break;
