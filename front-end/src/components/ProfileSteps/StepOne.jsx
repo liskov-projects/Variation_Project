@@ -1,5 +1,6 @@
 import React from "react";
 import { useProfile } from "../../contexts/ProfileContext";
+import validateStep from "../../utils/stepsValidator";
 
 const StepOne = () => {
   const { profileData, updateProfile } = useProfile();
@@ -39,6 +40,7 @@ const StepOne = () => {
           placeholder="john.doe@email.com"
           className="form-control"
           value={profileData.email || ""}
+          onBlur={() => validateStep}
           onChange={(e) => updateProfile({ email: e.target.value })}
           required
         />

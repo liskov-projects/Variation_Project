@@ -1,8 +1,6 @@
 // Validate form data for each step
 export default function validateStep(step, profileData) {
-  // Validate all business types have an ABN
-  if (profileData.abn.toString().length !== 11) return "ABN must be 11 digits";
-  
+
   switch (step) {
     case 1:
       if (!profileData.fullName) return "Full name is required";
@@ -15,6 +13,9 @@ export default function validateStep(step, profileData) {
       break;
       
     case 2:
+      // Validate all business types have an ABN
+      if (profileData.abn.toString().length !== 11) return "ABN must be 11 digits";
+      
       if (profileData.businessType === "Company") {
         if (!profileData.companyDetails?.companyName)
           return "Company name is required";
