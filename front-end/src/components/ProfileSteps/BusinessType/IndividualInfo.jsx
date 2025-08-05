@@ -9,6 +9,18 @@ const IndividualInfo = () => {
       <h4 className="mb-3">Individual Information</h4>
 
       <div className="mb-3">
+        <label className="form-label">Builder Registration # *</label>
+        <input
+          type="text"
+          placeholder='1234567'
+          className="form-control"
+          value={profileData.brn || ""}
+          onChange={(e) => updateProfile({ brn: e.target.value })}
+          required
+        />
+      </div>
+
+      <div className="mb-3">
         <label className="form-label">ABN (11 digits) *</label>
         <input
           type="number"
@@ -20,18 +32,7 @@ const IndividualInfo = () => {
         />
         <small className="text-muted">Must be exactly 11 digits</small>
       </div>
-
-      <div className="mb-3">
-        <label className="form-label">Builder Registration # *</label>
-        <input
-          type="text"
-          placeholder='1234567'
-          className="form-control"
-          value={profileData.brn || ""}
-          onChange={(e) => updateProfile({ brn: e.target.value })}
-          required
-        />
-      </div>
+      
     </div>
   );
 };

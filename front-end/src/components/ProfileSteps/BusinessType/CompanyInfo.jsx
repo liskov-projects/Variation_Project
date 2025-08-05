@@ -50,6 +50,20 @@ const CompanyInfo = () => {
           <small className="text-muted">Must be exactly 9 digits</small>
         </div>
       )}
+
+      <div className="mb-3">
+        <label className="form-label">ABN (11 digits) *</label>
+        <input
+          type="number"
+          placeholder='0123456789'
+          className="form-control"
+          value={profileData.abn || ""}
+          onChange={(e) => updateProfile({ abn: e.target.value })}
+          required
+        />
+        <small className="text-muted">Must be exactly 11 digits</small>
+      </div>
+      
     </div>
   );
 };

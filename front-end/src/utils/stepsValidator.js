@@ -1,5 +1,8 @@
 // Validate form data for each step
 export default function validateStep(step, profileData) {
+  // Validate all business types have an ABN
+  if (profileData.abn.toString().length !== 11) return "ABN must be 11 digits";
+  
   switch (step) {
     case 1:
       if (!profileData.fullName) return "Full name is required";
@@ -32,11 +35,8 @@ export default function validateStep(step, profileData) {
         }
       } else if (profileData.businessType === "Individual") {
         if (!profileData.abn) return "ABN is required";
-        if (profileData.abn.toString().length !== 11)
-          return "ABN must be 11 digits";
         if (!profileData.brn) return "Builder Registration is required";
       }
-      // Note: ABN/BRN only required for Individual business type
       break;
 
       
