@@ -8,6 +8,19 @@ const CompanyInfo = () => {
       {/* Company Section */}
       <h4 className="mb-3">Company Information</h4>
 
+      <div className="mb-3">
+        <label className="form-label">ABN (11 digits) *</label>
+        <input
+          type="number"
+          placeholder='0123456789'
+          className="form-control light-grey-placeholder-text"
+          value={profileData.abn || ""}
+          onChange={(e) => updateProfile({ abn: e.target.value })}
+          required
+        />
+        <small className="text-muted">Must be exactly 11 digits</small>
+      </div>
+
       {profileData.company === "Yes" && (
         <div className="mb-3">
           <label className="form-label">Company Name *</label>
@@ -50,19 +63,6 @@ const CompanyInfo = () => {
           <small className="text-muted">Must be exactly 9 digits</small>
         </div>
       )}
-
-      <div className="mb-3">
-        <label className="form-label">ABN (11 digits) *</label>
-        <input
-          type="number"
-          placeholder='0123456789'
-          className="form-control light-grey-placeholder-text"
-          value={profileData.abn || ""}
-          onChange={(e) => updateProfile({ abn: e.target.value })}
-          required
-        />
-        <small className="text-muted">Must be exactly 11 digits</small>
-      </div>
       
     </div>
   );

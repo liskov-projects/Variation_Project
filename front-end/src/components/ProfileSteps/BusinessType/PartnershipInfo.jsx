@@ -12,6 +12,19 @@ const PartnershipInfo = () => {
       {/* Partnership Section */}
       <h4 className="mb-3 mt-4">Partnership Information</h4>
 
+      <div className="mb-3">
+        <label className="form-label">ABN (11 digits) *</label>
+        <input
+          type="number"
+          placeholder='0123456789'
+          className="form-control light-grey-placeholder-text"
+          value={profileData.abn || ""}
+          onChange={(e) => updateProfile({ abn: e.target.value })}
+          required
+        />
+        <small className="text-muted">Must be exactly 11 digits</small>
+      </div>
+
       {profileData.partnership === "Yes" && (
         <div className="mb-3">
           <label className="form-label">Number of Partners *</label>
@@ -62,18 +75,6 @@ const PartnershipInfo = () => {
         </div>
       )}
 
-      <div className="mb-3">
-        <label className="form-label">ABN (11 digits) *</label>
-        <input
-          type="number"
-          placeholder='0123456789'
-          className="form-control light-grey-placeholder-text"
-          value={profileData.abn || ""}
-          onChange={(e) => updateProfile({ abn: e.target.value })}
-          required
-        />
-        <small className="text-muted">Must be exactly 11 digits</small>
-      </div>
     </div>
   );
 };
