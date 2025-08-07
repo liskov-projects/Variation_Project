@@ -45,7 +45,7 @@ const StepOne = ({ setFormError }) => {
           className="form-control light-grey-placeholder-text"
           value={profileData.email || ""}
           onBlur={validateEmailOnBlur}
-          onChange={(e) => updateProfile({ email: e.target.value })}
+          onChange={(e) => {setFormError(""); updateProfile({ email: e.target.value })}}
           required
         />
       </div>
