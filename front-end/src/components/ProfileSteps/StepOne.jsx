@@ -1,4 +1,3 @@
-import React from "react";
 import { useProfile } from "../../contexts/ProfileContext";
 
 const StepOne = ({ setFormError }) => {
@@ -19,7 +18,7 @@ const StepOne = ({ setFormError }) => {
         <input
           type="text"
           placeholder="John Doe"
-          className="form-control"
+          className="form-control light-grey-placeholder-text"
           value={profileData.fullName || ""}
           onChange={(e) => updateProfile({ fullName: e.target.value })}
           required
@@ -31,7 +30,7 @@ const StepOne = ({ setFormError }) => {
         <input
           type="text"
           placeholder="123 Main Street, City, State, Postcode"
-          className="form-control"
+          className="form-control light-grey-placeholder-text"
           value={profileData.address || ""}
           onChange={(e) => updateProfile({ address: e.target.value })}
           required
@@ -43,7 +42,7 @@ const StepOne = ({ setFormError }) => {
         <input
           type="email"
           placeholder="john.doe@email.com"
-          className="form-control"
+          className="form-control light-grey-placeholder-text"
           value={profileData.email || ""}
           onBlur={validateEmailOnBlur}
           onChange={(e) => updateProfile({ email: e.target.value })}
@@ -56,7 +55,7 @@ const StepOne = ({ setFormError }) => {
         <input
           type="text"
           placeholder="0412 345 678"
-          className="form-control"
+          className="form-control light-grey-placeholder-text"
           value={profileData.phoneNumber || ""}
           onChange={(e) => updateProfile({ phoneNumber: e.target.value })}
           required

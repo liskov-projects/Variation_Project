@@ -18,7 +18,7 @@ const PartnershipInfo = () => {
           <input
             type="number"
             placeholder="1"
-            className="form-control"
+            className="form-control light-grey-placeholder-text"
             value={profileData.numberOfPartners || ""}
             onChange={(e) =>
               updateProfile({ numberOfPartners: e.target.value })
@@ -36,7 +36,7 @@ const PartnershipInfo = () => {
                   <input
                     type="text"
                     placeholder={index === 0 ? "David Johnson" : index === 1 ? "Sarah Wilson" : "Michael Brown"}
-                    className="form-control"
+                    className="form-control light-grey-placeholder-text"
                     value={partner.name || ""}
                     onChange={(e) =>
                       updatePartner(index, "name", e.target.value)
@@ -49,7 +49,7 @@ const PartnershipInfo = () => {
                   <input
                     type="text"
                     placeholder={index === 0 ? "456 Collins Street, Melbourne VIC 3000" : index === 1 ? "789 George Street, Sydney NSW 2000" : "321 Queen Street, Brisbane QLD 4000"}
-                    className="form-control"
+                    className="form-control light-grey-placeholder-text"
                     value={partner.address || ""}
                     onChange={(e) =>
                       updatePartner(index, "address", e.target.value)
@@ -67,7 +67,7 @@ const PartnershipInfo = () => {
         <input
           type="number"
           placeholder='0123456789'
-          className="form-control"
+          className="form-control light-grey-placeholder-text"
           value={profileData.abn || ""}
           onChange={(e) => updateProfile({ abn: e.target.value })}
           required

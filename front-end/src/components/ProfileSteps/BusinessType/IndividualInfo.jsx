@@ -13,7 +13,7 @@ const IndividualInfo = () => {
         <input
           type="text"
           placeholder='1234567'
-          className="form-control"
+          className="form-control light-grey-placeholder-text"
           value={profileData.brn || ""}
           onChange={(e) => updateProfile({ brn: e.target.value })}
           required
@@ -25,7 +25,7 @@ const IndividualInfo = () => {
         <input
           type="number"
           placeholder='0123456789'
-          className="form-control"
+          className="form-control light-grey-placeholder-text"
           value={profileData.abn || ""}
           onChange={(e) => updateProfile({ abn: e.target.value })}
           required

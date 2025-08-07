@@ -14,7 +14,7 @@ const CompanyInfo = () => {
           <input
             type="text"
             placeholder="ABC Construction Pty Ltd"
-            className="form-control"
+            className="form-control light-grey-placeholder-text"
             value={profileData.companyDetails?.companyName || ""}
             onChange={(e) =>
               updateProfile({
@@ -35,7 +35,7 @@ const CompanyInfo = () => {
           <input
             type="number"
             placeholder="123456789"
-            className="form-control"
+            className="form-control light-grey-placeholder-text"
             value={profileData.companyDetails?.acn || ""}
             onChange={(e) =>
               updateProfile({
@@ -56,7 +56,7 @@ const CompanyInfo = () => {
         <input
           type="number"
           placeholder='0123456789'
-          className="form-control"
+          className="form-control light-grey-placeholder-text"
           value={profileData.abn || ""}
           onChange={(e) => updateProfile({ abn: e.target.value })}
           required

@@ -62,7 +62,7 @@ const ProfileEdit = () => {
                     <label className="form-label">Builder Name *</label>
                     <input
                       type="text"
-                      className="form-control"
+                      className="form-control light-grey-placeholder-text"
                       value={profileData.fullName || ""}
                       onChange={(e) => updateProfile({ fullName: e.target.value })}
                       required
@@ -82,7 +82,7 @@ const ProfileEdit = () => {
                     <label className="form-label">Email *</label>
                     <input
                       type="email"
-                      className="form-control"
+                      className="form-control light-grey-placeholder-text"
                       value={profileData.email || ""}
                       onChange={(e) => updateProfile({ email: e.target.value })}
                       required

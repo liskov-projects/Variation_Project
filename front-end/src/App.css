@@ -28,6 +28,10 @@
   color: #61dafb;
 }
 
+input.light-grey-placeholder-text::placeholder {
+  color: lightgray;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
