@@ -47,6 +47,7 @@ const ProfileSetup = () => {
   };
 
   const handleNext = async () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     const validationError = validateStep(currentStep, profileData);
     if (validationError) {
       setFormError(validationError);
