@@ -1,6 +1,6 @@
 import { useProfile } from "../../contexts/ProfileContext";
 
-export default function CustomRadioButton({ selected, setSelected, option }) {
+export default function CustomRadioButton({ selected, setSelected, option, icon }) {
   const { updateProfile } = useProfile();
 
   let businessFields;
@@ -21,7 +21,7 @@ export default function CustomRadioButton({ selected, setSelected, option }) {
       }}
     >
       <div>
-        <i className="bi bi-person-check fs-3 d-block mb-2"></i>
+        <i className={`bi ${icon} fs-3 d-block mb-2`}></i>
         <strong>{option}</strong>
       </div>
       <input

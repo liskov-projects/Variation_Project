@@ -10,13 +10,13 @@ const PartnershipInfo = () => {
   return (
     <div>
       {/* Partnership Section */}
-      <h4 className="mb-3 mt-4">Partnership Information</h4>
+      <h4 className="mb-3">Partnership Information</h4>
 
       <div className="mb-3">
         <label className="form-label">ABN (11 digits) *</label>
         <input
-          type="number"
-          placeholder='0123456789'
+          type="text"
+          placeholder='01234567890'
           className="form-control light-grey-placeholder-text"
           value={profileData.abn || ""}
           onChange={(e) => updateProfile({ abn: e.target.value })}

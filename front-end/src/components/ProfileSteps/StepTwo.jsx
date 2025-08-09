@@ -36,14 +36,18 @@ const StepTwo = () => {
           marginTop: "1rem",
           marginBottom: "1rem",
         }}>
-        {["Individual", "Company", "Partnership"].map((type) => (
+        {["Individual", "Company", "Partnership"].map((type, index) => {
+          const iconArray = ["bi-person", "bi-building", "bi-people"]
+          return (
           <CustomRadioButton
             key={type}
             selected={selected}
             setSelected={setSelected}
             option={type}
+            icon={iconArray[index]}
           />
-        ))}
+        )}
+        )}
       </div>
       <div>{renderContent()}</div>
     </div>
