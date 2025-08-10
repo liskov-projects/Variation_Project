@@ -82,6 +82,16 @@ const ProfileSetup = () => {
     setFormError(null); // Clear any previous errors
   };
 
+  const handleDisableNext = () => {
+    if (loading) return true; // If loading disable button
+    if (currentStep < 3) {
+      // If step 1 or 2 isn't complete disable the button
+      if (!isCompleted[currentStep - 1]) return true;
+    } else {
+      return false
+    }
+  }
+
   if (loading) {
     return (
       <div>
@@ -128,7 +138,7 @@ const ProfileSetup = () => {
                   type="button"
                   className="btn btn-primary ms-auto"
                   onClick={handleNext}
-                  disabled={loading}>
+                  disabled={handleDisableNext()}>
                   {loading ? "Processing..." : currentStep < 3 ? "Next" : "Complete Profile"}
                 </button>
               </div>
