@@ -4,9 +4,28 @@ export default function CustomRadioButton({ selected, setSelected, option, icon 
   const { updateProfile } = useProfile();
 
   let businessFields;
-  if (option === 'Individual') businessFields = { company: "No", companyDetails: {companyName: "", acn: ""}, partnership: "No", numberOfPartners: "", partners: [] };
-  if (option === 'Company') businessFields = { abn: "", brn: "", company: "Yes", partnership: "No", numberOfPartners: "", partners: []  };
-  if (option === 'Partnership') businessFields = { abn: "", brn: "", company: "No", companyDetails: {companyName: "", acn: ""}, partnership: "Yes" };
+  if (option === "Individual")
+    businessFields = {
+      businessType: "Individual",
+      companyDetails: { companyName: "", acn: "" },
+      numberOfPartners: "",
+      partners: [],
+    };
+  if (option === "Company")
+    businessFields = {
+      businessType: "Company",
+      abn: "",
+      brn: "",
+      numberOfPartners: "",
+      partners: [],
+    };
+  if (option === "Partnership")
+    businessFields = {
+      businessType: "Partnership",
+      abn: "",
+      brn: "",
+      companyDetails: { companyName: "", acn: "" },
+    };
 
   return (
     <button
@@ -16,10 +35,9 @@ export default function CustomRadioButton({ selected, setSelected, option, icon 
       style={{ minHeight: "80px", position: "relative", minWidth: "160px" }}
       type="button"
       onClick={() => {
-        setSelected(option)
-        updateProfile(businessFields)
-      }}
-    >
+        setSelected(option);
+        updateProfile(businessFields);
+      }}>
       <div>
         <i className={`bi ${icon} fs-3 d-block mb-2`}></i>
         <strong>{option}</strong>

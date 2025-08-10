@@ -4,7 +4,7 @@ const PartnershipInfo = () => {
   const { profileData, updateProfile, updatePartner } = useProfile();
 
   if (profileData.companyDetails?.acn) {
-    profileData.company = "Yes";
+    profileData.businessType = "Company";
   }
 
   return (
@@ -15,9 +15,9 @@ const PartnershipInfo = () => {
       <div className="mb-3">
         <label className="form-label">ABN (11 digits) *</label>
         <input
-          type="number"
-          placeholder='01234567890'
-          className="form-control light-grey-placeholder-text no-carets"
+          type="text"
+          placeholder="01234567890"
+          className="form-control light-grey-placeholder-text"
           value={profileData.abn || ""}
           onChange={(e) => updateProfile({ abn: e.target.value })}
           required
@@ -25,7 +25,7 @@ const PartnershipInfo = () => {
         <small className="text-muted">Must be exactly 11 digits</small>
       </div>
 
-      {profileData.partnership === "Yes" && (
+      {profileData.businessType === "Partnership" && (
         <div className="mb-3">
           <label className="form-label">Number of Partners *</label>
           <input
@@ -33,27 +33,27 @@ const PartnershipInfo = () => {
             placeholder="1"
             className="form-control light-grey-placeholder-text"
             value={profileData.numberOfPartners || ""}
-            onChange={(e) =>
-              updateProfile({ numberOfPartners: e.target.value })
-            }
+            onChange={(e) => updateProfile({ numberOfPartners: e.target.value })}
             min="1"
             required
           />
 
           {profileData.partners &&
             profileData.partners.map((partner, index) => (
-              <div key={index} className="card mb-3 mt-3 p-3 bg-light">
+              <div
+                key={index}
+                className="card mb-3 mt-3 p-3 bg-light">
                 <h5>Partner {index + 1}</h5>
                 <div className="mb-3">
                   <label className="form-label">Name *</label>
                   <input
                     type="text"
-                    placeholder={index === 0 ? "David Johnson" : index === 1 ? "Sarah Wilson" : "Michael Brown"}
+                    placeholder={
+                      index === 0 ? "David Johnson" : index === 1 ? "Sarah Wilson" : "Michael Brown"
+                    }
                     className="form-control light-grey-placeholder-text"
                     value={partner.name || ""}
-                    onChange={(e) =>
-                      updatePartner(index, "name", e.target.value)
-                    }
+                    onChange={(e) => updatePartner(index, "name", e.target.value)}
                     required
                   />
                 </div>
@@ -61,12 +61,16 @@ const PartnershipInfo = () => {
                   <label className="form-label">Address *</label>
                   <input
                     type="text"
-                    placeholder={index === 0 ? "456 Collins Street, Melbourne VIC 3000" : index === 1 ? "789 George Street, Sydney NSW 2000" : "321 Queen Street, Brisbane QLD 4000"}
+                    placeholder={
+                      index === 0
+                        ? "456 Collins Street, Melbourne VIC 3000"
+                        : index === 1
+                          ? "789 George Street, Sydney NSW 2000"
+                          : "321 Queen Street, Brisbane QLD 4000"
+                    }
                     className="form-control light-grey-placeholder-text"
                     value={partner.address || ""}
-                    onChange={(e) =>
-                      updatePartner(index, "address", e.target.value)
-                    }
+                    onChange={(e) => updatePartner(index, "address", e.target.value)}
                     required
                   />
                 </div>
@@ -74,7 +78,6 @@ const PartnershipInfo = () => {
             ))}
         </div>
       )}
-
     </div>
   );
 };

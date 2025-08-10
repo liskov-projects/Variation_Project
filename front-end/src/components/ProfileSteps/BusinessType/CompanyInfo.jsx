@@ -11,9 +11,9 @@ const CompanyInfo = () => {
       <div className="mb-3">
         <label className="form-label">ABN (11 digits) *</label>
         <input
-          type="number"
-          placeholder='01234567890'
-          className="form-control light-grey-placeholder-text no-carets"
+          type="text"
+          placeholder="01234567890"
+          className="form-control light-grey-placeholder-text"
           value={profileData.abn || ""}
           onChange={(e) => updateProfile({ abn: e.target.value })}
           required
@@ -21,7 +21,7 @@ const CompanyInfo = () => {
         <small className="text-muted">Must be exactly 11 digits</small>
       </div>
 
-      {profileData.company === "Yes" && (
+      {profileData.businessType === "Company" && (
         <div className="mb-3">
           <label className="form-label">Company Name *</label>
           <input
@@ -42,7 +42,7 @@ const CompanyInfo = () => {
         </div>
       )}
 
-      {profileData.company === "Yes" && (
+      {profileData.businessType === "Company" && (
         <div className="mb-3">
           <label className="form-label">ACN *</label>
           <input
@@ -63,10 +63,8 @@ const CompanyInfo = () => {
           <small className="text-muted">Must be exactly 9 digits</small>
         </div>
       )}
-      
     </div>
   );
 };
 
 export default CompanyInfo;
-
