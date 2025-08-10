@@ -11,9 +11,9 @@ const CompanyInfo = () => {
       <div className="mb-3">
         <label className="form-label">ABN (11 digits) *</label>
         <input
-          type="text"
+          type="number"
           placeholder='01234567890'
-          className="form-control light-grey-placeholder-text"
+          className="form-control light-grey-placeholder-text no-carets"
           value={profileData.abn || ""}
           onChange={(e) => updateProfile({ abn: e.target.value })}
           required
@@ -46,9 +46,9 @@ const CompanyInfo = () => {
         <div className="mb-3">
           <label className="form-label">ACN *</label>
           <input
-            type="text"
+            type="number"
             placeholder="123456789"
-            className="form-control light-grey-placeholder-text"
+            className="form-control light-grey-placeholder-text no-carets"
             value={profileData.companyDetails?.acn || ""}
             onChange={(e) =>
               updateProfile({
