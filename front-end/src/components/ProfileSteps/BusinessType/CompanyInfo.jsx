@@ -46,7 +46,7 @@ const CompanyInfo = () => {
         <div className="mb-3">
           <label className="form-label">ACN *</label>
           <input
-            type="number"
+            type="text"
             placeholder="123456789"
             className="form-control light-grey-placeholder-text"
             value={profileData.companyDetails?.acn || ""}
