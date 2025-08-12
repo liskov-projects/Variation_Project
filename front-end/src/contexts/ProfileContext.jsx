@@ -117,7 +117,7 @@ export const ProfileProvider = ({ children }) => {
         numberOfPartners: "",
       }));
     }
-  }, [profileData.businessType, profileData.numberOfPartners, profileData.partners]);
+  }, [profileData.businessType, profileData.numberOfPartners]);
 
   const saveProfile = async (isComplete = false) => {
     if (!userId) return { success: false, error: "User not authenticated" };
