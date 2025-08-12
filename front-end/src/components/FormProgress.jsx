@@ -13,7 +13,6 @@ const FormProgress = ({ isCompleted, changeCompletedState }) => {
     { number: 3, label: "Review & Submit" },
   ];
 
-
   // will remove the green tick if the step form is not completed
   useEffect(() => {
     const error = validateStep(currentStep, profileData);
@@ -29,8 +28,7 @@ const FormProgress = ({ isCompleted, changeCompletedState }) => {
   return (
     <div
       className="sidebar bg-light border-end p-4"
-      style={{ width: "280px", minHeight: "100vh" }}
-    >
+      style={{ minWidth: "280px", minHeight: "100vh" }}>
       <h4 className="mb-4">Profile Setup</h4>
       <div className="d-flex flex-column gap-3">
         {steps.map((step, index) => {
@@ -51,8 +49,7 @@ const FormProgress = ({ isCompleted, changeCompletedState }) => {
                 ${isActive ? "bg-primary text-white" : "bg-white"} 
                 ${isClickable ? "cursor-pointer" : "opacity-50"}
               `}
-              style={{ cursor: isClickable ? "pointer" : "not-allowed" }}
-            >
+              style={{ cursor: isClickable ? "pointer" : "not-allowed" }}>
               <div
                 className={`
                   step-number me-3 rounded-circle d-flex align-items-center justify-content-center
@@ -62,8 +59,7 @@ const FormProgress = ({ isCompleted, changeCompletedState }) => {
                   width: "30px",
                   height: "30px",
                   border: "2px solid currentColor",
-                }}
-              >
+                }}>
                 {completed ? "✓" : step.number}
               </div>
               <span>{step.label}</span>

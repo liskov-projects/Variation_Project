@@ -1,15 +1,21 @@
 // Validate form data for each step
 export default function validateStep(step, profileData) {
+
   switch (step) {
     case 1:
       if (!profileData.fullName) return "Full name is required";
       if (!profileData.address) return "Address is required";
-      if (!profileData.email || !profileData.email.includes("@"))
+      // Validate email string against regex pattern
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!profileData.email || !emailRegex.test(profileData.email))
         return "A valid email is required";
       if (!profileData.phoneNumber) return "Phone number is required";
       break;
       
     case 2:
+      // Validate all business types have an ABN
+      if (profileData.abn.toString().length !== 11) return "ABN must be 11 digits";
+      
       if (profileData.businessType === "Company") {
         if (!profileData.companyDetails?.companyName)
           return "Company name is required";
@@ -28,18 +34,12 @@ export default function validateStep(step, profileData) {
           if (!partner.name) return `Partner ${i + 1} name is required`;
           if (!partner.address) return `Partner ${i + 1} address is required`;
         }
-      }
-      break;
-      
-    case 3:
-      if (profileData.businessType === "Individual") {
+      } else if (profileData.businessType === "Individual") {
         if (!profileData.abn) return "ABN is required";
-        if (profileData.abn.toString().length !== 11)
-          return "ABN must be 11 digits";
         if (!profileData.brn) return "Builder Registration is required";
       }
-      // Note: ABN/BRN only required for Individual business type
       break;
+
       
     default:
       return null;

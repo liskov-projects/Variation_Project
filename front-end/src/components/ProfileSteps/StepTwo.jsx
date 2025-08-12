@@ -1,3 +1,4 @@
+// src/components/ProfileSteps/StepTwo.jsx
 import { useState, useEffect } from "react";
 import { useProfile } from "../../contexts/ProfileContext";
 import CustomRadioButton from "./CustomRadioButton";
@@ -7,35 +8,25 @@ import IndividualInfo from "./BusinessType/IndividualInfo";
 
 const StepTwo = () => {
   const { profileData, updateProfile } = useProfile();
-  const [selected, setSelected] = useState(() => {
-    if (profileData.businessType) return profileData.businessType;
-    if (profileData.company === "Yes") return "Company";
-    if (profileData.partnership === "Yes") return "Partnership";
-    return "Individual";
-  });
-
-  // REVIEW: direct mutation of state | also happens in other files
-  if (profileData.companyDetails?.acn) {
-    profileData.company = "Yes";
-  }
+  const [selected, setSelected] = useState(profileData.businessType || "Individual");
 
   useEffect(() => {
-    updateProfile({
-      businessType: selected,
-      company: selected === "Company" ? "Yes" : "No",
-      partnership: selected === "Partnership" ? "Yes" : "No",
-    });
+    updateProfile({ businessType: selected });
   }, [selected]);
 
   const renderContent = () => {
-    if (selected === "Company") return <CompanyInfo />;
-    else if (selected === "Partnership") return <PartnershipInfo />;
-    else if (selected === "Individual") return <IndividualInfo />;
-    else return <IndividualInfo />;
+    switch (selected) {
+      case "Company":
+        return <CompanyInfo />;
+      case "Partnership":
+        return <PartnershipInfo />;
+      default:
+        return <IndividualInfo />;
+    }
   };
 
-  const radios = (
-    <>
+  return (
+    <div>
       <h4>Select business type</h4>
       <div
         style={{
@@ -44,34 +35,20 @@ const StepTwo = () => {
           gap: "1.5rem",
           marginTop: "1rem",
           marginBottom: "1rem",
-        }}
-      >
-        {/*  NEW: Company*/}
-        <CustomRadioButton
-          selected={selected}
-          setSelected={setSelected}
-          option={"Company"}
-        />
-        {/* Partnership */}
-        <CustomRadioButton
-          selected={selected}
-          setSelected={setSelected}
-          option={"Partnership"}
-        />
-
-        {/* Individual */}
-        <CustomRadioButton
-          selected={selected}
-          setSelected={setSelected}
-          option={"Individual"}
-        />
+        }}>
+        {["Individual", "Company", "Partnership"].map((type, index) => {
+          const iconArray = ["bi-person", "bi-building", "bi-people"]
+          return (
+          <CustomRadioButton
+            key={type}
+            selected={selected}
+            setSelected={setSelected}
+            option={type}
+            icon={iconArray[index]}
+          />
+        )}
+        )}
       </div>
-    </>
-  );
-
-  return (
-    <div>
-      <div>{radios}</div>
       <div>{renderContent()}</div>
     </div>
   );

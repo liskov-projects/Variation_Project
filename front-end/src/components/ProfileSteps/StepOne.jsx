@@ -1,8 +1,13 @@
-import React from "react";
 import { useProfile } from "../../contexts/ProfileContext";
 
-const StepOne = () => {
+const StepOne = ({ setFormError }) => {
   const { profileData, updateProfile } = useProfile();
+
+  const validateEmailOnBlur = () => {
+    setFormError("")
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(profileData.email)) setFormError("A valid email is required");
+  }
 
   return (
     <div>
@@ -12,7 +17,8 @@ const StepOne = () => {
         <label className="form-label">Builder Name *</label>
         <input
           type="text"
-          className="form-control"
+          placeholder="John Doe"
+          className="form-control light-grey-placeholder-text"
           value={profileData.fullName || ""}
           onChange={(e) => updateProfile({ fullName: e.target.value })}
           required
@@ -23,7 +29,8 @@ const StepOne = () => {
         <label className="form-label">Address *</label>
         <input
           type="text"
-          className="form-control"
+          placeholder="123 Main Street, City, State, Postcode"
+          className="form-control light-grey-placeholder-text"
           value={profileData.address || ""}
           onChange={(e) => updateProfile({ address: e.target.value })}
           required
@@ -34,9 +41,11 @@ const StepOne = () => {
         <label className="form-label">Email *</label>
         <input
           type="email"
-          className="form-control"
+          placeholder="john.doe@email.com"
+          className="form-control light-grey-placeholder-text"
           value={profileData.email || ""}
-          onChange={(e) => updateProfile({ email: e.target.value })}
+          onBlur={validateEmailOnBlur}
+          onChange={(e) => {setFormError(""); updateProfile({ email: e.target.value })}}
           required
         />
       </div>
@@ -45,7 +54,8 @@ const StepOne = () => {
         <label className="form-label">Telephone/Mobile Number *</label>
         <input
           type="text"
-          className="form-control"
+          placeholder="0412 345 678"
+          className="form-control light-grey-placeholder-text"
           value={profileData.phoneNumber || ""}
           onChange={(e) => updateProfile({ phoneNumber: e.target.value })}
           required

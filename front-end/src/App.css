@@ -28,6 +28,27 @@
   color: #61dafb;
 }
 
+input.light-grey-placeholder-text::placeholder {
+  color: lightgray;
+}
+
+/* Hide number input arrows/carets */
+.no-carets::-webkit-outer-spin-button,
+.no-carets::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.no-carets[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Additional fallback for older browsers */
+.no-carets {
+  appearance: textfield;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

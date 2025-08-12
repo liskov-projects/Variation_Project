@@ -6,13 +6,14 @@ const IndividualInfo = () => {
 
   return (
     <div>
-      <h4 className="mb-3">Individual (Default) Information</h4>
+      <h4 className="mb-3">Individual Information</h4>
 
       <div className="mb-3">
         <label className="form-label">ABN (11 digits) *</label>
         <input
           type="number"
-          className="form-control"
+          placeholder='01234567890'
+          className="form-control light-grey-placeholder-text no-carets"
           value={profileData.abn || ""}
           onChange={(e) => updateProfile({ abn: e.target.value })}
           required
@@ -23,13 +24,15 @@ const IndividualInfo = () => {
       <div className="mb-3">
         <label className="form-label">Builder Registration # *</label>
         <input
-          type="text"
-          className="form-control"
+          type="number"
+          placeholder='1234567'
+          className="form-control light-grey-placeholder-text no-carets"
           value={profileData.brn || ""}
           onChange={(e) => updateProfile({ brn: e.target.value })}
           required
         />
       </div>
+      
     </div>
   );
 };

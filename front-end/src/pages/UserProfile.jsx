@@ -87,11 +87,11 @@ const UserProfile = () => {
 
       // If changing partnership status or number of partners,
       // update partners array here instead of in a separate effect
-      if (name === "partnership" || name === "numberOfPartners") {
+      if (name === "businessType" || name === "numberOfPartners") {
         // Only process partners if partnership is 'Yes' and numberOfPartners is a valid number
         if (
-          (name === "partnership" && value === "Yes" && prevState.numberOfPartners) ||
-          (name === "numberOfPartners" && value && prevState.partnership === "Yes")
+          (name === "businessType" && value === "Partnership" && prevState.numberOfPartners) ||
+          (name === "numberOfPartners" && value && prevState.businessType === "Partnership")
         ) {
           const numPartners = parseInt(
             name === "numberOfPartners" ? value : prevState.numberOfPartners
@@ -112,7 +112,7 @@ const UserProfile = () => {
         }
 
         // If partnership is set to 'No', clear partners
-        if (name === "partnership" && value === "No") {
+        if (name === "businessType" && value !== "Partnership") {
           newState.partners = [];
           newState.numberOfPartners = "";
         }
@@ -303,47 +303,8 @@ const UserProfile = () => {
 
                   {/* Company Section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">Company Details</h4>
-                  <div className="mb-3">
-                    <label className="form-label">Company Y/N *</label>
-                    <div>
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          name="company"
-                          id="companyYes"
-                          value="Yes"
-                          checked={userInfo.company === "Yes"}
-                          onChange={handleChange}
-                          required
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="companyYes">
-                          Yes
-                        </label>
-                      </div>
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          name="company"
-                          id="companyNo"
-                          value="No"
-                          checked={userInfo.company === "No"}
-                          onChange={handleChange}
-                          required
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="companyNo">
-                          No
-                        </label>
-                      </div>
-                    </div>
-                  </div>
 
-                  {userInfo.company === "Yes" && (
+                  {userInfo.businessType === "Company" && (
                     <div className="mb-3">
                       <label className="form-label">Company Name *</label>
                       <input
@@ -359,47 +320,8 @@ const UserProfile = () => {
 
                   {/* Partnership Section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">Partnership Details</h4>
-                  <div className="mb-3">
-                    <label className="form-label">Partnership Y/N *</label>
-                    <div>
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          name="partnership"
-                          id="partnershipYes"
-                          value="Yes"
-                          checked={userInfo.partnership === "Yes"}
-                          onChange={handleChange}
-                          required
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="partnershipYes">
-                          Yes
-                        </label>
-                      </div>
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          name="partnership"
-                          id="partnershipNo"
-                          value="No"
-                          checked={userInfo.partnership === "No"}
-                          onChange={handleChange}
-                          required
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="partnershipNo">
-                          No
-                        </label>
-                      </div>
-                    </div>
-                  </div>
 
-                  {userInfo.partnership === "Yes" && (
+                  {userInfo.businessType === "Partnership" && (
                     <div className="mb-4">
                       <div className="mb-3">
                         <label className="form-label">Number of Partners *</label>

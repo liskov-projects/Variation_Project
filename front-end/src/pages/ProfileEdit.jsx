@@ -62,7 +62,7 @@ const ProfileEdit = () => {
                     <label className="form-label">Builder Name *</label>
                     <input
                       type="text"
-                      className="form-control"
+                      className="form-control light-grey-placeholder-text"
                       value={profileData.fullName || ""}
                       onChange={(e) => updateProfile({ fullName: e.target.value })}
                       required
@@ -82,7 +82,7 @@ const ProfileEdit = () => {
                     <label className="form-label">Email *</label>
                     <input
                       type="email"
-                      className="form-control"
+                      className="form-control light-grey-placeholder-text"
                       value={profileData.email || ""}
                       onChange={(e) => updateProfile({ email: e.target.value })}
                       required
@@ -101,43 +101,8 @@ const ProfileEdit = () => {
 
                   {/* Company Section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">Company Details</h4>
-                  <div className="mb-3">
-                    <label className="form-label">Company Y/N </label>
-                    <div>
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="companyYes"
-                          checked={profileData.company === "Yes"}
-                          onChange={() => updateProfile({ company: "Yes" })}
-                          required
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="companyYes">
-                          Yes
-                        </label>
-                      </div>
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="companyNo"
-                          checked={profileData.company === "No"}
-                          onChange={() => updateProfile({ company: "No" })}
-                          required
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="companyNo">
-                          No
-                        </label>
-                      </div>
-                    </div>
-                  </div>
 
-                  {profileData.company === "Yes" && (
+                  {profileData.businessType === "Company" && (
                     <div className="mb-3">
                       <label className="form-label">Company Name *</label>
                       <input
@@ -157,7 +122,7 @@ const ProfileEdit = () => {
                     </div>
                   )}
 
-                  {profileData.company === "Yes" && (
+                  {profileData.businessType === "Company" && (
                     <div className="mb-3">
                       <label className="form-label">ACN *</label>
                       <input
@@ -180,43 +145,8 @@ const ProfileEdit = () => {
 
                   {/* Partnership Section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">Partnership Details</h4>
-                  <div className="mb-3">
-                    <label className="form-label">Partnership Y/N *</label>
-                    <div>
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="partnershipYes"
-                          checked={profileData.partnership === "Yes"}
-                          onChange={() => updateProfile({ partnership: "Yes" })}
-                          required
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="partnershipYes">
-                          Yes
-                        </label>
-                      </div>
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="partnershipNo"
-                          checked={profileData.partnership === "No"}
-                          onChange={() => updateProfile({ partnership: "No" })}
-                          required
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="partnershipNo">
-                          No
-                        </label>
-                      </div>
-                    </div>
-                  </div>
 
-                  {profileData.partnership === "Yes" && (
+                  {profileData.businessType === "Partnership" && (
                     <div className="mb-4">
                       <div className="mb-3">
                         <label className="form-label">Number of Partners *</label>
