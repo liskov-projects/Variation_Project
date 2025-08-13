@@ -179,6 +179,18 @@ const ProjectEdit = () => {
   const basePrice = parseFloat(String(projectData.contractPrice || "").replace(/,/g, "")) || 0;
   const currentContractPrice = basePrice + totalVariationCost;
 
+    const formatAustralianMobile = (input) => {
+    // Remove all non-digit characters
+    const digits = input.replace(/\D/g, "");
+
+    // Format: 0412 345 678
+    if (digits.length <= 4) return digits;
+    if (digits.length <= 7) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+    return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 10)}`;
+  };
+
+
+
   return (
     <div>
       <Header />
@@ -372,14 +384,21 @@ const ProjectEdit = () => {
 
                   <div className="mb-3">
                     <label className="form-label">Client Phone *</label>
-                    <input
-                      type="text"
-                      className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
-                      name="clientPhone"
-                      value={projectData.clientPhone || ""}
-                      onChange={handleChange}
-                      required
-                    />
+                  <input
+                    type="text"
+                    className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
+                    name="clientPhone"
+                    value={formatAustralianMobile(projectData.clientPhone) || ""}
+                    onChange={(e) =>
+                      setProjectData((prev) => ({
+                        ...prev,
+                        clientPhone: formatAustralianMobile(e.target.value)
+                      }))
+                    }
+                    placeholder="04XX XXX XXX"
+                    required
+                  />
+
                     {formErrors.clientPhone && (
                       <div className="invalid-feedback">{formErrors.clientPhone}</div>
                     )}
@@ -452,8 +471,15 @@ const ProjectEdit = () => {
                         formErrors.architectPmPhone ? "is-invalid" : ""
                       }`}
                       name="architectPmPhone"
-                      value={projectData.architectPmPhone || ""}
-                      onChange={handleChange}
+                      value={formatAustralianMobile(projectData.architectPmPhone || "")}
+                        onChange={(e) =>
+                      setProjectData((prev) => ({
+                        ...prev,
+                        architectPmPhone: formatAustralianMobile(e.target.value)
+                      }))
+                    }
+                    placeholder="04XX XXX XXX"
+                    required
                     
                     />
                     {formErrors.architectPmPhone && (
@@ -559,9 +585,15 @@ No
                         formErrors.surveyorPhone ? "is-invalid" : ""
                       }`}
                       name="surveyorPhone"
-                      value={projectData.surveyorPhone || ""}
-                      onChange={handleChange}
-                      required
+                      value={formatAustralianMobile(projectData.surveyorPhone || "")}
+                      onChange={(e) =>
+                      setProjectData((prev) => ({
+                        ...prev,
+                        surveyorPhone: formatAustralianMobile(e.target.value)
+                      }))
+                    }
+                    placeholder="04XX XXX XXX"
+                    required
                     />
                     {formErrors.surveyorPhone && (
                       <div className="invalid-feedback">
