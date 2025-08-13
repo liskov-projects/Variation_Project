@@ -1,5 +1,5 @@
 // src/contexts/ProfileContext.js
-import React, { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import API_BASE_URL from "../api";
 import axios from "axios";
@@ -16,6 +16,7 @@ export const ProfileProvider = ({ children }) => {
     email: "",
     phoneNumber: "",
     businessType: "Individual", // New unified field
+    logo: "",
 
     // Company
     companyDetails: {
@@ -51,6 +52,12 @@ export const ProfileProvider = ({ children }) => {
         if (response.data && response.data.profileData) {
           setProfileData(response.data.profileData);
           setIsProfileComplete(response.data.profileSetupComplete || false);
+
+          const serverData = response.data.profileData;
+          setProfileData({
+            ...serverData,
+            logo: serverData.logo || null,
+          });
         }
       } catch (err) {
         if (err.response?.status !== 404) {
@@ -179,6 +186,7 @@ export const ProfileProvider = ({ children }) => {
         companyName: "",
         acn: "",
       },
+      logo: null,
       numberOfPartners: "",
       partners: [],
       abn: "",

@@ -288,7 +288,7 @@ export const migrateBusinessType = async () => {
     console.log(`Found ${profiles.length} profiles to migrate`);
 
     for (const profile of profiles) {
-      let businessType = 'individual';
+      let businessType = 'Individual';
 
       if (profile.profileData.company === 'Yes') {
         businessType = 'company';
