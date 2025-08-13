@@ -173,7 +173,7 @@ const Dashboard = () => {
             <div className="row mb-3">
               <div className="col-md-3 fw-bold">Company:</div>
               <div className="col-md-9">
-                {profileData.company === "Yes"
+                {profileData.businessType === "Company"
                   ? `Yes (${profileData.companyDetails.companyName})`
                   : "No"}
               </div>
@@ -181,7 +181,7 @@ const Dashboard = () => {
             <div className="row mb-3">
               <div className="col-md-3 fw-bold">Partnership:</div>
               <div className="col-md-9">
-                {profileData.partnership === "Yes"
+                {profileData.businessType === "Partnership"
                   ? `Yes (${profileData.numberOfPartners} partners)`
                   : "No"}
               </div>

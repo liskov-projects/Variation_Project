@@ -1,15 +1,24 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "../contexts/ProfileContext";
 // import Header from '../components/Header';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "../components/Header/index";
+import { useAuth } from "@clerk/clerk-react";
+import axios from "axios";
+import API_BASE_URL from "../api"; // adjust if needed
+
+
 
 const ProfileEdit = () => {
   const navigate = useNavigate();
   const { profileData, updateProfile, updatePartner, saveProfile, loading, error } = useProfile();
-
+  const fileInputRef = useRef(null);
   const [success, setSuccess] = useState(false);
+  const { getToken, userId } = useAuth();
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -38,6 +47,47 @@ const ProfileEdit = () => {
       }, 3000);
     }
   };
+
+  const handleLogoUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  setUploading(true);
+  setUploadError("");
+
+  try {
+    const formData = new FormData();
+    formData.append("logo", file);
+
+    const token = await getToken();
+
+    const response = await axios.post(`${API_BASE_URL}/api/profile/${userId}/logo`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    const logoPath = response.data.logo;
+    console.log("Logo uploaded successfully:", logoPath);
+    const fullURL = `${API_BASE_URL}/${logoPath.replace(/^\/?/, "")}`;
+    updateProfile({ logo: fullURL, logoPath });
+  } catch (err) {
+    setUploadError(err?.response?.data?.message || err.message || "Upload failed");
+  } finally {
+    setUploading(false);
+  }
+};
+
+  const handleLogoRemove = () => {
+  updateProfile({ logo: "", logoPath: "" });
+
+  if (fileInputRef.current) {
+    fileInputRef.current.value = null;
+  }
+};
+
+
 
     const formatAustralianMobile = (input) => {
     // Remove all non-digit characters
@@ -73,7 +123,7 @@ const ProfileEdit = () => {
                     <label className="form-label">Builder Name *</label>
                     <input
                       type="text"
-                      className="form-control"
+                      className="form-control light-grey-placeholder-text"
                       value={profileData.fullName || ""}
                       onChange={(e) => updateProfile({ fullName: e.target.value })}
                       required
@@ -93,7 +143,7 @@ const ProfileEdit = () => {
                     <label className="form-label">Email *</label>
                     <input
                       type="email"
-                      className="form-control"
+                      className="form-control light-grey-placeholder-text"
                       value={profileData.email || ""}
                       onChange={(e) => updateProfile({ email: e.target.value })}
                       required
@@ -113,46 +163,44 @@ const ProfileEdit = () => {
                       required
                     />
                   </div>
+                  
+                  {/* Logo Upload */}
+                  <h4 className="mb-3 mt-4 border-bottom pb-2">Logo</h4>
+                  <div className="mb-3">
+                    <label className="form-label">Upload Logo</label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    ref={fileInputRef}
+                  />
+                    {uploading && <small className="text-muted">Uploading...</small>}
+                    {uploadError && <div className="text-danger">{uploadError}</div>}
+                    {profileData.logo && (
+                      <div className="mt-2">
+                        <img
+                          src={profileData.logo}
+                          alt="Logo preview"
+                          style={{ maxWidth: "150px", maxHeight: "100px", border: "1px solid #ccc" }}
+                        />
+                        <div>
+                          <button
+                            className="btn btn-sm btn-outline-danger mt-2"
+                            type="button"
+                            onClick={handleLogoRemove}>
+                            Remove Logo
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
 
                   {/* Company Section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">Company Details</h4>
-                  <div className="mb-3">
-                    <label className="form-label">Company Y/N *</label>
-                    <div>
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="companyYes"
-                          checked={profileData.company === "Yes"}
-                          onChange={() => updateProfile({ company: "Yes" })}
-                          required
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="companyYes">
-                          Yes
-                        </label>
-                      </div>
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="companyNo"
-                          checked={profileData.company === "No"}
-                          onChange={() => updateProfile({ company: "No" })}
-                          required
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="companyNo">
-                          No
-                        </label>
-                      </div>
-                    </div>
-                  </div>
 
-                  {profileData.company === "Yes" && (
+                  {profileData.businessType === "Company" && (
                     <div className="mb-3">
                       <label className="form-label">Company Name *</label>
                       <input
@@ -172,7 +220,7 @@ const ProfileEdit = () => {
                     </div>
                   )}
 
-                  {profileData.company === "Yes" && (
+                  {profileData.businessType === "Company" && (
                     <div className="mb-3">
                       <label className="form-label">ACN *</label>
                       <input
@@ -195,43 +243,8 @@ const ProfileEdit = () => {
 
                   {/* Partnership Section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">Partnership Details</h4>
-                  <div className="mb-3">
-                    <label className="form-label">Partnership Y/N *</label>
-                    <div>
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="partnershipYes"
-                          checked={profileData.partnership === "Yes"}
-                          onChange={() => updateProfile({ partnership: "Yes" })}
-                          required
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="partnershipYes">
-                          Yes
-                        </label>
-                      </div>
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="radio"
-                          className="form-check-input"
-                          id="partnershipNo"
-                          checked={profileData.partnership === "No"}
-                          onChange={() => updateProfile({ partnership: "No" })}
-                          required
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="partnershipNo">
-                          No
-                        </label>
-                      </div>
-                    </div>
-                  </div>
 
-                  {profileData.partnership === "Yes" && (
+                  {profileData.businessType === "Partnership" && (
                     <div className="mb-4">
                       <div className="mb-3">
                         <label className="form-label">Number of Partners *</label>

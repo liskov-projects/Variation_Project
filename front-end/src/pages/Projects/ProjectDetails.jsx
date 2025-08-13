@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import VariationPDF from "./VariationPDF";
+import { useProfile } from "../../contexts/ProfileContext";
 
 const ProjectDetails = () => {
   const { projectId } = useParams();
@@ -16,6 +17,7 @@ const ProjectDetails = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
+  const { profileData } = useProfile();
 
   useEffect(() => {
     if (projectId && !hasFetched) {
@@ -432,6 +434,8 @@ const formatAustralianMobile = (value) => {
                               <VariationPDF
                                 variation={variation}
                                 project={currentProject}
+                                profile={profileData}
+                            
                               />
                             }
                             fileName={`variation-${variation._id}.pdf`}

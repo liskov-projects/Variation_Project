@@ -12,14 +12,8 @@ const ProfileSetup = () => {
   const navigate = useNavigate();
   const [formError, setFormError] = useState(null);
   const [isCompleted, setIsCompleted] = useState([false, false, false, false]);
-  const {
-    currentStep,
-    setCurrentStep,
-    saveProfile,
-    loading,
-    isProfileComplete,
-    profileData,
-  } = useProfile();
+  const { currentStep, setCurrentStep, saveProfile, loading, isProfileComplete, profileData } =
+    useProfile();
 
   // Redirect if profile is already complete
   useEffect(() => {
@@ -32,7 +26,7 @@ const ProfileSetup = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <StepOne />;
+        return <StepOne setFormError={setFormError} />;
       case 2:
         return <StepTwo />;
       case 3:
@@ -53,6 +47,7 @@ const ProfileSetup = () => {
   };
 
   const handleNext = async () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     const validationError = validateStep(currentStep, profileData);
     if (validationError) {
       setFormError(validationError);
@@ -67,7 +62,7 @@ const ProfileSetup = () => {
 
     setFormError(null); // Clear any previous errors
 
-    if (currentStep < 4) {
+    if (currentStep < 3) {
       // For steps 1-3, just save progress and move to next step
       // await saveProfile(false);
       setCurrentStep(currentStep + 1);
@@ -86,6 +81,16 @@ const ProfileSetup = () => {
     }
     setFormError(null); // Clear any previous errors
   };
+
+  const handleDisableNext = () => {
+    if (loading) return true; // If loading disable button
+    if (currentStep < 3) {
+      // If step 1 or 2 isn't complete disable the button
+      if (!isCompleted[currentStep - 1]) return true;
+    } else {
+      return false
+    }
+  }
 
   if (loading) {
     return (
@@ -133,8 +138,8 @@ const ProfileSetup = () => {
                   type="button"
                   className="btn btn-primary ms-auto"
                   onClick={handleNext}
-                  disabled={loading}>
-                  {loading ? "Processing..." : currentStep < 4 ? "Next" : "Complete Profile"}
+                  disabled={handleDisableNext()}>
+                  {loading ? "Processing..." : currentStep < 3 ? "Next" : "Complete Profile"}
                 </button>
               </div>
             </div>

@@ -1,35 +1,34 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+// src/contexts/ProfileContext.js
+import { createContext, useState, useContext, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import API_BASE_URL from "../api";
 import axios from "axios";
 
 const ProfileContext = createContext();
-
 export const useProfile = () => useContext(ProfileContext);
 
 export const ProfileProvider = ({ children }) => {
   const { userId, getToken, isSignedIn } = useAuth();
 
   const [profileData, setProfileData] = useState({
-    // Builder Information
     fullName: "",
     address: "",
     email: "",
     phoneNumber: "",
+    businessType: "Individual", // New unified field
+    logo: "",
 
-    // Company Information
-    company: "No",
+    // Company
     companyDetails: {
       companyName: "",
       acn: "",
     },
 
-    // Partnership Information
-    partnership: "No",
+    // Partnership
     numberOfPartners: "",
     partners: [],
 
-    // Individual Information
+    // Individual
     abn: "",
     brn: "",
   });
@@ -39,7 +38,6 @@ export const ProfileProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Load profile data when user signs in
   useEffect(() => {
     const fetchProfileData = async () => {
       if (!isSignedIn || !userId) return;
@@ -54,13 +52,18 @@ export const ProfileProvider = ({ children }) => {
         if (response.data && response.data.profileData) {
           setProfileData(response.data.profileData);
           setIsProfileComplete(response.data.profileSetupComplete || false);
+
+          const serverData = response.data.profileData;
+          setProfileData({
+            ...serverData,
+            logo: serverData.logo || null,
+          });
         }
       } catch (err) {
-        if (err.response && err.response.status !== 404) {
+        if (err.response?.status !== 404) {
           setError("Failed to load profile data");
           console.error("Error fetching profile data:", err);
         }
-        // 404 means profile doesn't exist yet, which is fine for new users
       } finally {
         setLoading(false);
       }
@@ -69,12 +72,10 @@ export const ProfileProvider = ({ children }) => {
     fetchProfileData();
   }, [userId, getToken, isSignedIn]);
 
-  // Update profile data
   const updateProfile = (updates) => {
     setProfileData((prev) => ({ ...prev, ...updates }));
   };
 
-  // Handle partner changes
   const updatePartner = (index, field, value) => {
     const updatedPartners = [...profileData.partners];
     if (!updatedPartners[index]) {
@@ -88,21 +89,19 @@ export const ProfileProvider = ({ children }) => {
     }));
   };
 
-  // Adjust partners array when number of partners changes
   useEffect(() => {
-    if (profileData.partnership === "Yes" && profileData.numberOfPartners) {
+    if (profileData.businessType === "Partnership" && profileData.numberOfPartners) {
       const numPartners = parseInt(profileData.numberOfPartners);
       const currentPartners = [...profileData.partners];
 
       if (currentPartners.length !== numPartners) {
         let updatedPartners = [...currentPartners];
 
-        // Add or remove partners as needed
-        if (updatedPartners.length < numPartners) {
-          while (updatedPartners.length < numPartners) {
-            updatedPartners.push({ name: "", address: "" });
-          }
-        } else if (updatedPartners.length > numPartners) {
+        while (updatedPartners.length < numPartners) {
+          updatedPartners.push({ name: "", address: "" });
+        }
+
+        if (updatedPartners.length > numPartners) {
           updatedPartners = updatedPartners.slice(0, numPartners);
         }
 
@@ -111,17 +110,15 @@ export const ProfileProvider = ({ children }) => {
           partners: updatedPartners,
         }));
       }
-    } else if (profileData.partnership === "No") {
-      // Clear partners if partnership is set to No
+    } else if (profileData.businessType !== "Partnership") {
       setProfileData((prev) => ({
         ...prev,
         partners: [],
         numberOfPartners: "",
       }));
     }
-  }, [profileData.partnership, profileData.numberOfPartners]);
+  }, [profileData.businessType, profileData.numberOfPartners]);
 
-  // Save profile to backend
   const saveProfile = async (isComplete = false) => {
     if (!userId) return { success: false, error: "User not authenticated" };
 
@@ -132,10 +129,9 @@ export const ProfileProvider = ({ children }) => {
       const token = await getToken();
       profileData.phoneNumber = profileData.phoneNumber.replace(/\s+/g, ''); // Remove spaces from phone number
 
-      // Validate important fields
       if (
         profileData.companyDetails?.acn &&
-        profileData.companyDetails?.acn.toString().length !== 9
+        profileData.companyDetails.acn.toString().length !== 9
       ) {
         throw new Error("ACN must be exactly 9 digits");
       }
@@ -144,14 +140,13 @@ export const ProfileProvider = ({ children }) => {
         throw new Error("ABN must be exactly 11 digits");
       }
 
-      // Check if profile exists
       let userExists = false;
       try {
         const checkResponse = await axios.get(`${API_BASE_URL}/api/profile/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         userExists = checkResponse.status === 200;
-      } catch (err) {
+      } catch {
         userExists = false;
       }
 
@@ -162,18 +157,13 @@ export const ProfileProvider = ({ children }) => {
         profileSetupComplete: isComplete,
       };
 
-      let response;
-      if (userExists) {
-        // Update existing profile
-        response = await axios.put(`${API_BASE_URL}/api/profile/${userId}`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } else {
-        // Create new profile
-        response = await axios.post(`${API_BASE_URL}/api/profile`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      }
+      const response = userExists
+        ? await axios.put(`${API_BASE_URL}/api/profile/${userId}`, payload, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+        : await axios.post(`${API_BASE_URL}/api/profile`, payload, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
       setIsProfileComplete(isComplete);
       return { success: true, data: response.data };
@@ -186,19 +176,20 @@ export const ProfileProvider = ({ children }) => {
     }
   };
 
-  // Reset form data
   const resetProfile = () => {
     setProfileData({
       fullName: "",
       address: "",
       email: "",
       phoneNumber: "",
-      company: "No",
-      companyName: "",
-      partnership: "No",
+      businessType: "Individual",
+      companyDetails: {
+        companyName: "",
+        acn: "",
+      },
+      logo: null,
       numberOfPartners: "",
       partners: [],
-      acn: "",
       abn: "",
       brn: "",
     });

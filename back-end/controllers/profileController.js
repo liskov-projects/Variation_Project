@@ -1,23 +1,4 @@
-import Profile from '../models/profileModel.js';
-import multer from 'multer';
-import path from 'path';
-
-// Configure multer for logo upload
-const storage = multer.memoryStorage();
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
-  },
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.'), false);
-    }
-  }
-});
+import Profile from "../models/profileModel.js";
 
 // @desc    Get user profile by userId
 // @route   GET /api/profile/:userId
@@ -74,36 +55,42 @@ export const createProfile = async (req, res) => {
     }
 
     // TASK 1: Validate business type and related fields
-    if (!profileData.businessType || !['Individual', 'Company', 'Partnership'].includes(profileData.businessType)) {
+    if (
+      !profileData.businessType ||
+      !["Individual", "Company", "Partnership"].includes(profileData.businessType)
+    ) {
       return res.status(400).json({
-        message: 'Business type must be Individual, Company, or Partnership'
+        message: "Business type must be Individual, Company, or Partnership",
       });
     }
 
     // Validate company details if business type is company
-    if (profileData.businessType === 'Company') {
+    if (profileData.businessType === "Company") {
       if (!profileData.companyDetails?.companyName) {
         return res.status(400).json({
-          message: 'Company name is required when business type is Company'
+          message: "Company name is required when business type is Company",
         });
       }
-      if (profileData.companyDetails?.acn && profileData.companyDetails?.acn.toString().length !== 9) {
+      if (
+        profileData.CompanyDetails?.acn &&
+        profileData.CompanyDetails?.acn.toString().length !== 9
+      ) {
         return res.status(400).json({
-          message: 'ACN must be exactly 9 digits'
+          message: "ACN must be exactly 9 digits",
         });
       }
     }
 
     // Validate partnership details if business type is partnership
-    if (profileData.businessType === 'Partnership') {
+    if (profileData.businessType === "Partnership") {
       if (!profileData.numberOfPartners) {
         return res.status(400).json({
-          message: 'Number of partners is required when business type is Partnership'
+          message: "Number of partners is required when business type is Partnership",
         });
       }
       if (!profileData.partners || profileData.partners.length === 0) {
         return res.status(400).json({
-          message: 'At least one partner is required when business type is Partnership'
+          message: "At least one partner is required when business type is Partnership",
         });
       }
     }
@@ -171,36 +158,42 @@ export const updateProfile = async (req, res) => {
     }
 
     // TASK 1: Validate business type and related fields
-    if (profileData.businessType && !['Individual', 'Company', 'Partnership'].includes(profileData.businessType)) {
+    if (
+      profileData.businessType &&
+      !["Individual", "Company", "Partnership"].includes(profileData.businessType)
+    ) {
       return res.status(400).json({
-        message: 'Business type must be Individual, Company, or Partnership'
+        message: "Business type must be Individual, Company, or Partnership",
       });
     }
 
     // Validate company details if business type is company
-    if (profileData.businessType === 'Company') {
+    if (profileData.businessType === "Company") {
       if (!profileData.companyDetails?.companyName) {
         return res.status(400).json({
-          message: 'Company name is required when business type is Company'
+          message: "Company name is required when business type is Company",
         });
       }
-      if (profileData.companyDetails?.acn && profileData.companyDetails?.acn.toString().length !== 9) {
+      if (
+        profileData.CompanyDetails?.acn &&
+        profileData.CompanyDetails?.acn.toString().length !== 9
+      ) {
         return res.status(400).json({
-          message: 'ACN must be exactly 9 digits'
+          message: "ACN must be exactly 9 digits",
         });
       }
     }
 
     // Validate partnership details if business type is partnership
-    if (profileData.businessType === 'Partnership') {
+    if (profileData.businessType === "Partnership") {
       if (!profileData.numberOfPartners) {
         return res.status(400).json({
-          message: 'Number of partners is required when business type is Partnership'
+          message: "Number of partners is required when business type is Partnership",
         });
       }
       if (!profileData.partners || profileData.partners.length === 0) {
         return res.status(400).json({
-          message: 'At least one partner is required when business type is Partnership'
+          message: "At least one partner is required when business type is Partnership",
         });
       }
     }
@@ -247,7 +240,7 @@ export const updateProfile = async (req, res) => {
 // @desc    Upload profile logo
 // @route   POST /api/profile/:userId/logo
 export const uploadLogo = [
-  upload.single('logo'),
+  // upload.single('logo'),
   async (req, res) => {
     try {
       const { userId } = req.params;
@@ -255,43 +248,55 @@ export const uploadLogo = [
       // Check if the request user ID matches the parameter
       if (req.auth.userId !== userId) {
         return res.status(403).json({
-          message: 'Unauthorized: You can only upload logo to your own profile'
+          message: "Unauthorized: You can only upload logo to your own profile",
         });
       }
 
       if (!req.file) {
         return res.status(400).json({
-          message: 'No logo file provided'
+          message: "No logo file provided",
         });
       }
 
-      // Find profile
+      // Find profile, profile may not exist yet
+
+      // const profile = await Profile.findOne({ userId });
+      // if (!profile) {
+      //   return res.status(404).json({
+      //     message: 'Profile not found'
+      //   });
+      // }
+
       const profile = await Profile.findOne({ userId });
+      const logoPath = `uploads/${req.file.filename}`;
       if (!profile) {
-        return res.status(404).json({
-          message: 'Profile not found'
+        //  Profile doesn't exist, return 200 with message instead of 404
+        return res.status(200).json({
+          message: "Profile not found. Logo uploaded.",
+          logo: logoPath,
+          profile: null,
         });
       }
 
       // Convert to base64
-      const logoBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+      const logoBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
 
       // Update profile with logo
-      profile.profileData.logo = logoBase64;
+      // profile.profileData.logo = logoBase64;
       const updatedProfile = await profile.save();
 
       res.status(200).json({
-        message: 'Logo uploaded successfully',
-        profile: updatedProfile
+        message: "Logo uploaded successfully",
+        profile: updatedProfile,
       });
     } catch (error) {
-      console.error('Error uploading logo:', error);
+      console.error("Error uploading logo:", error);
       res.status(500).json({
-        message: 'Server error',
-        error: error.message
+        message: "Server error",
+        error: error.message,
       });
     }
-  }
+  },
 ];
 
 // @desc    Delete profile logo
@@ -303,7 +308,7 @@ export const deleteLogo = async (req, res) => {
     // Check if the request user ID matches the parameter
     if (req.auth.userId !== userId) {
       return res.status(403).json({
-        message: 'Unauthorized: You can only delete logo from your own profile'
+        message: "Unauthorized: You can only delete logo from your own profile",
       });
     }
 
@@ -311,7 +316,7 @@ export const deleteLogo = async (req, res) => {
     const profile = await Profile.findOne({ userId });
     if (!profile) {
       return res.status(404).json({
-        message: 'Profile not found'
+        message: "Profile not found",
       });
     }
 
@@ -320,14 +325,14 @@ export const deleteLogo = async (req, res) => {
     const updatedProfile = await profile.save();
 
     res.status(200).json({
-      message: 'Logo deleted successfully',
-      profile: updatedProfile
+      message: "Logo deleted successfully",
+      profile: updatedProfile,
     });
   } catch (error) {
-    console.error('Error deleting logo:', error);
+    console.error("Error deleting logo:", error);
     res.status(500).json({
-      message: 'Server error',
-      error: error.message
+      message: "Server error",
+      error: error.message,
     });
   }
 };

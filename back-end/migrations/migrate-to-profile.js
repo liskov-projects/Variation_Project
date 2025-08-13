@@ -37,12 +37,14 @@ const migrateToProfileStructure = async () => {
           address: latestFormData.address || "Default Address",
           email: form.email || latestFormData.email || "default@example.com",
           phoneNumber: latestFormData.phonenumber || "0000000000",
-          company: latestFormData.company || "No",
           companyName:
-            latestFormData.company === "Yes" ? latestFormData.companyName || "Default Company" : "",
-          partnership: latestFormData.partnership || "No",
+            latestFormData.businessType === "Company"
+              ? latestFormData.companyName || "Default Company"
+              : "",
           numberOfPartners:
-            latestFormData.partnership === "Yes" ? latestFormData.numberOfPartners || "1" : "",
+            latestFormData.businessType === "Partnership"
+              ? latestFormData.numberOfPartners || "1"
+              : "",
           partners: latestFormData.partners || [],
           acn: latestFormData.acn || "123456789", // Default 9-digit number
           abn: latestFormData.abn || "12345678901", // Default 11-digit number
