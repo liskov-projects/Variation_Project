@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import Project from "../models/projectModel.js";
 import { config } from "dotenv";
+import { ConnectionCheckOutFailedEvent } from "mongodb";
 
 config();
 
@@ -97,7 +98,7 @@ export const createProject = async (req, res) => {
     // TASK 2 & 3: Validate architect and surveyor data
     if (req.body.architect?.hasArchitect && !req.body.architect.details?.contactName) {
       return res.status(400).json({
-        message: 'Architect details are required when architect is engaged'
+        message: "Architect details are required when architect is engaged",
       });
     }
 
@@ -160,7 +161,7 @@ export const updateProject = async (req, res) => {
       // The pre-save middleware will calculate currentEndDate
       req.body.totalDaysExtended = Number(req.body.totalDaysExtended);
     }
-    
+
     const updatedProject = await Project.findByIdAndUpdate(
       projectId,
       { $set: req.body },
@@ -203,7 +204,7 @@ export const deleteProject = async (req, res) => {
     if (project.userId !== req.auth.userId) {
       return res.status(403).json({ message: "Not authorized to delete this project" });
     }
-    
+
     await Project.findByIdAndDelete(projectId);
 
     res.status(200).json({ message: "Project deleted successfully" });
@@ -221,6 +222,8 @@ export const deleteProject = async (req, res) => {
 // @access  Private
 export const addVariation = async (req, res) => {
   try {
+    console.log("VARIATION ADD");
+    console.log(req.body);
     const { projectId } = req.params;
     const project = await Project.findById(projectId);
 
@@ -238,54 +241,27 @@ export const addVariation = async (req, res) => {
 
     // Validate variation type
     if (!variationData.variationType) {
-      variationData.variationType = 'debit'; // Default to debit
+      variationData.variationType = "debit"; // Default to debit
     }
 
-    // Validate and calculate GST breakdown
-    if (variationData.costBreakdown) {
-      const { subtotal, gstRate = 10 } = variationData.costBreakdown;
-      
-      if (!subtotal || subtotal < 0) {
-        return res.status(400).json({
-          message: 'Subtotal is required and must be positive'
-        });
-      }
+    const cost = Math.abs(variationData.cost || 0);
+    // Set CONSTANT
+    const gstRate = 10;
+    const subtotal = cost / (1 + gstRate / 100);
+    const gstAmount = cost - subtotal;
 
-      // Calculate GST amount
-      const gstAmount = (subtotal * gstRate) / 100;
-      const total = subtotal + gstAmount;
+    variationData.costBreakdown = {
+      subtotal: Number(subtotal.toFixed(2)),
+      gstAmount: Number(gstAmount.toFixed(2)),
+      gstRate: gstRate,
+      total: Number(cost.toFixed(2)),
+    };
 
-      variationData.costBreakdown = {
-        subtotal: Number(subtotal),
-        gstAmount: Number(gstAmount.toFixed(2)),
-        gstRate: Number(gstRate),
-        total: Number(total.toFixed(2))
-      };
+    variationData.cost = variationData.variationType === "credit" ? -cost : cost;
 
-      // Set cost based on variation type
-      variationData.cost = variationData.variationType === 'credit' 
-        ? -Math.abs(variationData.costBreakdown.total)
-        : variationData.costBreakdown.total;
-    } else {
-      // Backward compatibility - if no costBreakdown, create one from cost
-      const cost = Math.abs(variationData.cost || 0);
-      const gstRate = 10;
-      const subtotal = cost / (1 + gstRate/100);
-      const gstAmount = cost - subtotal;
-
-      variationData.costBreakdown = {
-        subtotal: Number(subtotal.toFixed(2)),
-        gstAmount: Number(gstAmount.toFixed(2)),
-        gstRate: gstRate,
-        total: Number(cost.toFixed(2))
-      };
-
-      variationData.cost = variationData.variationType === 'credit' ? -cost : cost;
-    }
-    
     // Add variation to project
     project.variations.push(variationData);
-    
+
     // The pre-save middleware will automatically calculate the new contract price
     const updatedProject = await project.save();
 
@@ -344,7 +320,7 @@ export const updateVariation = async (req, res) => {
     // If costBreakdown is being updated, recalculate
     if (updateData.costBreakdown) {
       const { subtotal, gstRate = 10 } = updateData.costBreakdown;
-      
+
       if (subtotal !== undefined && subtotal >= 0) {
         const gstAmount = (subtotal * gstRate) / 100;
         const total = subtotal + gstAmount;
@@ -353,25 +329,33 @@ export const updateVariation = async (req, res) => {
           subtotal: Number(subtotal),
           gstAmount: Number(gstAmount.toFixed(2)),
           gstRate: Number(gstRate),
-          total: Number(total.toFixed(2))
+          total: Number(total.toFixed(2)),
         };
 
         // Update cost based on variation type
-        const variationType = updateData.variationType || project.variations[variationIndex].variationType;
-        updateData.cost = variationType === 'credit' 
-          ? -Math.abs(updateData.costBreakdown.total)
-          : updateData.costBreakdown.total;
+        const variationType =
+          updateData.variationType || project.variations[variationIndex].variationType;
+        updateData.cost =
+          variationType === "credit"
+            ? -Math.abs(updateData.costBreakdown.total)
+            : updateData.costBreakdown.total;
       }
     }
 
     // If variation type is being changed, recalculate cost
-    if (updateData.variationType && updateData.variationType !== project.variations[variationIndex].variationType) {
-      const currentCost = project.variations[variationIndex].costBreakdown?.total || Math.abs(project.variations[variationIndex].cost || 0);
-      updateData.cost = updateData.variationType === 'credit' ? -Math.abs(currentCost) : Math.abs(currentCost);
+    if (
+      updateData.variationType &&
+      updateData.variationType !== project.variations[variationIndex].variationType
+    ) {
+      const currentCost =
+        project.variations[variationIndex].costBreakdown?.total ||
+        Math.abs(project.variations[variationIndex].cost || 0);
+      updateData.cost =
+        updateData.variationType === "credit" ? -Math.abs(currentCost) : Math.abs(currentCost);
     }
 
     // Update the variation
-    Object.keys(updateData).forEach(key => {
+    Object.keys(updateData).forEach((key) => {
       project.variations[variationIndex][key] = updateData[key];
     });
 
@@ -460,10 +444,10 @@ export const sendForSignature = async (req, res) => {
         message: "Variation not found",
       });
     }
-    
-    if (variation.status !== 'draft') {
-      return res.status(400).json({ 
-        error: 'Variation has already been submitted or processed' 
+
+    if (variation.status !== "draft") {
+      return res.status(400).json({
+        error: "Variation has already been submitted or processed",
       });
     }
 
@@ -473,20 +457,20 @@ export const sendForSignature = async (req, res) => {
 
     variation.signatureToken = signatureToken;
     variation.signatureTokenExpiresAt = signatureTokenExpiresAt;
-    variation.status = 'submitted';
-    
+    variation.status = "submitted";
+
     await project.save();
 
     // BUSINESS LOGIC: Determine recipient using new routing logic
     const recipient = project.getVariationRecipient();
-    
+
     // Check if surveyor sign-off is required
     const requiresSurveyor = project.requiresSurveyorSignoff(variation);
     const surveyorInfo = requiresSurveyor ? project.getSurveyorForSignoff() : null;
 
     // Email configuration
     const transporter = nodemailer.createTransporter({
-      service: 'gmail',
+      service: "gmail",
       auth: {
         user: process.env.VARIATION_EMAIL,
         pass: process.env.VARIATION_PASSWORD,
@@ -500,21 +484,23 @@ export const sendForSignature = async (req, res) => {
 
     // Format currency
     const formatCurrency = (amount) => `$${Math.abs(amount).toLocaleString()}`;
-    const variationCostDisplay = variation.variationType === 'credit' 
-      ? `(${formatCurrency(variationCost)}) Credit` 
-      : formatCurrency(variationCost);
+    const variationCostDisplay =
+      variation.variationType === "credit"
+        ? `(${formatCurrency(variationCost)}) Credit`
+        : formatCurrency(variationCost);
 
     // Environment-specific URL
-    const signatureUrl = process.env.NODE_ENV === 'production'
-      ? `https://variation-front-end.onrender.com/signature?token=${signatureToken}`
-      : `http://localhost:3000/signature?token=${signatureToken}`;
+    const signatureUrl =
+      process.env.NODE_ENV === "production"
+        ? `https://variation-front-end.onrender.com/signature?token=${signatureToken}`
+        : `http://localhost:3000/signature?token=${signatureToken}`;
 
     // Determine email recipient and customize message
     let recipientEmail = recipient.email;
     let recipientName = recipient.name;
-    let recipientMessage = '';
+    let recipientMessage = "";
 
-    if (recipient.type === 'architect') {
+    if (recipient.type === "architect") {
       recipientMessage = `
         <p><strong>Note:</strong> This variation is being sent to you as the project architect. Please review and coordinate with the client as needed.</p>
         <p><strong>Client:</strong> ${project.clientName} (${project.clientEmail})</p>
@@ -522,7 +508,7 @@ export const sendForSignature = async (req, res) => {
     }
 
     // Add surveyor notification if required
-    let surveyorMessage = '';
+    let surveyorMessage = "";
     if (requiresSurveyor && surveyorInfo) {
       surveyorMessage = `
         <p><strong>Important:</strong> This is a permit variation that requires surveyor approval.</p>
@@ -534,7 +520,7 @@ export const sendForSignature = async (req, res) => {
     const mailOptions = {
       from: process.env.VARIATION_EMAIL,
       to: recipientEmail,
-      subject: `Signature Request for ${variation.variationType === 'credit' ? 'Credit' : ''} Variation - ${project.projectName}`, 
+      subject: `Signature Request for ${variation.variationType === "credit" ? "Credit" : ""} Variation - ${project.projectName}`,
       html: `
         <p>Dear ${recipientName},</p>
         ${recipientMessage}
@@ -546,11 +532,15 @@ export const sendForSignature = async (req, res) => {
         
         <h3>Financial Impact:</h3>
         <p><strong>Original Contract Price:</strong> ${formatCurrency(project.contractPrice)}</p>
-        <p><strong>Variation ${variation.variationType === 'credit' ? 'Credit' : 'Cost'}:</strong> ${variationCostDisplay}</p>
-        ${variation.costBreakdown ? `
+        <p><strong>Variation ${variation.variationType === "credit" ? "Credit" : "Cost"}:</strong> ${variationCostDisplay}</p>
+        ${
+          variation.costBreakdown
+            ? `
         <p><strong>Subtotal:</strong> ${formatCurrency(variation.costBreakdown.subtotal)}</p>
         <p><strong>GST (${variation.costBreakdown.gstRate}%):</strong> ${formatCurrency(variation.costBreakdown.gstAmount)}</p>
-        ` : ''}
+        `
+            : ""
+        }
         <p><strong>New Contract Price:</strong> ${formatCurrency(newContractPrice)}</p>
         
         ${surveyorMessage}
@@ -588,21 +578,21 @@ export const sendForSignature = async (req, res) => {
           <p><strong>Delay:</strong> ${variation.delay}</p>
           
           <p>Thank you!</p>
-        `
+        `,
       };
 
       await transporter.sendMail(surveyorMailOptions);
     }
 
     console.log("email sent successfully");
-    
-    res.status(200).json({ 
-      success: true, 
-      message: 'Email sent successfully',
+
+    res.status(200).json({
+      success: true,
+      message: "Email sent successfully",
       recipient: recipient,
       requiresSurveyorSignoff: requiresSurveyor,
       surveyorNotified: requiresSurveyor && surveyorInfo ? true : false,
-      project: project 
+      project: project,
     });
   } catch (error) {
     console.error("Error sending email:", error);
@@ -631,12 +621,12 @@ export const validateSignatureToken = async (req, res) => {
     const recipient = project.getVariationRecipient();
     const requiresSurveyorSignoff = project.requiresSurveyorSignoff(variation);
 
-    res.status(200).json({ 
-      success: true, 
-      project, 
+    res.status(200).json({
+      success: true,
+      project,
       variation,
       recipient,
-      requiresSurveyorSignoff
+      requiresSurveyorSignoff,
     });
   } catch (error) {
     console.error("Error validating token:", error);
@@ -712,7 +702,7 @@ export const signVariation = async (req, res) => {
     // Send confirmation emails
     try {
       const transporter = nodemailer.createTransporter({
-        service: 'gmail',
+        service: "gmail",
         auth: {
           user: process.env.VARIATION_EMAIL,
           pass: process.env.VARIATION_PASSWORD,
@@ -720,9 +710,10 @@ export const signVariation = async (req, res) => {
       });
 
       const formatCurrency = (amount) => `$${Math.abs(amount).toLocaleString()}`;
-      const variationCostDisplay = variation.variationType === 'credit' 
-        ? `(${formatCurrency(variation.cost)}) Credit` 
-        : formatCurrency(variation.cost);
+      const variationCostDisplay =
+        variation.variationType === "credit"
+          ? `(${formatCurrency(variation.cost)}) Credit`
+          : formatCurrency(variation.cost);
 
       // Email to the person who signed
       const signerMailOptions = {
@@ -734,18 +725,18 @@ export const signVariation = async (req, res) => {
           <p>Thank you for approving the ${variation.variationType} variation for project:</p>
           <p><strong>Project:</strong> ${project.projectName}</p>
           <p><strong>Variation:</strong> ${variation.description}</p>
-          <p><strong>Variation ${variation.variationType === 'credit' ? 'Credit' : 'Cost'}:</strong> ${variationCostDisplay}</p>
+          <p><strong>Variation ${variation.variationType === "credit" ? "Credit" : "Cost"}:</strong> ${variationCostDisplay}</p>
           <p><strong>Signed by:</strong> ${variation.signedBy.name}</p>
           <p><strong>Signed on:</strong> ${new Date(variation.signedAt).toLocaleString()}</p>
           <p>Your updated contract price is now ${formatCurrency(project.currentContractPrice)}</p>
           <p>Best regards</p>
-        `
+        `,
       };
 
       await transporter.sendMail(signerMailOptions);
 
       // If architect signed, also notify the client
-      if (recipient.type === 'architect') {
+      if (recipient.type === "architect") {
         const clientMailOptions = {
           from: process.env.VARIATION_EMAIL,
           to: project.clientEmail,
@@ -755,12 +746,12 @@ export const signVariation = async (req, res) => {
             <p>Your architect has approved a ${variation.variationType} variation for your project:</p>
             <p><strong>Project:</strong> ${project.projectName}</p>
             <p><strong>Variation:</strong> ${variation.description}</p>
-            <p><strong>Variation ${variation.variationType === 'credit' ? 'Credit' : 'Cost'}:</strong> ${variationCostDisplay}</p>
+            <p><strong>Variation ${variation.variationType === "credit" ? "Credit" : "Cost"}:</strong> ${variationCostDisplay}</p>
             <p><strong>Approved by:</strong> ${variation.signedBy.name} (${recipient.company})</p>
             <p><strong>Approved on:</strong> ${new Date(variation.signedAt).toLocaleString()}</p>
             <p>Your updated contract price is now ${formatCurrency(project.currentContractPrice)}</p>
             <p>Best regards</p>
-          `
+          `,
         };
 
         await transporter.sendMail(clientMailOptions);
@@ -777,7 +768,7 @@ export const signVariation = async (req, res) => {
       message: "Variation signed and approved successfully",
       project: project,
       variation: variation,
-      signedBy: recipient
+      signedBy: recipient,
     });
   } catch (error) {
     console.error("Error signing variation:", error);
