@@ -389,7 +389,8 @@ const VariationCreate = () => {
                     </button>
                     <button
                       type="submit"
-                      className="btn btn-primary"
+                      className="btn btn-warning"
+                      style={{color: "white"}}
                       disabled={loading}>
                       {loading ? (
                         <>
@@ -400,7 +401,7 @@ const VariationCreate = () => {
                           Creating...
                         </>
                       ) : (
-                        "Create Variation"
+                        "Save As Draft"
                       )}
                     </button>
                   </div>
