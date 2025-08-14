@@ -89,6 +89,17 @@ const ProfileEdit = () => {
 
 
 
+    const formatAustralianMobile = (input) => {
+    // Remove all non-digit characters
+    const digits = input.replace(/\D/g, "");
+
+    // Format: 0412 345 678
+    if (digits.length <= 4) return digits;
+    if (digits.length <= 7) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+    return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 10)}`;
+  };
+
+
   return (
     <div>
       <Header />
@@ -143,8 +154,12 @@ const ProfileEdit = () => {
                     <input
                       type="text"
                       className="form-control"
-                      value={profileData.phoneNumber || ""}
-                      onChange={(e) => updateProfile({ phoneNumber: e.target.value })}
+                      value={formatAustralianMobile(profileData.phoneNumber) || ""}
+                      onChange={(e) => {
+                        const formatted = formatAustralianMobile(e.target.value);
+                        updateProfile({ phoneNumber: formatted });
+                  }}
+                      placeholder="04XX XXX XXX"
                       required
                     />
                   </div>

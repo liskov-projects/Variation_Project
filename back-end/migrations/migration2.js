@@ -291,9 +291,9 @@ export const migrateBusinessType = async () => {
       let businessType = 'Individual';
 
       if (profile.profileData.company === 'Yes') {
-        businessType = 'company';
+        businessType = 'Company';
       } else if (profile.profileData.partnership === 'Yes') {
-        businessType = 'partnership';
+        businessType = 'Partnership';
       }
 
       profile.profileData.businessType = businessType;

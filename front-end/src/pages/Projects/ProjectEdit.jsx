@@ -291,6 +291,18 @@ const ProjectEdit = () => {
   const basePrice = parseFloat(String(projectData.contractPrice || "").replace(/,/g, "")) || 0;
   const currentContractPrice = basePrice + totalVariationCost;
 
+    const formatAustralianMobile = (input) => {
+    // Remove all non-digit characters
+    const digits = input.replace(/\D/g, "");
+
+    // Format: 0412 345 678
+    if (digits.length <= 4) return digits;
+    if (digits.length <= 7) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+    return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 10)}`;
+  };
+
+
+
   return (
     <div>
       <Header />
@@ -482,98 +494,223 @@ const ProjectEdit = () => {
 
                   <div className="mb-3">
                     <label className="form-label">Client Phone *</label>
-                    <input
-                      type="text"
-                      className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
-                      name="clientPhone"
-                      value={projectData.clientPhone || ""}
-                      onChange={handleChange}
-                      required
-                    />
+                  <input
+                    type="text"
+                    className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
+                    name="clientPhone"
+                    value={formatAustralianMobile(projectData.clientPhone) || ""}
+                    onChange={(e) =>
+                      setProjectData((prev) => ({
+                        ...prev,
+                        clientPhone: formatAustralianMobile(e.target.value)
+                      }))
+                    }
+                    placeholder="04XX XXX XXX"
+                    required
+                  />
+
                     {formErrors.clientPhone && (
                       <div className="invalid-feedback">{formErrors.clientPhone}</div>
                     )}
                   </div>
 
-                  {/* Surveyor section */}
+
+                  {/*NEW: Architect / Project Manager section */}
+                  <h4 className="mb-3 mt-4 border-bottom pb-2">
+                    Architect / Project Manager Information
+                  </h4>
+                  <div className="mb-3">
+                    <label className="form-label">Company Name *</label>
+                    <input
+                      type="text"
+                      className={`form-control ${
+                        formErrors.architectPmCompanyName ? "is-invalid" : "" // FIXME: here and below clientName should be something else
+                      }`}
+                      name="architectPmCompanyName"
+                      value={projectData.architectPmCompanyName || ""}
+                      onChange={handleChange}
+                    
+                    />
+                    {formErrors.architectPmCompanyName && (
+                      <div className="invalid-feedback">
+                        {formErrors.architectPmCompanyName}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Contact Name *</label>
+                    <input
+                      type="text"
+                      className={`form-control ${
+                        formErrors.architectPmContactName ? "is-invalid" : ""
+                      }`}
+                      name="architectPmContactName"
+                      value={projectData.architectPmContactName || ""}
+                      onChange={handleChange}
+                    
+                    />
+                    {formErrors.architectPmContactName && (
+                      <div className="invalid-feedback">
+                        {formErrors.architectPmContactName}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Address *</label>
+                    <input
+                      type="text"
+                      className={`form-control ${
+                        formErrors.architectPmAddress ? "is-invalid" : ""
+                      }`}
+                      name="architectPmAddress"
+                      value={projectData.architectPmAddress || ""}
+                      onChange={handleChange}
+                    
+                    />
+                    {formErrors.architectPmAddress && (
+                      <div className="invalid-feedback">
+                        {formErrors.architectPmAddress}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label"> Phone *</label>
+                    <input
+                      type="text"
+                      className={`form-control ${
+                        formErrors.architectPmPhone ? "is-invalid" : ""
+                      }`}
+                      name="architectPmPhone"
+                      value={formatAustralianMobile(projectData.architectPmPhone || "")}
+                        onChange={(e) =>
+                      setProjectData((prev) => ({
+                        ...prev,
+                        architectPmPhone: formatAustralianMobile(e.target.value)
+                      }))
+                    }
+                    placeholder="04XX XXX XXX"
+                    required
+                    
+                    />
+                    {formErrors.architectPmPhone && (
+                      <div className="invalid-feedback">
+                        {formErrors.architectPmPhone}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label"> Email *</label>
+                    <input
+                      type="email"
+                      className={`form-control ${
+                        formErrors.architectPmEmail ? "is-invalid" : ""
+                      }`}
+                      name="architectPmEmail"
+                      value={projectData.architectPmEmail || ""}
+                      onChange={handleChange}
+                    
+                    />
+                    {formErrors.architectPmEmail && (
+                      <div className="invalid-feedback">
+                        {formErrors.architectPmEmail}
+                      </div>
+                    )}
+                  </div>
+
+                  {/*NEW: Surveyor section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">
                     Surveyor Information
                   </h4>
+                  {/* <div>
+                    <label htmlFor="yes">
+Yes
+                    <input type="radio" value={projectData.hasSurveyor || "yes"} name="surveyorChoice"  id="yes" checked={hasSurveyor==="yes"} onChange={(e) => {setSurveyor(e.target.value)}}/>
+                    </label>
+                      <label htmlFor="no">
+No
+                    <input type="radio" value={projectData.hasSurveyor || "no"} name="surveyorChoice"  id="no" checked={hasSurveyor==="no"} onChange={(e) => {setSurveyor(e.target.value)}}/>
+                    </label>
+                  </div> */}
 
-                  {hasSurveyor && (
-                    <>
-                      <div className="mb-3">
-                        <label className="form-label">Company Name *</label>
-                        <input
-                          type="text"
-                          className={`form-control ${
-                            formErrors.surveyorCompanyName ? "is-invalid" : ""
-                          }`}
-                          name="surveyorCompanyName"
-                          value={projectData.surveyor.details.companyName || ""}
-                          onChange={handleSurveyorChange}
-                          required
-                        />
-                        {formErrors.surveyorCompanyName && (
-                          <div className="invalid-feedback">
-                            {formErrors.surveyorCompanyName}
-                          </div>
-                        )}
+                  <div className="mb-3">
+                    <label className="form-label">Company Name *</label>
+                    <input
+                      type="text"
+                      className={`form-control ${
+                        formErrors.surveyorCompanyName ? "is-invalid" : ""
+                      }`}
+                      name="surveyorCompanyName"
+                      value={projectData.surveyorCompanyName || ""}
+                      onChange={handleChange}
+                      required
+                    />
+                    {formErrors.surveyorCompanyName && (
+                      <div className="invalid-feedback">
+                        {formErrors.surveyorCompanyName}
                       </div>
-                      <div className="mb-3">
-                        <label className="form-label">Contact Name *</label>
-                        <input
-                          type="text"
-                          className={`form-control ${
-                            formErrors.surveyorContactName ? "is-invalid" : ""
-                          }`}
-                          name="surveyorContactName"
-                          value={projectData.surveyor.details.contactName || ""}
-                          onChange={handleSurveyorChange}
-                          required
-                        />
-                        {formErrors.surveyorContactName && (
-                          <div className="invalid-feedback">
-                            {formErrors.surveyorContactName}
-                          </div>
-                        )}
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Contact Name *</label>
+                    <input
+                      type="text"
+                      className={`form-control ${
+                        formErrors.surveyorContactName ? "is-invalid" : ""
+                      }`}
+                      name="surveyorContactName"
+                      value={projectData.surveyorContactName || ""}
+                      onChange={handleChange}
+                      required
+                    />
+                    {formErrors.surveyorContactName && (
+                      <div className="invalid-feedback">
+                        {formErrors.surveyorContactName}
                       </div>
-                      <div className="mb-3">
-                        <label className="form-label">Address *</label>
-                        <input
-                          type="text"
-                          className={`form-control ${
-                            formErrors.surveyorAddress ? "is-invalid" : ""
-                          }`}
-                          name="surveyorAddress"
-                          value={projectData.surveyor.details.address || ""}
-                          onChange={handleSurveyorChange}
-                          required
-                        />
-                        {formErrors.surveyorAddress && (
-                          <div className="invalid-feedback">
-                            {formErrors.surveyorAddress}
-                          </div>
-                        )}
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Address *</label>
+                    <input
+                      type="text"
+                      className={`form-control ${
+                        formErrors.surveyorAddress ? "is-invalid" : ""
+                      }`}
+                      name="surveyorAddress"
+                      value={projectData.surveyorAddress || ""}
+                      onChange={handleChange}
+                      required
+                    />
+                    {formErrors.surveyorAddress && (
+                      <div className="invalid-feedback">
+                        {formErrors.surveyorAddress}
                       </div>
-                      <div className="mb-3">
-                        <label className="form-label">Phone *</label>
-                        <input
-                          type="text"
-                          className={`form-control ${
-                            formErrors.surveyorPhone ? "is-invalid" : ""
-                          }`}
-                          name="surveyorPhone"
-                          value={projectData.surveyor.details.phone || ""}
-                          onChange={handleSurveyorChange}
-                          required
-                        />
-                        {formErrors.surveyorPhone && (
-                          <div className="invalid-feedback">
-                            {formErrors.surveyorPhone}
-                          </div>
-                        )}
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label"> Phone *</label>
+                    <input
+                      type="text"
+                      className={`form-control ${
+                        formErrors.surveyorPhone ? "is-invalid" : ""
+                      }`}
+                      name="surveyorPhone"
+                      value={formatAustralianMobile(projectData.surveyorPhone || "")}
+                      onChange={(e) =>
+                      setProjectData((prev) => ({
+                        ...prev,
+                        surveyorPhone: formatAustralianMobile(e.target.value)
+                      }))
+                    }
+                    placeholder="04XX XXX XXX"
+                    required
+                    />
+                    {formErrors.surveyorPhone && (
+                      <div className="invalid-feedback">
+                        {formErrors.surveyorPhone}
                       </div>
+                    )}
+                  </div>
 
                       <div className="mb-3">
                         <label className="form-label">Email *</label>
