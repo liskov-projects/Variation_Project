@@ -423,7 +423,6 @@ const ProjectDetails = () => {
                                 variation={variation}
                                 project={currentProject}
                                 profile={profileData}
-                            
                               />
                             }
                             fileName={`variation-${variation._id}.pdf`}
