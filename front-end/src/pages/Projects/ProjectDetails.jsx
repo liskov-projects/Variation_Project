@@ -178,9 +178,9 @@ const ProjectDetails = () => {
               <i className="bi bi-arrow-left"></i>
             </button>
             <h2 className="mb-0">{currentProject.projectName}</h2>
-            <span className={`badge ms-3 ${getStatusBadgeClass(currentProject.status)}`}>
+            {currentProject.status && <span className={`badge ms-3 ${getStatusBadgeClass(currentProject.status)}`}>
               {currentProject.status.charAt(0).toUpperCase() + currentProject.status.slice(1)}
-            </span>
+            </span>}
           </div>
           <div>
             <button

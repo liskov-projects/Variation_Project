@@ -151,7 +151,7 @@ const VariationCreate = () => {
     const result = await addVariation(projectId, formattedData);
 
                 if (result.success) {
-                  navigate(`/projects/${projectId}`, { replace: true });
+                  navigate(`/projects/${projectId}/variations/${result.data.variationId}`, { replace: true });
                 }
               };
 
@@ -389,7 +389,7 @@ const VariationCreate = () => {
                     </button>
                     <button
                       type="submit"
-                      className="btn btn-warning"
+                      className="btn btn-primary"
                       style={{color: "white"}}
                       disabled={loading}>
                       {loading ? (
@@ -401,7 +401,7 @@ const VariationCreate = () => {
                           Creating...
                         </>
                       ) : (
-                        "Save As Draft"
+                        "Create Variation"
                       )}
                     </button>
                   </div>

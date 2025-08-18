@@ -141,9 +141,9 @@ const ProjectList = () => {
                       style={{ maxWidth: "200px" }}>
                       {project.projectName}
                     </h5>
-                    <span className={`badge ${getStatusBadgeClass(project.status)}`}>
+                    {project.status && <span className={`badge ${getStatusBadgeClass(project.status)}`}>
                       {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-                    </span>
+                    </span>}
                   </div>
                   <div className="card-body">
                     <p className="mb-2">

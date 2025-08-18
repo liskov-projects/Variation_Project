@@ -37,8 +37,9 @@ const ProjectVariation = () => {
       } catch (error) {
         console.error("Error fetching project or finding variation:", error);
       }
-      fetchAndFindVariation();
-    }}, [projectId]);
+    }
+    fetchAndFindVariation();
+  }, [projectId]);
 
     useEffect(() => {
       if (showConfirmModal) {
