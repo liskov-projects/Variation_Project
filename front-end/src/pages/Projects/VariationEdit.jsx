@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
+import useFormLock from "../../hooks/useFormLock";
 
 const VariationEdit = () => {
   const { projectId, variationId } = useParams();
@@ -12,6 +13,9 @@ const VariationEdit = () => {
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
+  const [formLocked, setFormLocked] = useState(false);
+  
+  const { lockForm } = useFormLock(formLocked, `/projects/${projectId}/variations/${variationId}`);
 
   // Fetch project data
   useEffect(() => {
@@ -119,10 +123,11 @@ const VariationEdit = () => {
 
     if (result.success) {
       setSuccess(true);
+      setFormLocked(true);
 
       // Show success message briefly then redirect
       setTimeout(() => {
-        navigate(`/projects/${projectId}/variations/${variationId}`);
+        lockForm(`/projects/${projectId}/variations/${variationId}`);
       }, 1500);
     }
   };

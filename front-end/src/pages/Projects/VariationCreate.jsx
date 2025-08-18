@@ -4,6 +4,7 @@ import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLocation } from "react-router-dom";
+import useFormLock from "../../hooks/useFormLock";
 
 const VariationCreate = () => {
   const { projectId } = useParams();
@@ -13,6 +14,9 @@ const VariationCreate = () => {
     useProject();
   const [variationData, setVariationData] = useState(createEmptyVariation());
   const [formErrors, setFormErrors] = useState({});
+  const [formLocked, setFormLocked] = useState(false);
+  
+  const { lockForm } = useFormLock(formLocked, `/projects/${projectId}`);
 
   useEffect(() => {
     if (projectId) {
@@ -151,7 +155,8 @@ const VariationCreate = () => {
     const result = await addVariation(projectId, formattedData);
 
                 if (result.success) {
-                  navigate(`/projects/${projectId}`, { replace: true });
+                  setFormLocked(true);
+                  lockForm(`/projects/${projectId}`);
                 }
               };
 

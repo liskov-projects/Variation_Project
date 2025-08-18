@@ -4,6 +4,7 @@ import { Project } from "../../models/ProjectModel";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
+import useFormLock from "../../hooks/useFormLock";
 
 const ProjectEdit = () => {
   const { projectId } = useParams();
@@ -14,6 +15,9 @@ const ProjectEdit = () => {
   const [success, setSuccess] = useState(false);
   const [architectpmSelected, setArchitectpmSelected] = useState("No");
   const [hasSurveyor, setHasSurveyor] = useState(true);
+  const [formLocked, setFormLocked] = useState(false);
+  
+  const { lockForm } = useFormLock(formLocked, `/projects/${projectId}`);
 
   console.log("LOADING");
   console.log(loading);
@@ -220,8 +224,9 @@ const ProjectEdit = () => {
 
     if (result.success) {
       setSuccess(true);
+      setFormLocked(true);
       setTimeout(() => {
-        navigate(`/projects/${projectId}`);
+        lockForm(`/projects/${projectId}`);
       }, 1500);
     }
   };
