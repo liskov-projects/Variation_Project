@@ -9,19 +9,20 @@ const ConfirmModal = ({ setShowConfirmModal, handleSendVariationForSignature, is
             <div className="modal-dialog" role="document">
             <div className="modal-content">
                 <div className="modal-header">
-                <h5 className="modal-title">Confirm Submission</h5>
+                <h5 className="modal-title">Send Variation For Approval?</h5>
                 <button type="button" className="btn-close" onClick={() => setShowConfirmModal(false)}></button>
                 </div>
                 <div className="modal-body">
-                <p>Once you send this variation for approval, it cannot be edited. Are you sure you want to continue?</p>
+                <p>Once you send this variation for approval, it cannot be edited.</p>
+                <p>Please choose 'Review Details' if you'd like to make changes or 'Send Variation' if you're certain all the details are correct.</p>
                 </div>
                 <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowConfirmModal(false)}>
-                    Cancel
+                    Review Details
                 </button>
                 <button
                     type="button"
-                    className="btn btn-primary"
+                    className="btn btn-success"
                     onClick={async () => {
                     setShowConfirmModal(false);
                     await handleSendVariationForSignature();
@@ -34,7 +35,7 @@ const ConfirmModal = ({ setShowConfirmModal, handleSendVariationForSignature, is
                         Sending...
                     </>
                     ) : (
-                    "Yes, Send for Approval"
+                    "Send Variation For Approval"
                     )}
                 </button>
                 </div>

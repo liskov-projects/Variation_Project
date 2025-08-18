@@ -151,7 +151,7 @@ const VariationCreate = () => {
     const result = await addVariation(projectId, formattedData);
 
                 if (result.success) {
-                  navigate(`/projects/${projectId}/variations/${result.data.variationId}`, { replace: true });
+                  navigate(`/projects/${projectId}/variations/${result.data.variationId}/?firstTime=true`, { replace: true });
                 }
               };
 

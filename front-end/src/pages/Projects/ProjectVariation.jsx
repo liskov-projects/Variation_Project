@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -22,8 +22,10 @@ const ProjectVariation = () => {
     const [alertType, setAlertType] = useState('success'); // 'success', 'error', 'info'
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [searchParams, setSearchParams] = useSearchParams();
     const { profileData } = useProfile();
 
+    const isFirstVisit = searchParams.get('firstTime') === 'true';
 
 
   useEffect(() => {
@@ -48,6 +50,12 @@ const ProjectVariation = () => {
         document.body.style.overflow = "auto";
       }
       }, [showConfirmModal]);
+
+  useEffect(() => {
+    if (fetchedProject && isFirstVisit) {
+      setShowConfirmModal(true);
+    }
+  }, [fetchedProject, isFirstVisit])
 
 
   // Find the requested variation in the current project
