@@ -287,18 +287,6 @@ const ProjectEdit = () => {
   const basePrice = parseFloat(String(projectData.contractPrice || "").replace(/,/g, "")) || 0;
   const currentContractPrice = basePrice + totalVariationCost;
 
-    const formatAustralianMobile = (input) => {
-    // Remove all non-digit characters
-    const digits = input.replace(/\D/g, "");
-
-    // Format: 0412 345 678
-    if (digits.length <= 4) return digits;
-    if (digits.length <= 7) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
-    return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 10)}`;
-  };
-
-
-
   return (
     <div>
       <Header />
