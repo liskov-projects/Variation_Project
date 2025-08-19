@@ -730,9 +730,7 @@ No
                           </div>
                         )}
                       </div>
-                    </>
-                  )}
-
+                 
                   {/* Architect / Project Manager section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">
                     Architect / Project Manager Information
