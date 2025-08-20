@@ -6,7 +6,7 @@ const ConfirmModal = ({ setShowConfirmModal, handleSendVariationForSignature, is
             tabIndex="-1"
             role="dialog"
         >
-            <div className="modal-dialog" role="document">
+            <div className="modal-dialog" style={{marginTop: "20vh"}} role="document">
             <div className="modal-content">
                 <div className="modal-header">
                 <h5 className="modal-title">Send Variation For Approval?</h5>
