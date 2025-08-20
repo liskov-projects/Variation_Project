@@ -373,6 +373,48 @@ const ProjectVariation = () => {
           </div>
         )}
 
+        <div className="d-flex justify-content-between my-4">
+            <button className="btn btn-secondary" onClick={handleBackToProject}>
+              Back to Project
+            </button>
+            {variation.status === 'draft' && (
+              <button 
+                className='btn btn-primary'
+                onClick={() => setShowConfirmModal(true)}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-envelope me-2"></i>
+                    Send Variation for Approval
+                  </>
+                )}
+              </button>
+            )}
+            {variation.status !== 'approved' && (
+              <button
+                className="btn btn-primary"
+                onClick={handleEditVariation}
+              >
+                Edit Variation
+              </button>
+            )}
+            <PDFDownloadLink
+              document={
+                <VariationPDF project={currentProject} variation={variation} profile={profileData}/>
+              }
+              fileName={`variation-${variation._id}.pdf`}
+              className="btn btn-danger"
+            >
+              {({ loading }) => (loading ? "Preparing PDF..." : "Download PDF")}
+            </PDFDownloadLink>
+        </div>
+
         {/* Variation Details Card */}
         <div className="card mb-4">
           <div className="card-header bg-light">
@@ -605,47 +647,6 @@ const ProjectVariation = () => {
           </div>
         </div>
 
-          <div className="d-flex justify-content-between mt-4">
-            <button className="btn btn-secondary" onClick={handleBackToProject}>
-              Back to Project
-            </button>
-            {variation.status === 'draft' && (
-              <button 
-                className='btn btn-primary'
-                onClick={() => setShowConfirmModal(true)}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <i className="bi bi-envelope me-2"></i>
-                    Send Variation for Approval
-                  </>
-                )}
-              </button>
-            )}
-            {variation.status !== 'approved' && (
-              <button
-                className="btn btn-primary"
-                onClick={handleEditVariation}
-              >
-                Edit Variation
-              </button>
-            )}
-            <PDFDownloadLink
-              document={
-                <VariationPDF project={currentProject} variation={variation} profile={profileData}/>
-              }
-              fileName={`variation-${variation._id}.pdf`}
-              className="btn btn-danger"
-            >
-              {({ loading }) => (loading ? "Preparing PDF..." : "Download PDF")}
-            </PDFDownloadLink>
-          </div>
             {showConfirmModal && 
             <ConfirmModal 
               setShowConfirmModal={setShowConfirmModal} 
