@@ -27,20 +27,22 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       <nav
-        className={`navbar navbar-expand-lg fixed-top transition-all duration-300 ${
-          isScrolled ? "py-2" : "py-3"
-        }`}
+        className={`navbar navbar-expand-lg fixed-top transition-all duration-300 py-3`}
         style={{
-          backgroundColor: isScrolled ? "#2C3E50" : "rgba(44, 62, 80, 0.9)",
+          backgroundColor: "rgba(44, 62, 80, 0.85)",
           backdropFilter: "blur(8px)",
-          borderBottom: isScrolled ? "1px solid rgba(255, 255, 255, 0.9)" : "none",
+          borderBottom: "2px ridge rgba(74, 234, 255, 0.25)",
         }}>
         <div className="container">
-          <a
-            className="navbar-brand fw-bold text-white"
-            href="/">
-            Variation
-          </a>
+          <div className="d-flex align-items-center">
+            <img className="me-2" src="/logo192.png" alt="Variation Logo" width="36px" />
+            <a
+              style={{fontSize: '24px'}}
+              className="navbar-brand mb-0 fw-bold text-white"
+              href="/">
+              Variation
+            </a>
+          </div>
           <button
             className="navbar-toggler"
             type="button"
