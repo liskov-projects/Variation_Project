@@ -652,6 +652,7 @@ const ProjectVariation = () => {
               setShowConfirmModal={setShowConfirmModal} 
               handleSendVariationForSignature={handleSendVariationForSignature}
               isSubmitting={isSubmitting}
+              recipientDetails={{name: fetchedProject.clientName, email: fetchedProject.clientEmail}}
             />}
 
         </div>
