@@ -475,14 +475,21 @@ const ProjectEdit = () => {
 
                   <div className="mb-3">
                     <label className="form-label">Client Phone *</label>
-                    <input
-                      type="text"
-                      className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
-                      name="clientPhone"
-                      value={projectData.clientPhone || ""}
-                      onChange={handleChange}
-                      required
-                    />
+                  <input
+                    type="text"
+                    className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
+                    name="clientPhone"
+                    value={formatAustralianMobile(projectData.clientPhone) || ""}
+                    onChange={(e) =>
+                      setProjectData((prev) => ({
+                        ...prev,
+                        clientPhone: formatAustralianMobile(e.target.value)
+                      }))
+                    }
+                    placeholder="04XX XXX XXX"
+                    required
+                  />
+
                     {formErrors.clientPhone && (
                       <div className="invalid-feedback">{formErrors.clientPhone}</div>
                     )}

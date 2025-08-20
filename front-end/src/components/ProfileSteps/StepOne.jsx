@@ -69,6 +69,17 @@ const StepOne = ({ setFormError }) => {
     if (!emailRegex.test(profileData.email)) setFormError("A valid email is required");
   };
 
+  const formatAustralianMobile = (input) => {
+  // Remove all non-digit characters
+  const digits = input.replace(/\D/g, "");
+
+  // Format: 0412 345 678
+  if (digits.length <= 4) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+  return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 10)}`;
+};
+
+
   return (
     <div>
       <h4 className="mb-3">Builder Information</h4>
@@ -119,7 +130,11 @@ const StepOne = ({ setFormError }) => {
           placeholder="0412 345 678"
           className="form-control light-grey-placeholder-text"
           value={profileData.phoneNumber || ""}
-          onChange={(e) => updateProfile({ phoneNumber: e.target.value })}
+          onChange={(e) => {
+              const formatted = formatAustralianMobile(e.target.value);
+               updateProfile({ phoneNumber: formatted });
+     }}
+          placeholder="04XX XXX XXX"
           required
         />
       </div>
