@@ -66,7 +66,7 @@ const Dashboard = () => {
                 project or manage your existing ones.
               </p>
             </div>
-            <img className="rounded-circle border border-dark-subtle" src={profileData.logo} alt="Builder's Logo" width="150px"/>
+            {profileData.logo !== "" && <img className="rounded bg-dark-subtle" src={profileData.logo} alt="Builder's Logo" width="150px" height="150px"/>}
           </div>
         </div>
 
