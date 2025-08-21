@@ -13,9 +13,9 @@ const ConfirmModal = ({ setShowConfirmModal, handleSendVariationForSignature, is
                 <button type="button" className="btn-close" onClick={() => setShowConfirmModal(false)}></button>
                 </div>
                 <div className="modal-body">
-                <p>This variation requires sign off from the owner</p>
+                <p>This variation requires sign off from the owner.</p>
                 <p>Once you send this variation for approval, it cannot be edited.</p>
-                <p>If you agree to send, it will be sent to {recipientDetails.name} at {recipientDetails.email}</p>
+                <p>If you agree to send, it will be sent to {recipientDetails.name} at {recipientDetails.email}.</p>
                 <p>Please choose 'Review Details' if you'd like to make changes or 'Send Variation' if you're certain all the details are correct.</p>
                 </div>
                 <div className="modal-footer">
