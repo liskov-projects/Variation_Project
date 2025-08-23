@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Project } from "../../models/ProjectModel";
 import { useProject } from "../../contexts/ProjectContext";
-import { Project } from "../../models/ProjectModel"; // Import the Project model
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
+import useFormLock from "../../hooks/useFormLock";
 
 const ProjectEdit = () => {
   const { projectId } = useParams();
@@ -12,10 +13,41 @@ const ProjectEdit = () => {
   const [projectData, setProjectData] = useState(null);
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
-  const [architectpmSelected, setArchitectpmSelected] = useState('No');
+  const [architectpmSelected, setArchitectpmSelected] = useState("No");
   const [hasSurveyor, setHasSurveyor] = useState(true);
-
+  const [formLocked, setFormLocked] = useState(false);
   
+  const { lockForm } = useFormLock(formLocked, `/projects/${projectId}`);
+
+  console.log("LOADING");
+  console.log(loading);
+
+  // Helpers
+  const formatAustralianMobile = (input = "") => {
+    const digits = String(input).replace(/\D/g, "");
+    if (digits.length <= 4) return digits;
+    if (digits.length <= 7) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+    return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 10)}`;
+  };
+
+  const setSurveyorField = (key, val) => {
+    setProjectData((prev) => ({
+      ...prev,
+      surveyor: {
+        ...prev.surveyor,
+        hasSurveyor,
+        details: {
+          ...prev.surveyor.details,
+          [key]: key === "phone" ? formatAustralianMobile(val) : val,
+        },
+      },
+    }));
+
+    const errKey = `surveyor${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+    if (formErrors[errKey]) {
+      setFormErrors((prev) => ({ ...prev, [errKey]: "" }));
+    }
+  };
 
   // Fetch project data
   useEffect(() => {
@@ -27,22 +59,43 @@ const ProjectEdit = () => {
   // Set initial form data when project is loaded
   useEffect(() => {
     if (currentProject) {
-      // Create a Project instance from the backend data
       const projectInstance = new Project(currentProject);
-      
+
       const formattedPrice = currentProject.contractPrice
         ? parseFloat(currentProject.contractPrice).toLocaleString()
         : "";
 
-      // Set the project data
+      const safeArchitect = {
+        hasArchitect: projectInstance?.architect?.hasArchitect ?? false,
+        details: {
+          companyName: projectInstance?.architect?.details?.companyName ?? "",
+          contactName: projectInstance?.architect?.details?.contactName ?? "",
+          address: projectInstance?.architect?.details?.address ?? "",
+          phone: projectInstance?.architect?.details?.phone ?? "",
+          email: projectInstance?.architect?.details?.email ?? "",
+        },
+      };
+
+      const safeSurveyor = {
+        hasSurveyor: projectInstance?.surveyor?.hasSurveyor ?? true,
+        details: {
+          companyName: projectInstance?.surveyor?.details?.companyName ?? "",
+          contactName: projectInstance?.surveyor?.details?.contactName ?? "",
+          address: projectInstance?.surveyor?.details?.address ?? "",
+          phone: projectInstance?.surveyor?.details?.phone ?? "",
+          email: projectInstance?.surveyor?.details?.email ?? "",
+        },
+      };
+
       setProjectData({
         ...projectInstance,
         contractPrice: formattedPrice,
+        architect: safeArchitect,
+        surveyor: safeSurveyor,
       });
 
-      // Set the architect selection state
-      setArchitectpmSelected(projectInstance.architect.hasArchitect ? 'Yes' : 'No');
-      setHasSurveyor(projectInstance.surveyor.hasSurveyor);
+      setArchitectpmSelected(safeArchitect.hasArchitect ? "Yes" : "No");
+      setHasSurveyor(safeSurveyor.hasSurveyor);
     }
   }, [currentProject]);
 
@@ -53,7 +106,6 @@ const ProjectEdit = () => {
       [name]: value,
     }));
 
-    // Clear validation error when field is updated
     if (formErrors[name]) {
       setFormErrors((prev) => ({
         ...prev,
@@ -62,53 +114,28 @@ const ProjectEdit = () => {
     }
   };
 
-  // Handle architect selection change
   const handleArchitectSelection = (value) => {
     setArchitectpmSelected(value);
-    
-    // Update the project data using the Project model method
     const newProject = new Project(projectData);
     newProject.updateArchitect(value === "Yes", newProject.architect.details);
     setProjectData(newProject);
   };
 
-  // Handle architect details change
   const handleArchitectChange = (e) => {
     const { name, value } = e.target;
-    
-    // Extract the field name (remove 'architectPm' prefix)
-    const fieldName = name.replace('architectPm', '').toLowerCase();
-    const mappedFieldName = fieldName === 'companyname' ? 'companyName' : 
-                            fieldName === 'contactname' ? 'contactName' : fieldName;
+
+    const fieldName = name.replace("architectPm", "").toLowerCase();
+    const mappedFieldName =
+      fieldName === "companyname"
+        ? "companyName"
+        : fieldName === "contactname"
+          ? "contactName"
+          : fieldName;
 
     const newProject = new Project(projectData);
     newProject.updateArchitect(architectpmSelected === "Yes", {
       ...newProject.architect.details,
-      [mappedFieldName]: value
-    });
-    setProjectData(newProject);
-
-    if (formErrors[name]) {
-      setFormErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
-  };
-
-  // Handle surveyor details change
-  const handleSurveyorChange = (e) => {
-    const { name, value } = e.target;
-    
-    // Extract the field name (remove 'surveyor' prefix)
-    const fieldName = name.replace('surveyor', '').toLowerCase();
-    const mappedFieldName = fieldName === 'companyname' ? 'companyName' : 
-                            fieldName === 'contactname' ? 'contactName' : fieldName;
-
-    const newProject = new Project(projectData);
-    newProject.updateSurveyor(hasSurveyor, {
-      ...newProject.surveyor.details,
-      [mappedFieldName]: value
+      [mappedFieldName]: value,
     });
     setProjectData(newProject);
 
@@ -123,7 +150,6 @@ const ProjectEdit = () => {
   const validateForm = () => {
     const errors = {};
 
-    // Required fields
     const requiredFields = [
       "projectName",
       "propertyAddress",
@@ -140,60 +166,36 @@ const ProjectEdit = () => {
       }
     });
 
-    // Validate surveyor fields (always required)
     if (hasSurveyor) {
-      if (!projectData.surveyor.details.companyName) {
-        errors.surveyorCompanyName = "Surveyor company name is required";
-      }
-      if (!projectData.surveyor.details.contactName) {
-        errors.surveyorContactName = "Surveyor contact name is required";
-      }
-      if (!projectData.surveyor.details.address) {
-        errors.surveyorAddress = "Surveyor address is required";
-      }
-      if (!projectData.surveyor.details.phone) {
-        errors.surveyorPhone = "Surveyor phone is required";
-      }
-      if (!projectData.surveyor.details.email) {
-        errors.surveyorEmail = "Surveyor email is required";
-      }
+      const s = projectData.surveyor?.details || {};
+      if (!s.companyName) errors.surveyorCompanyName = "Surveyor company name is required";
+      if (!s.contactName) errors.surveyorContactName = "Surveyor contact name is required";
+      if (!s.address) errors.surveyorAddress = "Surveyor address is required";
+      if (!s.phone) errors.surveyorPhone = "Surveyor phone is required";
+      if (!s.email) errors.surveyorEmail = "Surveyor email is required";
     }
 
-    // Validate architect fields (only if architect is selected)
     if (architectpmSelected === "Yes") {
-      if (!projectData.architect.details.companyName) {
-        errors.architectPmCompanyName = "Architect company name is required";
-      }
-      if (!projectData.architect.details.contactName) {
-        errors.architectPmContactName = "Architect contact name is required";
-      }
-      if (!projectData.architect.details.address) {
-        errors.architectPmAddress = "Architect address is required";
-      }
-      if (!projectData.architect.details.phone) {
-        errors.architectPmPhone = "Architect phone is required";
-      }
-      if (!projectData.architect.details.email) {
-        errors.architectPmEmail = "Architect email is required";
-      }
+      const a = projectData.architect?.details || {};
+      if (!a.companyName) errors.architectPmCompanyName = "Architect company name is required";
+      if (!a.contactName) errors.architectPmContactName = "Architect contact name is required";
+      if (!a.address) errors.architectPmAddress = "Architect address is required";
+      if (!a.phone) errors.architectPmPhone = "Architect phone is required";
+      if (!a.email) errors.architectPmEmail = "Architect email is required";
     }
 
-    // Email validation
     if (projectData.clientEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(projectData.clientEmail)) {
       errors.clientEmail = "Please enter a valid email address";
     }
 
-    // Date validation
     if (projectData.startDate && projectData.expectedEndDate) {
       const startDate = new Date(projectData.startDate);
       const endDate = new Date(projectData.expectedEndDate);
-
       if (endDate < startDate) {
         errors.expectedEndDate = "End date must be after start date";
       }
     }
 
-    // Validate contract price
     if (
       projectData.contractPrice &&
       (isNaN(parseFloat(projectData.contractPrice)) || parseFloat(projectData.contractPrice) < 0)
@@ -212,23 +214,19 @@ const ProjectEdit = () => {
       return;
     }
 
-    // Create a new Project instance to ensure all transformations are applied
     const projectInstance = new Project({
       ...projectData,
       contractPrice: parseFloat(String(projectData.contractPrice || "").replace(/,/g, "")),
     });
 
-    // Use the toBackendFormat method to get the correctly structured data
     const backendData = projectInstance.toBackendFormat();
-
     const result = await updateProject(projectId, backendData);
 
     if (result.success) {
       setSuccess(true);
-
-      // Show success message briefly then redirect
+      setFormLocked(true);
       setTimeout(() => {
-        navigate(`/projects/${projectId}`);
+        lockForm(`/projects/${projectId}`);
       }, 1500);
     }
   };
@@ -237,18 +235,17 @@ const ProjectEdit = () => {
     navigate(`/projects/${projectId}`);
   };
 
-  const MAX_ALLOWED = 10000000; // e.g., 10 million
+  const MAX_ALLOWED = 10000000;
 
   const handleCurrencyChange = (e) => {
     const { name, value } = e.target;
     const rawValue = value.replace(/[^0-9.]/g, "");
     const numeric = parseFloat(rawValue);
 
-    if (numeric > MAX_ALLOWED) return; // silently ignore or show error
+    if (numeric > MAX_ALLOWED) return;
 
     const [integer, decimal] = rawValue.split(".");
-    const formattedInteger = parseInt(integer || "0").toLocaleString();
-
+    const formattedInteger = parseInt(integer || "0", 10).toLocaleString();
     const formatted =
       decimal !== undefined ? `${formattedInteger}.${decimal.slice(0, 2)}` : formattedInteger;
 
@@ -258,7 +255,6 @@ const ProjectEdit = () => {
     }));
   };
 
-  // Format date for input fields (YYYY-MM-DD)
   const formatDateForInput = (dateString) => {
     if (!dateString) return "";
     return dateString.split("T")[0];
@@ -269,7 +265,9 @@ const ProjectEdit = () => {
       <div>
         <Header />
         <div className="d-flex justify-content-center align-items-center vh-100">
-          <div className="spinner-border text-primary" role="status">
+          <div
+            className="spinner-border text-primary"
+            role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
@@ -277,16 +275,14 @@ const ProjectEdit = () => {
     );
   }
 
-  // Calculate contract price summary for display
-  const totalVariationCost = projectData.variations
-    ? projectData.variations.reduce((total, variation) => {
-        if (variation.status === "approved") {
-          const parsed = parseFloat(String(variation.cost || "0").replace(/,/g, ""));
-          return total + (isNaN(parsed) ? 0 : parsed);
-        }
-        return total;
-      }, 0)
-    : 0;
+  const totalVariationCost =
+    projectData.variations?.reduce((total, variation) => {
+      if (variation.status === "approved") {
+        const parsed = parseFloat(String(variation.cost || "0").replace(/,/g, ""));
+        return total + (isNaN(parsed) ? 0 : parsed);
+      }
+      return total;
+    }, 0) ?? 0;
 
   const basePrice = parseFloat(String(projectData.contractPrice || "").replace(/,/g, "")) || 0;
   const currentContractPrice = basePrice + totalVariationCost;
@@ -300,7 +296,9 @@ const ProjectEdit = () => {
             <div className="card shadow-sm">
               <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h3 className="mb-0">Edit Project</h3>
-                <button className="btn btn-sm btn-outline-light" onClick={handleCancel}>
+                <button
+                  className="btn btn-sm btn-outline-light"
+                  onClick={handleCancel}>
                   Back to Project
                 </button>
               </div>
@@ -310,7 +308,6 @@ const ProjectEdit = () => {
                   <div className="alert alert-success">Project updated successfully!</div>
                 )}
 
-                {/* Current Contract Price Summary */}
                 {projectData.variations && projectData.variations.length > 0 && (
                   <div className="alert alert-info mb-4">
                     <h5>Current Contract Summary</h5>
@@ -338,7 +335,6 @@ const ProjectEdit = () => {
                 )}
 
                 <form onSubmit={handleSubmit}>
-                  {/* Project Details Section */}
                   <h4 className="mb-3 border-bottom pb-2">Project Details</h4>
                   <div className="mb-3">
                     <label className="form-label">Project Name *</label>
@@ -377,11 +373,10 @@ const ProjectEdit = () => {
                       name="description"
                       value={projectData.description || ""}
                       onChange={handleChange}
-                      rows="3"
+                      rows={3}
                     />
                   </div>
 
-                  {/* Contract Price Field */}
                   <div className="mb-3">
                     <label className="form-label">Original Contract Price *</label>
                     <div className="input-group">
@@ -439,8 +434,7 @@ const ProjectEdit = () => {
                       className="form-select"
                       name="status"
                       value={projectData.status || "active"}
-                      onChange={handleChange}
-                    >
+                      onChange={handleChange}>
                       <option value="active">Active</option>
                       <option value="on-hold">On Hold</option>
                       <option value="completed">Completed</option>
@@ -448,7 +442,6 @@ const ProjectEdit = () => {
                     </select>
                   </div>
 
-                  {/* Client Information Section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">Client Information</h4>
                   <div className="mb-3">
                     <label className="form-label">Client Name *</label>
@@ -482,23 +475,28 @@ const ProjectEdit = () => {
 
                   <div className="mb-3">
                     <label className="form-label">Client Phone *</label>
-                    <input
-                      type="text"
-                      className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
-                      name="clientPhone"
-                      value={projectData.clientPhone || ""}
-                      onChange={handleChange}
-                      required
-                    />
+                  <input
+                    type="text"
+                    className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
+                    name="clientPhone"
+                    value={formatAustralianMobile(projectData.clientPhone) || ""}
+                    onChange={(e) =>
+                      setProjectData((prev) => ({
+                        ...prev,
+                        clientPhone: formatAustralianMobile(e.target.value)
+                      }))
+                    }
+                    placeholder="04XX XXX XXX"
+                    required
+                  />
+
                     {formErrors.clientPhone && (
                       <div className="invalid-feedback">{formErrors.clientPhone}</div>
                     )}
                   </div>
 
                   {/* Surveyor section */}
-                  <h4 className="mb-3 mt-4 border-bottom pb-2">
-                    Surveyor Information
-                  </h4>
+                  <h4 className="mb-3 mt-4 border-bottom pb-2">Surveyor Information</h4>
 
                   {hasSurveyor && (
                     <>
@@ -511,13 +509,11 @@ const ProjectEdit = () => {
                           }`}
                           name="surveyorCompanyName"
                           value={projectData.surveyor.details.companyName || ""}
-                          onChange={handleSurveyorChange}
+                          onChange={(e) => setSurveyorField("companyName", e.target.value)}
                           required
                         />
                         {formErrors.surveyorCompanyName && (
-                          <div className="invalid-feedback">
-                            {formErrors.surveyorCompanyName}
-                          </div>
+                          <div className="invalid-feedback">{formErrors.surveyorCompanyName}</div>
                         )}
                       </div>
                       <div className="mb-3">
@@ -529,13 +525,11 @@ const ProjectEdit = () => {
                           }`}
                           name="surveyorContactName"
                           value={projectData.surveyor.details.contactName || ""}
-                          onChange={handleSurveyorChange}
+                          onChange={(e) => setSurveyorField("contactName", e.target.value)}
                           required
                         />
                         {formErrors.surveyorContactName && (
-                          <div className="invalid-feedback">
-                            {formErrors.surveyorContactName}
-                          </div>
+                          <div className="invalid-feedback">{formErrors.surveyorContactName}</div>
                         )}
                       </div>
                       <div className="mb-3">
@@ -547,31 +541,25 @@ const ProjectEdit = () => {
                           }`}
                           name="surveyorAddress"
                           value={projectData.surveyor.details.address || ""}
-                          onChange={handleSurveyorChange}
+                          onChange={(e) => setSurveyorField("address", e.target.value)}
                           required
                         />
                         {formErrors.surveyorAddress && (
-                          <div className="invalid-feedback">
-                            {formErrors.surveyorAddress}
-                          </div>
+                          <div className="invalid-feedback">{formErrors.surveyorAddress}</div>
                         )}
                       </div>
                       <div className="mb-3">
                         <label className="form-label">Phone *</label>
                         <input
                           type="text"
-                          className={`form-control ${
-                            formErrors.surveyorPhone ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${formErrors.surveyorPhone ? "is-invalid" : ""}`}
                           name="surveyorPhone"
                           value={projectData.surveyor.details.phone || ""}
-                          onChange={handleSurveyorChange}
+                          onChange={(e) => setSurveyorField("phone", e.target.value)}
                           required
                         />
                         {formErrors.surveyorPhone && (
-                          <div className="invalid-feedback">
-                            {formErrors.surveyorPhone}
-                          </div>
+                          <div className="invalid-feedback">{formErrors.surveyorPhone}</div>
                         )}
                       </div>
 
@@ -579,71 +567,69 @@ const ProjectEdit = () => {
                         <label className="form-label">Email *</label>
                         <input
                           type="email"
-                          className={`form-control ${
-                            formErrors.surveyorEmail ? "is-invalid" : ""
-                          }`}
-                          name="surveyorEmail"
-                          value={projectData.surveyor.details.email || ""}
-                          onChange={handleSurveyorChange}
+                          className={`form-control ${formErrors.surveyorEmail ? "is-invalid" : ""}`}
+                          value={projectData.surveyor.details.email}
+                          onChange={(e) => setSurveyorField("email", e.target.value)}
                           required
                         />
                         {formErrors.surveyorEmail && (
-                          <div className="invalid-feedback">
-                            {formErrors.surveyorEmail}
-                          </div>
+                          <div className="invalid-feedback">{formErrors.surveyorEmail}</div>
                         )}
                       </div>
                     </>
                   )}
 
-                  {/* Architect / Project Manager section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">
                     Architect / Project Manager Information
                   </h4>
 
                   <div className="mb-3">
-                    <label className="form-label fw-semibold">Do you have an Architect / Project Manager? *</label>
+                    <label className="form-label fw-semibold">
+                      Do you have an Architect / Project Manager? *
+                    </label>
                     <div className="d-flex gap-4 mt-2">
                       <div className="form-check">
-                        <input 
-                          className="form-check-input" 
-                          type="radio" 
-                          name="architectChoice" 
-                          id="architectYes" 
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="architectChoice"
+                          id="architectYes"
                           value="Yes"
-                          checked={architectpmSelected === "Yes"} 
+                          checked={architectpmSelected === "Yes"}
                           onChange={(e) => handleArchitectSelection(e.target.value)}
                         />
-                        <label className="form-check-label" htmlFor="architectYes">
+                        <label
+                          className="form-check-label"
+                          htmlFor="architectYes">
                           Yes
                         </label>
                       </div>
                       <div className="form-check">
-                        <input 
-                          className="form-check-input" 
-                          type="radio" 
-                          name="architectChoice" 
-                          id="architectNo" 
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="architectChoice"
+                          id="architectNo"
                           value="No"
-                          checked={architectpmSelected === "No"} 
+                          checked={architectpmSelected === "No"}
                           onChange={(e) => handleArchitectSelection(e.target.value)}
                         />
-                        <label className="form-check-label" htmlFor="architectNo">
+                        <label
+                          className="form-check-label"
+                          htmlFor="architectNo">
                           No
                         </label>
                       </div>
                     </div>
                   </div>
 
-                  {architectpmSelected === 'Yes' && (
+                  {architectpmSelected === "Yes" && (
                     <>
                       <div className="mb-3">
                         <label className="form-label">Company Name *</label>
                         <input
                           type="text"
-                          className={`form-control ${
-                            formErrors.architectPmCompanyName ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${formErrors.architectPmCompanyName ? "is-invalid" : ""}`}
                           name="architectPmCompanyName"
                           value={projectData.architect.details.companyName || ""}
                           onChange={handleArchitectChange}
@@ -654,13 +640,12 @@ const ProjectEdit = () => {
                           </div>
                         )}
                       </div>
+
                       <div className="mb-3">
                         <label className="form-label">Contact Name *</label>
                         <input
                           type="text"
-                          className={`form-control ${
-                            formErrors.architectPmContactName ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${formErrors.architectPmContactName ? "is-invalid" : ""}`}
                           name="architectPmContactName"
                           value={projectData.architect.details.contactName || ""}
                           onChange={handleArchitectChange}
@@ -671,38 +656,32 @@ const ProjectEdit = () => {
                           </div>
                         )}
                       </div>
+
                       <div className="mb-3">
                         <label className="form-label">Address *</label>
                         <input
                           type="text"
-                          className={`form-control ${
-                            formErrors.architectPmAddress ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${formErrors.architectPmAddress ? "is-invalid" : ""}`}
                           name="architectPmAddress"
                           value={projectData.architect.details.address || ""}
                           onChange={handleArchitectChange}
                         />
                         {formErrors.architectPmAddress && (
-                          <div className="invalid-feedback">
-                            {formErrors.architectPmAddress}
-                          </div>
+                          <div className="invalid-feedback">{formErrors.architectPmAddress}</div>
                         )}
                       </div>
+
                       <div className="mb-3">
                         <label className="form-label">Phone *</label>
                         <input
                           type="text"
-                          className={`form-control ${
-                            formErrors.architectPmPhone ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${formErrors.architectPmPhone ? "is-invalid" : ""}`}
                           name="architectPmPhone"
                           value={projectData.architect.details.phone || ""}
                           onChange={handleArchitectChange}
                         />
                         {formErrors.architectPmPhone && (
-                          <div className="invalid-feedback">
-                            {formErrors.architectPmPhone}
-                          </div>
+                          <div className="invalid-feedback">{formErrors.architectPmPhone}</div>
                         )}
                       </div>
 
@@ -710,17 +689,13 @@ const ProjectEdit = () => {
                         <label className="form-label">Email *</label>
                         <input
                           type="email"
-                          className={`form-control ${
-                            formErrors.architectPmEmail ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${formErrors.architectPmEmail ? "is-invalid" : ""}`}
                           name="architectPmEmail"
                           value={projectData.architect.details.email || ""}
                           onChange={handleArchitectChange}
                         />
                         {formErrors.architectPmEmail && (
-                          <div className="invalid-feedback">
-                            {formErrors.architectPmEmail}
-                          </div>
+                          <div className="invalid-feedback">{formErrors.architectPmEmail}</div>
                         )}
                       </div>
                     </>
@@ -731,18 +706,19 @@ const ProjectEdit = () => {
                       type="button"
                       className="btn btn-secondary"
                       onClick={handleCancel}
-                      disabled={loading}
-                    >
+                      disabled={loading}>
                       Cancel
                     </button>
-                    <button type="submit" className="btn btn-primary" disabled={loading}>
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={loading}>
                       {loading ? (
                         <>
                           <span
                             className="spinner-border spinner-border-sm me-2"
                             role="status"
-                            aria-hidden="true"
-                          ></span>
+                            aria-hidden="true"></span>
                           Saving...
                         </>
                       ) : (

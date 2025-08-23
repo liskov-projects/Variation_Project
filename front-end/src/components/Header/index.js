@@ -18,14 +18,15 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-dark text-white py-3">
+    <header className="text-white py-3" style={{backgroundColor: "rgb(44, 62, 80)", borderBottom: "3px ridge rgba(74, 234, 255, 0.5)"}}>
       <div className="container d-flex justify-content-between align-items-center">
         <div className="d-flex align-items-center">
+          <img className="me-2" src="/logo192.png" alt="Variation Logo" width="36px"/>
           <h1
-            className="h3 mb-0"
-            style={{ cursor: "pointer" }}
+            className="fw-bold text-white mb-0"
+            style={{ cursor: "pointer", fontSize: "24px"}}
             onClick={() => handleNavigate("/")}>
-            Variation Project
+            Variation
           </h1>
         </div>
 

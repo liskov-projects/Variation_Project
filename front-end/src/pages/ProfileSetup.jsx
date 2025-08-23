@@ -7,13 +7,17 @@ import StepReview from "../components/ProfileSteps/StepReview";
 import FormProgress from "../components/FormProgress";
 import Header from "../components/Header/index";
 import validateStep from "../utils/stepsValidator";
+import useFormLock from "../hooks/useFormLock";
 
 const ProfileSetup = () => {
   const navigate = useNavigate();
   const [formError, setFormError] = useState(null);
   const [isCompleted, setIsCompleted] = useState([false, false, false, false]);
+  const [formLocked, setFormLocked] = useState(false);
   const { currentStep, setCurrentStep, saveProfile, loading, isProfileComplete, profileData } =
     useProfile();
+  
+  const { lockForm } = useFormLock(formLocked, "/dashboard");
 
   // Redirect if profile is already complete
   useEffect(() => {
@@ -70,7 +74,8 @@ const ProfileSetup = () => {
       // For final step (review), mark profile as complete and redirect
       const result = await saveProfile(true);
       if (result.success) {
-        navigate("/profile-complete");
+        setFormLocked(true);
+        lockForm("/profile-complete");
       }
     }
   };

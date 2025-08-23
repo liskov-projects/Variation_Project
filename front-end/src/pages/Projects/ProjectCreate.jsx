@@ -5,6 +5,7 @@ import { useProject } from "../../contexts/ProjectContext";
 import { Project } from "../../models/ProjectModel"; // Import the Project model
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
+import useFormLock from "../../hooks/useFormLock";
 
 const ProjectCreate = () => {
   const navigate = useNavigate();
@@ -13,6 +14,9 @@ const ProjectCreate = () => {
   const [projectData, setProjectData] = useState(new Project()); // Use Project model
   const [formErrors, setFormErrors] = useState({});
   const [architectpmSelected, setArchitectpmSelected] = useState('No');
+  const [formLocked, setFormLocked] = useState(false);
+  
+  const { lockForm } = useFormLock(formLocked, "/projects");
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
@@ -233,7 +237,8 @@ const ProjectCreate = () => {
     const result = await createProject(backendData);
 
     if (result.success) {
-      navigate(`/projects/${result.data._id}`);
+      setFormLocked(true);
+      lockForm(`/projects/${result.data._id}`);
     }
   };
 

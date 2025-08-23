@@ -127,6 +127,7 @@ export const ProfileProvider = ({ children }) => {
 
     try {
       const token = await getToken();
+      profileData.phoneNumber = profileData.phoneNumber.replace(/\s+/g, ''); // Remove spaces from phone number
 
       if (
         profileData.companyDetails?.acn &&

@@ -58,12 +58,15 @@ const Dashboard = () => {
 
         {/* Welcome card */}
         <div className="card mb-4">
-          <div className="card-body">
-            <h5 className="card-title">Welcome, {profileData.fullName}!</h5>
-            <p className="card-text">
-              This is your dashboard where you can manage all your variation projects. Create a new
-              project or manage your existing ones.
-            </p>
+          <div className="card-body d-flex justify-content-between">
+            <div>
+              <h5 className="card-title">Welcome, {profileData.fullName}!</h5>
+              <p className="card-text">
+                This is your dashboard where you can manage all your variation projects. Create a new
+                project or manage your existing ones.
+              </p>
+            </div>
+            {profileData.logo !== "" && <img className="rounded bg-dark-subtle" src={profileData.logo} alt="Builder's Logo" width="150px" height="150px"/>}
           </div>
         </div>
 

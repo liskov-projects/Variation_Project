@@ -135,6 +135,18 @@ const ProjectDetails = () => {
     }).format(amount || 0);
   };
 
+const formatAustralianMobile = (value) => {
+  if (!value) return "";
+  const cleaned = value.replace(/\D/g, '');
+  if (cleaned.startsWith('04')) {
+    return cleaned
+      .replace(/^(\d{4})(\d{3})(\d{0,3}).*/, '$1 $2 $3')
+      .trim();
+  }
+  return value; // fallback if not matching
+};
+
+
   if (loading && !currentProject) {
     return (
       <div>
@@ -247,8 +259,8 @@ const ProjectDetails = () => {
                     <div className="col-md-8">{currentProject.clientEmail}</div>
                   </div>
                   <div className="row">
-                    <div className="col-md-4 fw-bold">Phone:</div>
-                    <div className="col-md-8">{currentProject.clientPhone}</div>
+                     <div className="col-md-4 fw-bold">Phone:</div>
+                     <div className="col-md-8">{formatAustralianMobile(currentProject.clientPhone)}</div>
                   </div>
                 </div>
               </div>
@@ -423,7 +435,6 @@ const ProjectDetails = () => {
                                 variation={variation}
                                 project={currentProject}
                                 profile={profileData}
-                            
                               />
                             }
                             fileName={`variation-${variation._id}.pdf`}

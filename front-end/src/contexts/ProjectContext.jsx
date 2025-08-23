@@ -37,6 +37,8 @@ export const ProjectProvider = ({ children }) => {
   }, [userId, isSignedIn, getToken]);
 
   const fetchProjectById = async (projectId) => {
+    console.log("FETCH PROJ BY ID");
+    console.log(projectId);
     if (!isSignedIn || !userId) return null;
 
     setLoading(true);
@@ -65,6 +67,7 @@ export const ProjectProvider = ({ children }) => {
 
   const createProject = async (projectData) => {
     if (!isSignedIn || !userId) return { success: false, error: "User not authenticated" };
+
     setLoading(true);
     setError(null);
     try {
@@ -92,6 +95,12 @@ export const ProjectProvider = ({ children }) => {
     if (!isSignedIn || !userId) return { success: false, error: "User not authenticated" };
     setLoading(true);
     setError(null);
+
+    console.log("ARE WE IN EDIT?");
+    console.log("PROJECT ID");
+    console.log(projectId);
+    console.log("PROJECT DATA");
+    console.log(projectData);
 
     try {
       const token = await getToken();
