@@ -265,7 +265,10 @@ export const addVariation = async (req, res) => {
     // The pre-save middleware will automatically calculate the new contract price
     const updatedProject = await project.save();
 
-    res.status(201).json(updatedProject);
+    // Get the newly created variation
+    const newVariation = updatedProject.variations[updatedProject.variations.length - 1];
+
+    res.status(201).json({updatedProject: updateProject, variationId: newVariation._id});
   } catch (error) {
     console.error("Error adding variation:", error);
 

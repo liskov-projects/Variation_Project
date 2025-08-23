@@ -49,7 +49,11 @@ input.light-grey-placeholder-text::placeholder {
   appearance: textfield;
 }
 
-@keyframes App-logo-spin {
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
   from {
     transform: rotate(0deg);
   }

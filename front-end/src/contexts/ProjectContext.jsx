@@ -252,11 +252,7 @@ export const ProjectProvider = ({ children }) => {
     try {
       const token = await getToken();
       const response = await axios.post(
-        /* shouldn't be
-         `${API_BASE_URL}/api/projects/${projectId}/variations/${variationId}/send-signature`,
-         as in projectRoutes.js line 42?
-        */
-        `${API_BASE_URL}/api/projects/${projectId}/variations/${variationId}/send-for-signature`,
+        `${API_BASE_URL}/api/projects/${projectId}/variations/${variationId}/send-signature`,
         { variationData, clientEmail },
         {
           headers: { Authorization: `Bearer ${token}` },

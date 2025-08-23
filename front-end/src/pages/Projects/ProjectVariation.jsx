@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -7,6 +7,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import VariationPDF from "./VariationPDF"; 
 import { useProfile } from "../../contexts/ProfileContext";
+import ConfirmModal from "../../components/Variations/ConfirmModal"
 
 
 
@@ -21,8 +22,10 @@ const ProjectVariation = () => {
     const [alertType, setAlertType] = useState('success'); // 'success', 'error', 'info'
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [searchParams, setSearchParams] = useSearchParams();
     const { profileData } = useProfile();
 
+    const isFirstVisit = searchParams.get('firstTime') === 'true';
 
 
   useEffect(() => {
@@ -36,8 +39,9 @@ const ProjectVariation = () => {
       } catch (error) {
         console.error("Error fetching project or finding variation:", error);
       }
-      fetchAndFindVariation();
-    }}, [projectId]);
+    }
+    fetchAndFindVariation();
+  }, [projectId]);
 
     useEffect(() => {
       if (showConfirmModal) {
@@ -46,6 +50,12 @@ const ProjectVariation = () => {
         document.body.style.overflow = "auto";
       }
       }, [showConfirmModal]);
+
+  useEffect(() => {
+    if (fetchedProject && isFirstVisit) {
+      setShowConfirmModal(true);
+    }
+  }, [fetchedProject, isFirstVisit])
 
 
   // Find the requested variation in the current project
@@ -88,6 +98,7 @@ const ProjectVariation = () => {
   };
 
   const handleSendVariationForSignature = async () => {
+
     if (!fetchedProject) {
       showNotification("Project data not loaded. Please try again.", "error");
       return;
@@ -362,6 +373,48 @@ const ProjectVariation = () => {
           </div>
         )}
 
+        <div className="d-flex justify-content-between my-4">
+            <button className="btn btn-secondary" onClick={handleBackToProject}>
+              Back to Project
+            </button>
+            {variation.status === 'draft' && (
+              <button 
+                className='btn btn-primary'
+                onClick={() => setShowConfirmModal(true)}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-envelope me-2"></i>
+                    Send Variation for Approval
+                  </>
+                )}
+              </button>
+            )}
+            {variation.status !== 'approved' && (
+              <button
+                className="btn btn-primary"
+                onClick={handleEditVariation}
+              >
+                Edit Variation
+              </button>
+            )}
+            <PDFDownloadLink
+              document={
+                <VariationPDF project={currentProject} variation={variation} profile={profileData}/>
+              }
+              fileName={`variation-${variation._id}.pdf`}
+              className="btn btn-danger"
+            >
+              {({ loading }) => (loading ? "Preparing PDF..." : "Download PDF")}
+            </PDFDownloadLink>
+        </div>
+
         {/* Variation Details Card */}
         <div className="card mb-4">
           <div className="card-header bg-light">
@@ -594,90 +647,13 @@ const ProjectVariation = () => {
           </div>
         </div>
 
-          <div className="d-flex justify-content-between mt-4">
-            <button className="btn btn-secondary" onClick={handleBackToProject}>
-              Back to Project
-            </button>
-            {variation.status === 'draft' && (
-              <button 
-                className='btn btn-primary'
-                onClick={() => setShowConfirmModal(true)}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <i className="bi bi-envelope me-2"></i>
-                    Send Variation for Approval
-                  </>
-                )}
-              </button>
-            )}
-            {variation.status !== 'approved' && (
-              <button
-                className="btn btn-primary"
-                onClick={handleEditVariation}
-              >
-                Edit Variation
-              </button>
-            )}
-            <PDFDownloadLink
-              document={
-                <VariationPDF project={currentProject} variation={variation} profile={profileData}/>
-              }
-              fileName={`variation-${variation._id}.pdf`}
-              className="btn btn-danger"
-            >
-              {({ loading }) => (loading ? "Preparing PDF..." : "Download PDF")}
-            </PDFDownloadLink>
-          </div>
-            {showConfirmModal && (
-            <div
-              className="modal fade show"
-              style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
-              tabIndex="-1"
-              role="dialog"
-            >
-              <div className="modal-dialog" role="document">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title">Confirm Submission</h5>
-                    <button type="button" className="btn-close" onClick={() => setShowConfirmModal(false)}></button>
-                  </div>
-                  <div className="modal-body">
-                    <p>Once you send this variation for approval, it cannot be edited. Are you sure you want to continue?</p>
-                  </div>
-                  <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" onClick={() => setShowConfirmModal(false)}>
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={async () => {
-                        setShowConfirmModal(false);
-                        await handleSendVariationForSignature();
-                      }}
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                          Sending...
-                        </>
-                      ) : (
-                        "Yes, Send for Approval"
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+            {showConfirmModal && 
+            <ConfirmModal 
+              setShowConfirmModal={setShowConfirmModal} 
+              handleSendVariationForSignature={handleSendVariationForSignature}
+              isSubmitting={isSubmitting}
+              recipientDetails={{name: fetchedProject.clientName, email: fetchedProject.clientEmail}}
+            />}
 
         </div>
       </div>

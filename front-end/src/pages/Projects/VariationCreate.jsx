@@ -155,6 +155,7 @@ const VariationCreate = () => {
     const result = await addVariation(projectId, formattedData);
 
                 if (result.success) {
+                  navigate(`/projects/${projectId}/variations/${result.data.variationId}/?firstTime=true`, { replace: true });
                   setFormLocked(true);
                   lockForm(`/projects/${projectId}`);
                 }
@@ -395,6 +396,7 @@ const VariationCreate = () => {
                     <button
                       type="submit"
                       className="btn btn-primary"
+                      style={{color: "white"}}
                       disabled={loading}>
                       {loading ? (
                         <>
