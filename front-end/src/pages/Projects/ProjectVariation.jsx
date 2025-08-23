@@ -391,11 +391,17 @@ const ProjectVariation = () => {
                 ) : (
                   <>
                     <i className="bi bi-envelope me-2"></i>
-                    Send Variation for Approval
+                    Send To Owner For Approval
                   </>
                 )}
               </button>
             )}
+            {variation.permitVariation === "Yes" && 
+              <button className="btn btn-primary">
+                <i className="bi bi-envelope me-2"></i>
+                Send To Architect For Approval
+              </button>
+            }
             {variation.status !== 'approved' && (
               <button
                 className="btn btn-primary"
