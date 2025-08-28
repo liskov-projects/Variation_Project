@@ -403,7 +403,7 @@ const ProjectVariation = () => {
                 ) : (
                   <>
                     <i className="bi bi-envelope me-2"></i>
-                    Send To Owner For Approval
+                    {currentProject.architect.hasArchitect === true ? 'Send To Architect For Approval' : 'Send To Owner For Approval'}
                   </>
                 )}
               </button>
