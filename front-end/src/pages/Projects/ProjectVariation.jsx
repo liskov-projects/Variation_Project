@@ -403,17 +403,13 @@ const ProjectVariation = () => {
                 ) : (
                   <>
                     <i className="bi bi-envelope me-2"></i>
-                    {currentProject.architect.hasArchitect === true ? 'Send To Architect For Approval' : 'Send To Owner For Approval'}
+                    {currentProject.architect.hasArchitect === true 
+                    ? `Send To Architect ${variation.permitVariation === "Yes" ? `And Surveyor` : ""} For Approval` 
+                    : `Send To Owner ${variation.permitVariation === "Yes" ? `And Surveyor` : ""} For Approval`}
                   </>
                 )}
               </button>
             )}
-            {variation.permitVariation === "Yes" && 
-              <button className="btn btn-primary">
-                <i className="bi bi-envelope me-2"></i>
-                Send To Architect For Approval
-              </button>
-            }
             {variation.status !== 'approved' && (
               <button
                 className="btn btn-primary"

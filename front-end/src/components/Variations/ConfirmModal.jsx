@@ -1,5 +1,4 @@
 const ConfirmModal = ({ setShowConfirmModal, handleSendVariationForSignature, isSubmitting, recipientDetails}) => {
-    console.log(`Recipient details: ${recipientDetails.name}`)
     return (
         <div
             className="modal fade show"
