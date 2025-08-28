@@ -201,6 +201,18 @@ const ProjectVariation = () => {
     return currentProject.currentContractPrice || currentProject.contractPrice || 0;
   };
 
+  const setApprovalRecipient = () => {
+    // If project has an architect send to Architect instead of owner/client
+    if (currentProject.architect.hasArchitect === true) {
+      const architectName = currentProject.architect.details.contactName;
+      const architectEmail = currentProject.architect.details.email;
+      return {name: architectName, email: architectEmail, type: 'Architect/Project Manager'}
+    } else {
+      return {name: fetchedProject.clientName, email: fetchedProject.clientEmail, type: 'Owner'}
+    }
+
+  }
+
   if (loading) {
     return (
       <div>
@@ -658,7 +670,7 @@ const ProjectVariation = () => {
               setShowConfirmModal={setShowConfirmModal} 
               handleSendVariationForSignature={handleSendVariationForSignature}
               isSubmitting={isSubmitting}
-              recipientDetails={{name: fetchedProject.clientName, email: fetchedProject.clientEmail}}
+              recipientDetails={setApprovalRecipient()}
             />}
 
         </div>
