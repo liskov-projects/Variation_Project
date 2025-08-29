@@ -1,7 +1,7 @@
 const ConfirmModal = ({ setShowConfirmModal, handleSendVariationForSignature, isSubmitting, recipientDetails}) => {
     return (
         <div
-            className="modal fade show"
+            className="modal fade-in"
             style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
             tabIndex="-1"
             role="dialog"
@@ -9,7 +9,7 @@ const ConfirmModal = ({ setShowConfirmModal, handleSendVariationForSignature, is
             <div className="modal-dialog" style={{marginTop: "20vh"}} role="document">
             <div className="modal-content">
                 <div className="modal-header">
-                <h5 className="modal-title">Send Variation To {recipientDetails.type}{recipientDetails.permitRequired && ' and Surveyor'} For Approval?</h5>
+                <h5 className="modal-title">Send Variation To {recipientDetails.type}{recipientDetails.permitRequired && ' And Surveyor'} For Approval?</h5>
                 <button type="button" className="btn-close" onClick={() => setShowConfirmModal(false)}></button>
                 </div>
                 <div className="modal-body">
@@ -18,7 +18,7 @@ const ConfirmModal = ({ setShowConfirmModal, handleSendVariationForSignature, is
                 <p>If you agree to send, it will be sent to {recipientDetails.name} at {recipientDetails.email}{recipientDetails.permitRequired && ` and ${recipientDetails.surveyorDetails.name} at ${recipientDetails.surveyorDetails.email}`}.</p>
                 <p>Please choose 'Review Details' if you'd like to make changes or 'Send Variation' if you're certain all the details are correct.</p>
                 </div>
-                <div className="d-flex justify-content-between p-3">
+                <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowConfirmModal(false)}>
                     Review Details
                 </button>
