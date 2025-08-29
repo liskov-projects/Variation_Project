@@ -201,14 +201,30 @@ const ProjectVariation = () => {
     return currentProject.currentContractPrice || currentProject.contractPrice || 0;
   };
 
-  const setApprovalRecipient = () => {
-    // If project has an architect send to Architect instead of owner/client
+  const setApprovalRecipients = () => {
+    const permitRequired = variation.permitVariation === "Yes";
+    const surveyorName = currentProject.surveyor.details.contactName;
+    const surveyorEmail = currentProject.surveyor.details.email;
+
+    // If project has an architect send to architect instead of owner/client
     if (currentProject.architect.hasArchitect === true) {
       const architectName = currentProject.architect.details.contactName;
       const architectEmail = currentProject.architect.details.email;
-      return {name: architectName, email: architectEmail, type: 'Architect/Project Manager'}
+      return {
+        name: architectName, 
+        email: architectEmail, 
+        type: 'Architect/Project Manager', 
+        permitRequired,
+        surveyorDetails: { name: surveyorName, email: surveyorEmail }
+      }
     } else {
-      return {name: fetchedProject.clientName, email: fetchedProject.clientEmail, type: 'Owner'}
+      return {
+        name: fetchedProject.clientName, 
+        email: fetchedProject.clientEmail, 
+        type: 'Owner', 
+        permitRequired,
+        surveyorDetails: { name: surveyorName, email: surveyorEmail }
+      }
     }
 
   }
@@ -666,7 +682,7 @@ const ProjectVariation = () => {
               setShowConfirmModal={setShowConfirmModal} 
               handleSendVariationForSignature={handleSendVariationForSignature}
               isSubmitting={isSubmitting}
-              recipientDetails={setApprovalRecipient()}
+              recipientDetails={setApprovalRecipients()}
             />}
 
         </div>
