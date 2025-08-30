@@ -201,6 +201,34 @@ const ProjectVariation = () => {
     return currentProject.currentContractPrice || currentProject.contractPrice || 0;
   };
 
+  const setApprovalRecipients = () => {
+    const permitRequired = variation.permitVariation === "Yes";
+    const surveyorName = currentProject.surveyor.details.contactName;
+    const surveyorEmail = currentProject.surveyor.details.email;
+
+    // If project has an architect send to architect instead of owner/client
+    if (currentProject.architect.hasArchitect === true) {
+      const architectName = currentProject.architect.details.contactName;
+      const architectEmail = currentProject.architect.details.email;
+      return {
+        name: architectName, 
+        email: architectEmail, 
+        type: 'Architect/Project Manager', 
+        permitRequired,
+        surveyorDetails: { name: surveyorName, email: surveyorEmail }
+      }
+    } else {
+      return {
+        name: fetchedProject.clientName, 
+        email: fetchedProject.clientEmail, 
+        type: 'Owner', 
+        permitRequired,
+        surveyorDetails: { name: surveyorName, email: surveyorEmail }
+      }
+    }
+
+  }
+
   if (loading) {
     return (
       <div>
@@ -391,7 +419,9 @@ const ProjectVariation = () => {
                 ) : (
                   <>
                     <i className="bi bi-envelope me-2"></i>
-                    Send Variation for Approval
+                    {currentProject.architect.hasArchitect === true 
+                    ? `Send To Architect ${variation.permitVariation === "Yes" ? `And Surveyor` : ""} For Approval` 
+                    : `Send To Owner ${variation.permitVariation === "Yes" ? `And Surveyor` : ""} For Approval`}
                   </>
                 )}
               </button>
@@ -652,7 +682,7 @@ const ProjectVariation = () => {
               setShowConfirmModal={setShowConfirmModal} 
               handleSendVariationForSignature={handleSendVariationForSignature}
               isSubmitting={isSubmitting}
-              recipientDetails={{name: fetchedProject.clientName, email: fetchedProject.clientEmail}}
+              recipientDetails={setApprovalRecipients()}
             />}
 
         </div>

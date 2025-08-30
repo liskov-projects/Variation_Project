@@ -155,9 +155,9 @@ const VariationCreate = () => {
     const result = await addVariation(projectId, formattedData);
 
                 if (result.success) {
-                  navigate(`/projects/${projectId}/variations/${result.data.variationId}/?firstTime=true`, { replace: true });
                   setFormLocked(true);
                   lockForm(`/projects/${projectId}`);
+                  navigate(`/projects/${projectId}/variations/${result.data.variationId}/?firstTime=true`);
                 }
               };
 
