@@ -264,6 +264,25 @@ const formatAustralianMobile = (value) => {
                   </div>
                 </div>
               </div>
+
+              <div className="col-md-6">
+                <h5>Architect Information</h5>
+                <div className="ms-3">
+                  <div className="row mb-2">
+                    <div className="col-md-4 fw-bold">Name:</div>
+                    <div className="col-md-8">{currentProject.architectName}</div>
+                  </div>
+                  <div className="row mb-2">
+                    <div className="col-md-4 fw-bold">Email:</div>
+                    <div className="col-md-8">{currentProject.clientEmail}</div>
+                  </div>
+                  <div className="row">
+                     <div className="col-md-4 fw-bold">Phone:</div>
+                     <div className="col-md-8">{formatAustralianMobile(currentProject.clientPhone)}</div>
+                  </div>
+                </div>
+              </div>
+
             </div>
 
             {/* Contract Price Summary */}
