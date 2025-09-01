@@ -8,7 +8,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import VariationPDF from "./VariationPDF"; 
 import { useProfile } from "../../contexts/ProfileContext";
 import ConfirmModal from "../../components/Variations/ConfirmModal"
-
+import { formatCurrency } from "../../utils/formatCurrency";
 
 
 const ProjectVariation = () => {
@@ -173,14 +173,6 @@ const ProjectVariation = () => {
       default:
         return "bg-secondary";
     }
-  };
-
-  // Format currency
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-AU", {
-      style: "currency",
-      currency: "AUD",
-    }).format(amount || 0);
   };
 
   // Calculate contract price with this variation

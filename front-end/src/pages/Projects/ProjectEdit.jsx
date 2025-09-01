@@ -175,10 +175,8 @@ const ProjectEdit = () => {
       if (!s.address) errors.surveyorAddress = "Surveyor address is required";
       if (!s.phone) errors.surveyorPhone = "Surveyor phone is required";
       if (!s.email) {
-        console.log("Surveyor email exists");
         errors.surveyorEmail = "Surveyor email is required";
       } else {
-        console.log("Checking surveyor email is valid");
         const isValid = isValidEmail(s.email);
         if (!isValid) errors.surveyorEmail = "Please enter a valid email address";
       }

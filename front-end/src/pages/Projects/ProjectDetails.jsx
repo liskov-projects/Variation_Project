@@ -7,6 +7,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import VariationPDF from "./VariationPDF";
 import { useProfile } from "../../contexts/ProfileContext";
+import { formatCurrency } from "../../utils/formatCurrency";
 
 const ProjectDetails = () => {
   const { projectId } = useParams();
@@ -126,13 +127,6 @@ const ProjectDetails = () => {
       default:
         return "bg-secondary";
     }
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-AU", {
-      style: "currency",
-      currency: "AUD",
-    }).format(amount || 0);
   };
 
 const formatAustralianMobile = (value) => {

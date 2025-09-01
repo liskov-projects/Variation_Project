@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import API_BASE_URL from "../api";
+import { formatCurrency } from "../utils/formatCurrency";
 
 const SignaturePage = () => {
   const [searchParams] = useSearchParams();
@@ -123,14 +124,6 @@ const SignaturePage = () => {
       </div>
     );
   }
-
-  // Format currency
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-AU", {
-      style: "currency",
-      currency: "AUD",
-    }).format(amount || 0);
-  };
 
   // Format date
   const formatDate = (dateString) => {
