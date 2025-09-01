@@ -17,7 +17,7 @@ const ProjectEdit = () => {
   const [architectpmSelected, setArchitectpmSelected] = useState("No");
   const [hasSurveyor, setHasSurveyor] = useState(true);
   const [formLocked, setFormLocked] = useState(false);
-  
+
   const { lockForm } = useFormLock(formLocked, `/projects/${projectId}`);
 
   console.log("LOADING");
@@ -174,12 +174,12 @@ const ProjectEdit = () => {
       if (!s.address) errors.surveyorAddress = "Surveyor address is required";
       if (!s.phone) errors.surveyorPhone = "Surveyor phone is required";
       if (!s.email) {
-        console.log('Surveyor email exists')
+        console.log("Surveyor email exists");
         errors.surveyorEmail = "Surveyor email is required";
       } else {
-        console.log('Checking surveyor email is valid')
+        console.log("Checking surveyor email is valid");
         const isValid = isValidEmail(s.email);
-        if (!isValid) errors.surveyorEmail = "Please enter a valid email address"
+        if (!isValid) errors.surveyorEmail = "Please enter a valid email address";
       }
     }
 
@@ -189,7 +189,13 @@ const ProjectEdit = () => {
       if (!a.contactName) errors.architectPmContactName = "Architect contact name is required";
       if (!a.address) errors.architectPmAddress = "Architect address is required";
       if (!a.phone) errors.architectPmPhone = "Architect phone is required";
-      if (!a.email) errors.architectPmEmail = "Architect email is required";
+      if (!a.email) {
+        errors.architectPmEmail = "Architect email is required";
+      } else {
+        console.log("Checking architect email is valid");
+        const isValid = isValidEmail(a.email);
+        if (!isValid) errors.architectPmEmail = "Please enter a valid email address";
+      }
     }
 
     if (projectData.clientEmail) {
@@ -484,20 +490,20 @@ const ProjectEdit = () => {
 
                   <div className="mb-3">
                     <label className="form-label">Client Phone *</label>
-                  <input
-                    type="text"
-                    className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
-                    name="clientPhone"
-                    value={formatAustralianMobile(projectData.clientPhone) || ""}
-                    onChange={(e) =>
-                      setProjectData((prev) => ({
-                        ...prev,
-                        clientPhone: formatAustralianMobile(e.target.value)
-                      }))
-                    }
-                    placeholder="04XX XXX XXX"
-                    required
-                  />
+                    <input
+                      type="text"
+                      className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
+                      name="clientPhone"
+                      value={formatAustralianMobile(projectData.clientPhone) || ""}
+                      onChange={(e) =>
+                        setProjectData((prev) => ({
+                          ...prev,
+                          clientPhone: formatAustralianMobile(e.target.value),
+                        }))
+                      }
+                      placeholder="04XX XXX XXX"
+                      required
+                    />
 
                     {formErrors.clientPhone && (
                       <div className="invalid-feedback">{formErrors.clientPhone}</div>
