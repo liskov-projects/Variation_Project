@@ -15,7 +15,7 @@ const VariationCreate = () => {
   const [variationData, setVariationData] = useState(createEmptyVariation());
   const [formErrors, setFormErrors] = useState({});
   const [formLocked, setFormLocked] = useState(false);
-  
+
   const { lockForm } = useFormLock(formLocked, `/projects/${projectId}`);
 
   useEffect(() => {
@@ -154,13 +154,12 @@ const VariationCreate = () => {
 
     const result = await addVariation(projectId, formattedData);
 
-                if (result.success) {
-                  setFormLocked(true);
-                  lockForm(`/projects/${projectId}`);
-                  navigate(`/projects/${projectId}/variations/${result.data.variationId}/?firstTime=true`);
-                }
-              };
-
+    if (result.success) {
+      setFormLocked(true);
+      lockForm(`/projects/${projectId}`);
+      navigate(`/projects/${projectId}/variations/${result.data.variationId}/?firstTime=true`);
+    }
+  };
 
   const handleCancel = () => {
     navigate(`/projects/${projectId}`);
@@ -169,6 +168,7 @@ const VariationCreate = () => {
   // Calculate the projected new contract price for display
   const projectedContractPrice = calculateProjectedContractPrice(variationData.cost);
 
+  // NOTE: very similar (identical?) to VariatoinEdit.jsx
   return (
     <div>
       <Header />
@@ -226,7 +226,8 @@ const VariationCreate = () => {
                       value={variationData.reason || ""}
                       onChange={handleChange}
                       rows="2"
-                      required></textarea>
+                      required
+                      placeholder="Enter reason for variation"></textarea>
                     {formErrors.reason && (
                       <div className="invalid-feedback">{formErrors.reason}</div>
                     )}
@@ -396,7 +397,7 @@ const VariationCreate = () => {
                     <button
                       type="submit"
                       className="btn btn-primary"
-                      style={{color: "white"}}
+                      style={{ color: "white" }}
                       disabled={loading}>
                       {loading ? (
                         <>

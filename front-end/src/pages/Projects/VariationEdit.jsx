@@ -14,7 +14,7 @@ const VariationEdit = () => {
   const [success, setSuccess] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
   const [formLocked, setFormLocked] = useState(false);
-  
+
   const { lockForm } = useFormLock(formLocked, `/projects/${projectId}/variations/${variationId}`);
 
   // Fetch project data
@@ -207,6 +207,7 @@ const VariationEdit = () => {
     }
   };
 
+  // NOTE: very similar (identical?) to VariatoinCreate.jsx
   return (
     <div>
       <Header />
@@ -265,7 +266,8 @@ const VariationEdit = () => {
                       value={variationData.reason || ""}
                       onChange={handleChange}
                       rows="2"
-                      required></textarea>
+                      required
+                      placeholder="Enter reason for variation"></textarea>
                     {formErrors.reason && (
                       <div className="invalid-feedback">{formErrors.reason}</div>
                     )}
