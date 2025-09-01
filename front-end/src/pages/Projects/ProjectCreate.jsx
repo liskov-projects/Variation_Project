@@ -6,6 +6,7 @@ import { Project } from "../../models/ProjectModel"; // Import the Project model
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useFormLock from "../../hooks/useFormLock";
+import { isValidEmail } from "../../utils/isValidEmail";
 
 const ProjectCreate = () => {
   const navigate = useNavigate();
@@ -145,7 +146,7 @@ const ProjectCreate = () => {
       errors.surveyorEmail = "Surveyor email is required";
     } else {
       console.log("Checking surveyor email is valid");
-      const isValid = isValidEmail(s.email);
+      const isValid = isValidEmail(projectData.surveyor.details.email);
       if (!isValid) errors.surveyorEmail = "Please enter a valid email address";
     }
 
@@ -167,7 +168,7 @@ const ProjectCreate = () => {
         errors.architectPmEmail = "Architect email is required";
       } else {
         console.log("Checking architect email is valid");
-        const isValid = isValidEmail(a.email);
+        const isValid = isValidEmail(projectData.architect.details.email);
         if (!isValid) errors.architectPmEmail = "Please enter a valid email address";
       }
     }
