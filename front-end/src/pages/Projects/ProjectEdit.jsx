@@ -148,6 +148,7 @@ const ProjectEdit = () => {
     }
   };
 
+  // Very similar (the same actually) with ProjectCreate.jsx
   const validateForm = () => {
     const errors = {};
 
