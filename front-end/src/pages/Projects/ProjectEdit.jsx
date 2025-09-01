@@ -5,6 +5,7 @@ import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useFormLock from "../../hooks/useFormLock";
+import { isValidEmail } from "../../utils/isValidEmail";
 
 const ProjectEdit = () => {
   const { projectId } = useParams();
@@ -172,7 +173,14 @@ const ProjectEdit = () => {
       if (!s.contactName) errors.surveyorContactName = "Surveyor contact name is required";
       if (!s.address) errors.surveyorAddress = "Surveyor address is required";
       if (!s.phone) errors.surveyorPhone = "Surveyor phone is required";
-      if (!s.email) errors.surveyorEmail = "Surveyor email is required";
+      if (!s.email) {
+        console.log('Surveyor email exists')
+        errors.surveyorEmail = "Surveyor email is required";
+      } else {
+        console.log('Checking surveyor email is valid')
+        const isValid = isValidEmail(s.email);
+        if (!isValid) errors.surveyorEmail = "Please enter a valid email address"
+      }
     }
 
     if (architectpmSelected === "Yes") {
@@ -184,8 +192,9 @@ const ProjectEdit = () => {
       if (!a.email) errors.architectPmEmail = "Architect email is required";
     }
 
-    if (projectData.clientEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(projectData.clientEmail)) {
-      errors.clientEmail = "Please enter a valid email address";
+    if (projectData.clientEmail) {
+      const isValid = isValidEmail(projectData.clientEmail);
+      if (!isValid) errors.clientEmail = "Please enter a valid email address";
     }
 
     if (projectData.startDate && projectData.expectedEndDate) {
