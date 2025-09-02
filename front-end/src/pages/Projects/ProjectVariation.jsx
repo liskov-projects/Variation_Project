@@ -25,7 +25,7 @@ const ProjectVariation = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const { profileData } = useProfile();
 
-    const isFirstVisit = searchParams.get('firstTime') === 'true';
+    const displayModal = searchParams.get('displayModal') === 'true';
 
 
   useEffect(() => {
@@ -52,10 +52,10 @@ const ProjectVariation = () => {
       }, [showConfirmModal]);
 
   useEffect(() => {
-    if (fetchedProject && isFirstVisit) {
+    if (fetchedProject && displayModal) {
       setShowConfirmModal(true);
     }
-  }, [fetchedProject, isFirstVisit])
+  }, [fetchedProject, displayModal])
 
 
   // Find the requested variation in the current project

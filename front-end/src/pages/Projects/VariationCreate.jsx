@@ -159,7 +159,7 @@ const VariationCreate = () => {
     if (result.success) {
       setFormLocked(true);
       lockForm(`/projects/${projectId}`);
-      navigate(`/projects/${projectId}/variations/${result.data.variationId}/?firstTime=true`);
+      navigate(`/projects/${projectId}/variations/${result.data.variationId}/?displayModal=true`);
     }
   };
 

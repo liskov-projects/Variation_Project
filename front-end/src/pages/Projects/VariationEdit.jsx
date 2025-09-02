@@ -128,6 +128,7 @@ const VariationEdit = () => {
       // Show success message briefly then redirect
       setTimeout(() => {
         lockForm(`/projects/${projectId}/variations/${variationId}`);
+        navigate(`/projects/${projectId}/variations/${variationId}/?displayModal=true`);
       }, 1500);
     }
   };
