@@ -71,7 +71,7 @@ const ProfileEdit = () => {
       });
 
       const logoPath = response.data.logo;
-      console.log("Logo uploaded successfully:", logoPath);
+
       const fullURL = `${API_BASE_URL}/${logoPath.replace(/^\/?/, "")}`;
       updateProfile({ logo: fullURL, logoPath });
     } catch (err) {

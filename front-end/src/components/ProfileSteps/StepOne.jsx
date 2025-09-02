@@ -26,7 +26,6 @@ const StepOne = ({ setFormError }) => {
 
       const token = await getToken();
 
-      console.log("Uploading logo for user:", userId);
       const response = await axios.post(`${API_BASE_URL}/api/profile/${userId}/logo`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -34,10 +33,10 @@ const StepOne = ({ setFormError }) => {
         },
       });
 
-      console.log("Upload response:", response.data);
+  
       const logoURL = response.data.logo; // Assuming the response contains the logo URL
       // if (!response.ok) throw new Error(response.data.message || "Upload failed");
-      console.log("Logo uploaded successfully:", logoURL);
+
       const fullURL = `${API_BASE_URL}/${logoURL.replace(/^\/?/, "")}`;
       updateProfile({ logo: fullURL });
     } catch (err) {
@@ -47,14 +46,6 @@ const StepOne = ({ setFormError }) => {
       setUploading(false);
     }
   };
-
-  useEffect(() => {
-    console.log("Updated profileData:", profileData);
-  }, [profileData]);
-
-  useEffect(() => {
-    console.log("Updated profileData:", profileData);
-  }, [profileData]);
 
   const handleLogoRemove = () => {
     updateProfile({ logo: "", logoPath: "" });

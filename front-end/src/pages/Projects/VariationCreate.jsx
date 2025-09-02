@@ -142,10 +142,6 @@ const VariationCreate = () => {
 
     delete formattedData.newContractPrice;
 
-    console.log("Submitting cost:", variationData.cost); // formatted string
-    console.log("Parsed cost:", cleanedCost); // numeric value
-    console.log("Final submit payload:", formattedData); // full payload
-
     const result = await addVariation(projectId, formattedData);
 
     if (result.success) {

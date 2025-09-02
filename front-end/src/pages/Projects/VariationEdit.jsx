@@ -118,8 +118,6 @@ const VariationEdit = () => {
     // Remove newContractPrice if it exists
     delete formattedData.newContractPrice;
 
-    console.log("Submitting data:", formattedData); // Debug what's being sent
-
     const result = await updateVariation(projectId, variationId, formattedData);
 
     if (result.success) {

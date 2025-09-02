@@ -21,9 +21,6 @@ const ProjectEdit = () => {
 
   const { lockForm } = useFormLock(formLocked, `/projects/${projectId}`);
 
-  console.log("LOADING");
-  console.log(loading);
-
   // Helpers
   const formatAustralianMobile = (input = "") => {
     const digits = String(input).replace(/\D/g, "");
@@ -192,7 +189,6 @@ const ProjectEdit = () => {
       if (!a.email) {
         errors.architectPmEmail = "Architect email is required";
       } else {
-        console.log("Checking architect email is valid");
         const isValid = isValidEmail(a.email);
         if (!isValid) errors.architectPmEmail = "Please enter a valid email address";
       }

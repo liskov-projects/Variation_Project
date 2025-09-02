@@ -146,7 +146,6 @@ const ProjectCreate = () => {
     if (!projectData.surveyor.details.email) {
       errors.surveyorEmail = "Surveyor email is required";
     } else {
-      console.log("Checking surveyor email is valid");
       const isValid = isValidEmail(projectData.surveyor.details.email);
       if (!isValid) errors.surveyorEmail = "Please enter a valid email address";
     }
@@ -168,7 +167,6 @@ const ProjectCreate = () => {
       if (!projectData.architect.details.email) {
         errors.architectPmEmail = "Architect email is required";
       } else {
-        console.log("Checking architect email is valid");
         const isValid = isValidEmail(projectData.architect.details.email);
         if (!isValid) errors.architectPmEmail = "Please enter a valid email address";
       }
