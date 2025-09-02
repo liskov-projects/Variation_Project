@@ -29,6 +29,16 @@ const StepReview = () => {
             <div className="col-md-4 fw-bold">Phone:</div>
             <div className="col-md-8">{profileData.phoneNumber}</div>
           </div>
+          {profileData.logo && (
+            <div className="row mb-3">
+              <div className="col-md-4 fw-bold">Logo:</div>
+              <img
+                src={profileData.logo}
+                alt="Logo preview"
+                style={{ maxWidth: "150px", maxHeight: "100px", objectFit: 'contain' }}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -108,17 +118,6 @@ const StepReview = () => {
               <div className="col-md-8">{profileData.brn}</div>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* NOTE: should work, haven't tested */}
-      {profileData.logo && (
-        <div className="mt-2">
-          <img
-            src={profileData.logo}
-            alt="Logo preview"
-            style={{ maxWidth: "150px", maxHeight: "100px", border: "1px solid #ccc" }}
-          />
         </div>
       )}
 
