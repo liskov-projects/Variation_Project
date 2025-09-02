@@ -42,11 +42,11 @@ const StepReview = () => {
               <div className="col-md-4 fw-bold">Company:</div>
               <div className="col-md-8">{profileData.company || "N/A"}</div>
             </div>
-              <div className="row mb-3">
-                <div className="col-md-4 fw-bold">Company Name:</div>
-                <div className="col-md-8">{profileData.companyDetails.companyName || "N/A"}</div>
-              </div>
-              <div className="row mb-3">
+            <div className="row mb-3">
+              <div className="col-md-4 fw-bold">Company Name:</div>
+              <div className="col-md-8">{profileData.companyDetails.companyName || "N/A"}</div>
+            </div>
+            <div className="row mb-3">
               <div className="col-md-4 fw-bold">ACN:</div>
               <div className="col-md-8">
                 {profileData.companyDetails.acn ? profileData.companyDetails.acn : "N/A"}
@@ -99,7 +99,6 @@ const StepReview = () => {
             <h5 className="mb-0">Individual Information</h5>
           </div>
           <div className="card-body">
-            
             <div className="row mb-3">
               <div className="col-md-4 fw-bold">ABN:</div>
               <div className="col-md-8">{profileData.abn}</div>
@@ -109,6 +108,17 @@ const StepReview = () => {
               <div className="col-md-8">{profileData.brn}</div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* NOTE: should work, haven't tested */}
+      {profileData.logo && (
+        <div className="mt-2">
+          <img
+            src={profileData.logo}
+            alt="Logo preview"
+            style={{ maxWidth: "150px", maxHeight: "100px", border: "1px solid #ccc" }}
+          />
         </div>
       )}
 
