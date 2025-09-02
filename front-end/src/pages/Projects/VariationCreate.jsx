@@ -5,6 +5,7 @@ import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLocation } from "react-router-dom";
 import useFormLock from "../../hooks/useFormLock";
+import { formatCurrency } from "../../utils/formatCurrency";
 
 const VariationCreate = () => {
   const { projectId } = useParams();
@@ -36,7 +37,7 @@ const VariationCreate = () => {
 
   useEffect(() => {
     if (location.state?.prefillData) {
-      const { cost, delay, permitVariation } = location.state.prefillData;
+      const { cost, delay, permitVariation, description } = location.state.prefillData;
 
       const formattedCost = cost ? parseFloat(cost).toLocaleString() : "";
 
@@ -45,7 +46,8 @@ const VariationCreate = () => {
         cost: formattedCost,
         delay: delay || "",
         permitVariation: permitVariation || "",
-        description: `Variation - $${formattedCost}`,
+        // description: `Variation - $${formattedCost}`,
+        description: description,
         reason: "Owner requested variation",
       }));
     }

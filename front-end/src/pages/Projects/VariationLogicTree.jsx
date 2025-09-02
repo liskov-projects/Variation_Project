@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { formatCurrency } from "../../utils/formatCurrency";
 
 const VariationLogicTree = () => {
   const { projectId } = useParams();
@@ -15,6 +16,7 @@ const VariationLogicTree = () => {
     variationPrice: "",
     delayDays: "",
     permitVariation: "",
+    description: "",
   });
   const [formErrors, setFormErrors] = useState({});
   const [isCreating, setIsCreating] = useState(false);
@@ -86,7 +88,7 @@ const VariationLogicTree = () => {
     const delayDays = parseInt(ownerAnswers.delayDays);
     const permitVariation = ownerAnswers.permitVariation === "yes";
     const twoPercentThreshold = getTwoPercentThreshold();
-
+    const variationDescription = ownerAnswers.description;
     // Check if any condition requires full variation process
     const needsFullProcess =
       variationPrice > twoPercentThreshold || delayDays > 0 || permitVariation;
@@ -99,6 +101,7 @@ const VariationLogicTree = () => {
             cost: variationPrice,
             delay: delayDays,
             permitVariation: permitVariation ? "Yes" : "No",
+            description: variationDescription,
           },
         },
       });
