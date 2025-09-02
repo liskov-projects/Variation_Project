@@ -7,7 +7,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import VariationPDF from "./VariationPDF";
 import { useProfile } from "../../contexts/ProfileContext";
-import { formatCurrency } from "../../utils/formatCurrency";
+import { formatDisplayCurrency } from "../../utils/formatCurrency";
 
 const ProjectDetails = () => {
   const { projectId } = useParams();
@@ -270,7 +270,7 @@ const formatAustralianMobile = (value) => {
                       <div className="col-md-6 fw-bold">Original Contract Price:</div>
                       <div className="col-md-6">
                         <span className="text-primary fs-5">
-                          {formatCurrency(currentProject.contractPrice || 0)}
+                          {formatDisplayCurrency(currentProject.contractPrice || 0)}
                         </span>
                       </div>
                     </div>
@@ -279,7 +279,7 @@ const formatAustralianMobile = (value) => {
                         <div className="col-md-6 fw-bold">Current Contract Price:</div>
                         <div className="col-md-6">
                           <span className="text-success fs-5">
-                            {formatCurrency(
+                            {formatDisplayCurrency(
                               currentProject.currentContractPrice || currentProject.contractPrice
                             )}
                           </span>
@@ -298,7 +298,7 @@ const formatAustralianMobile = (value) => {
                           <div className="col-md-6 fw-bold">Total Variation Cost:</div>
                           <div className="col-md-6">
                             <span className="text-info">
-                              {formatCurrency(
+                              {formatDisplayCurrency(
                                 currentProject.variations.reduce((total, variation) => {
                                   if (variation.status === "approved") {
                                     return total + (variation.cost || 0);
@@ -391,7 +391,7 @@ const formatAustralianMobile = (value) => {
                             className={
                               variation.status === "approved" ? "text-success fw-bold" : ""
                             }>
-                            {formatCurrency(variation.cost || 0)}
+                            {formatDisplayCurrency(variation.cost || 0)}
                           </span>
                         </td>
                         <td>{formatDate(variation.dateCreated)}</td>
@@ -476,7 +476,7 @@ const formatAustralianMobile = (value) => {
                   <div className="bg-light p-3 rounded">
                     <strong>Variation:</strong> {variationToDelete.description}
                     <br />
-                    <strong>Cost:</strong> {formatCurrency(variationToDelete.cost)}
+                    <strong>Cost:</strong> {formatDisplayCurrency(variationToDelete.cost)}
                     <br />
                     <strong>Status:</strong>{" "}
                     <span

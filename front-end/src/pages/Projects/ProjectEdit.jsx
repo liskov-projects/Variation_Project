@@ -6,6 +6,7 @@ import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useFormLock from "../../hooks/useFormLock";
 import { isValidEmail } from "../../utils/isValidEmail";
+import { formatFormCurrency } from "../../utils/formatCurrency";
 
 const ProjectEdit = () => {
   const { projectId } = useParams();
@@ -249,19 +250,32 @@ const ProjectEdit = () => {
     navigate(`/projects/${projectId}`);
   };
 
-  const MAX_ALLOWED = 10000000;
+  // Float is const MAX_ALLOWED relevant? (Not used in other places)
+
+  // const MAX_ALLOWED = 10000000;
+
+  // const handleCurrencyChange = (e) => {
+  //   const { name, value } = e.target;
+  //   const rawValue = value.replace(/[^0-9.]/g, "");
+  //   const numeric = parseFloat(rawValue);
+
+  //   if (numeric > MAX_ALLOWED) return;
+
+  //   const [integer, decimal] = rawValue.split(".");
+  //   const formattedInteger = parseInt(integer || "0", 10).toLocaleString();
+  //   const formatted =
+  //     decimal !== undefined ? `${formattedInteger}.${decimal.slice(0, 2)}` : formattedInteger;
+
+  //   setProjectData((prev) => ({
+  //     ...prev,
+  //     [name]: formatted,
+  //   }));
+  // };
 
   const handleCurrencyChange = (e) => {
     const { name, value } = e.target;
-    const rawValue = value.replace(/[^0-9.]/g, "");
-    const numeric = parseFloat(rawValue);
 
-    if (numeric > MAX_ALLOWED) return;
-
-    const [integer, decimal] = rawValue.split(".");
-    const formattedInteger = parseInt(integer || "0", 10).toLocaleString();
-    const formatted =
-      decimal !== undefined ? `${formattedInteger}.${decimal.slice(0, 2)}` : formattedInteger;
+    const formatted = formatFormCurrency(value);
 
     setProjectData((prev) => ({
       ...prev,

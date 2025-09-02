@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, replace } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLocation } from "react-router-dom";
 import useFormLock from "../../hooks/useFormLock";
-import { formatCurrency } from "../../utils/formatCurrency";
+import { formatFormCurrency } from "../../utils/formatCurrency";
 
 const VariationCreate = () => {
   const { projectId } = useParams();
@@ -110,15 +110,7 @@ const VariationCreate = () => {
   const handleCurrencyChange = (e) => {
     const { name, value } = e.target;
 
-    // Clean out non-numeric characters (except dot)
-    const rawValue = value.replace(/[^0-9.]/g, "");
-
-    // Separate integer and decimal
-    const [intPart, decPart] = rawValue.split(".");
-
-    const withCommas = parseInt(intPart || "0").toLocaleString();
-
-    const formatted = decPart !== undefined ? `${withCommas}.${decPart.slice(0, 2)}` : withCommas;
+    const formatted = formatFormCurrency(value);
 
     setVariationData((prev) => ({
       ...prev,

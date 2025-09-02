@@ -4,6 +4,7 @@ import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useFormLock from "../../hooks/useFormLock";
+import { formatFormCurrency } from "../../utils/formatCurrency";
 
 const VariationEdit = () => {
   const { projectId, variationId } = useParams();
@@ -182,18 +183,7 @@ const VariationEdit = () => {
   const handleCostChange = (e) => {
     const { name, value } = e.target;
 
-    // Remove all non-digit and non-dot characters
-    const rawValue = value.replace(/[^0-9.]/g, "");
-
-    // Split into integer and decimal parts
-    const [integer, decimal] = rawValue.split(".");
-
-    // Format integer part with commas
-    const formattedInteger = (integer || "0").replace(/^0+(?!$)/, ""); // remove leading zeros
-    const withCommas = parseInt(formattedInteger || "0").toLocaleString();
-
-    // Recombine with decimal (up to 2 places)
-    const formatted = decimal !== undefined ? `${withCommas}.${decimal.slice(0, 2)}` : withCommas;
+    const formatted = formatFormCurrency(value);
 
     setVariationData((prev) => ({
       ...prev,

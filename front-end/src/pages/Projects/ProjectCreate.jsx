@@ -7,6 +7,7 @@ import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useFormLock from "../../hooks/useFormLock";
 import { isValidEmail } from "../../utils/isValidEmail";
+import { formatFormCurrency } from "../../utils/formatCurrency";
 
 const ProjectCreate = () => {
   const navigate = useNavigate();
@@ -201,16 +202,7 @@ const ProjectCreate = () => {
   const handleCurrencyChange = (e) => {
     const { name, value } = e.target;
 
-    // Remove non-numeric characters except dot
-    const rawValue = value.replace(/[^0-9.]/g, "");
-
-    // Split into integer and decimal
-    const [integer, decimal] = rawValue.split(".");
-    const formattedInteger = (integer || "0").replace(/^0+(?!$)/, "");
-    const withCommas = parseInt(formattedInteger || "0").toLocaleString();
-
-    // Recombine with decimal (if any)
-    const formatted = decimal !== undefined ? `${withCommas}.${decimal.slice(0, 2)}` : withCommas;
+    const formatted = formatFormCurrency(value);
 
     setProjectData((prev) => ({
       ...prev,
