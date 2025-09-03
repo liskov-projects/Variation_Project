@@ -302,14 +302,14 @@ const VariationCreate = () => {
                   <div className="row mb-3">
                     <div className="col-md-6">
                       <label className="form-label">Variation Cost *</label>
-                      <div className="row">
+                      <div className="input-group mb-2 align-items-center">
                         <label
                           htmlFor="type"
                           className="col">
-                          type:
+                          Type:
                         </label>
                         <select
-                          className="form-select col justify-content-start"
+                          className="form-select col"
                           name="type"
                           id="type"
                           onChange={(e) => {
