@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, replace } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -15,7 +15,7 @@ const VariationCreate = () => {
   const [variationData, setVariationData] = useState(createEmptyVariation());
   const [formErrors, setFormErrors] = useState({});
   const [formLocked, setFormLocked] = useState(false);
-  
+
   const { lockForm } = useFormLock(formLocked, `/projects/${projectId}`);
 
   useEffect(() => {
@@ -157,13 +157,12 @@ const VariationCreate = () => {
 
     const result = await addVariation(projectId, formattedData);
 
-                if (result.success) {
-                  setFormLocked(true);
-                  lockForm(`/projects/${projectId}`);
-                  navigate(`/projects/${projectId}/variations/${result.data.variationId}/?firstTime=true`);
-                }
-              };
-
+    if (result.success) {
+      setFormLocked(true);
+      lockForm(`/projects/${projectId}`);
+      navigate(`/projects/${projectId}/variations/${result.data.variationId}/?firstTime=true`);
+    }
+  };
 
   const handleCancel = () => {
     navigate(`/projects/${projectId}`);
@@ -303,22 +302,35 @@ const VariationCreate = () => {
                   <div className="row mb-3">
                     <div className="col-md-6">
                       <label className="form-label">Variation Cost *</label>
-                      <div>
-                        <label htmlFor="type">type:</label>
-                        <select name="type" id="type" onChange={
-                          (e) => {
+                      <div className="row">
+                        <label
+                          htmlFor="type"
+                          className="col">
+                          type:
+                        </label>
+                        <select
+                          className="form-select col justify-content-start"
+                          name="type"
+                          id="type"
+                          onChange={(e) => {
                             setVariationData((prev) => ({
                               ...prev,
-                              variationType: e.target.value
+                              variationType: e.target.value,
                             }));
-                          }
-                        }>
-                          <option selected value="debit">debit</option>
+                          }}>
+                          <option
+                            selected
+                            value="debit">
+                            debit
+                          </option>
                           <option value="credit">credit</option>
                         </select>
                       </div>
                       <div className="input-group">
-                        <span className="input-group-text">$</span>
+                        <span className="input-group-text">
+                          {variationData.variationType === "credit" && <span>-</span>}$
+                        </span>
+
                         <input
                           type="text"
                           className={`form-control ${formErrors.cost ? "is-invalid" : ""}`}
@@ -413,7 +425,7 @@ const VariationCreate = () => {
                     <button
                       type="submit"
                       className="btn btn-primary"
-                      style={{color: "white"}}
+                      style={{ color: "white" }}
                       disabled={loading}>
                       {loading ? (
                         <>
