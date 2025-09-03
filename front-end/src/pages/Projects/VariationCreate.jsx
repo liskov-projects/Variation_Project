@@ -58,6 +58,9 @@ const VariationCreate = () => {
 
     // Fallback to 0 if cost is invalid
     if (isNaN(cleanCost)) return currentProject.currentContractPrice;
+    if (variationData.variationType === "credit") {
+      return currentProject.currentContractPrice - cleanCost;
+    }
 
     return currentProject.currentContractPrice + cleanCost;
   };
@@ -300,6 +303,20 @@ const VariationCreate = () => {
                   <div className="row mb-3">
                     <div className="col-md-6">
                       <label className="form-label">Variation Cost *</label>
+                      <div>
+                        <label htmlFor="type">type:</label>
+                        <select name="type" id="type" onChange={
+                          (e) => {
+                            setVariationData((prev) => ({
+                              ...prev,
+                              variationType: e.target.value
+                            }));
+                          }
+                        }>
+                          <option selected value="debit">debit</option>
+                          <option value="credit">credit</option>
+                        </select>
+                      </div>
                       <div className="input-group">
                         <span className="input-group-text">$</span>
                         <input
