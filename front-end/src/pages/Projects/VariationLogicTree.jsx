@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { formatFormCurrency } from "../../utils/formatCurrency";
 
 const VariationLogicTree = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const { fetchProjectById, currentProject, addVariation, loading } = useProject();
-  console.log("Current project: ", currentProject);
   const [step, setStep] = useState("userType");
   const [userType, setUserType] = useState("");
   const [ownerAnswers, setOwnerAnswers] = useState({
     variationPrice: "",
     delayDays: "",
     permitVariation: "",
-    variationType: "debit"
+    description: "",
+    variationType: "debit",
   });
   const [formErrors, setFormErrors] = useState({});
   const [isCreating, setIsCreating] = useState(false);
@@ -43,10 +44,19 @@ const VariationLogicTree = () => {
   };
 
   const handleOwnerAnswerChange = (field, value) => {
-    setOwnerAnswers((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    if (field === "variationPrice") {
+      const formatted = formatFormCurrency(value);
+
+      setOwnerAnswers((prev) => ({
+        ...prev,
+        [field]: formatted,
+      }));
+    } else {
+      setOwnerAnswers((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    }
 
     // Clear errors when user starts typing
     if (formErrors[field]) {
@@ -83,10 +93,11 @@ const VariationLogicTree = () => {
       return;
     }
 
-    const variationPrice = parseFloat(ownerAnswers.variationPrice);
+    const variationPrice = parseFloat(ownerAnswers.variationPrice.replace(/,/g, ""));
     const delayDays = parseInt(ownerAnswers.delayDays);
     const permitVariation = ownerAnswers.permitVariation === "yes";
     const twoPercentThreshold = getTwoPercentThreshold();
+    const variationDescription = ownerAnswers.description;
     const variationType = ownerAnswers.variationType;
 
     // Check if any condition requires full variation process
@@ -101,7 +112,8 @@ const VariationLogicTree = () => {
             cost: variationPrice,
             delay: delayDays,
             permitVariation: permitVariation ? "Yes" : "No",
-            variationType: variationType
+            description: variationDescription,
+            variationType: variationType,
           },
         },
       });
@@ -265,8 +277,7 @@ const VariationLogicTree = () => {
                           {ownerAnswers.variationType === "credit" && <span>-</span>}$
                         </span>
                         <input
-                          type="number"
-                          step="0.01"
+                          type="text"
                           className={`form-control ${formErrors.variationPrice ? "is-invalid" : ""}`}
                           value={ownerAnswers.variationPrice}
                           onChange={(e) =>

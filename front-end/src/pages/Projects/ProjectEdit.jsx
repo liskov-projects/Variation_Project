@@ -5,6 +5,8 @@ import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useFormLock from "../../hooks/useFormLock";
+import { isValidEmail } from "../../utils/isValidEmail";
+import { formatFormCurrency } from "../../utils/formatCurrency";
 
 const ProjectEdit = () => {
   const { projectId } = useParams();
@@ -16,11 +18,8 @@ const ProjectEdit = () => {
   const [architectpmSelected, setArchitectpmSelected] = useState("No");
   const [hasSurveyor, setHasSurveyor] = useState(true);
   const [formLocked, setFormLocked] = useState(false);
-  
-  const { lockForm } = useFormLock(formLocked, `/projects/${projectId}`);
 
-  console.log("LOADING");
-  console.log(loading);
+  const { lockForm } = useFormLock(formLocked, `/projects/${projectId}`);
 
   // Helpers
   const formatAustralianMobile = (input = "") => {
@@ -147,6 +146,7 @@ const ProjectEdit = () => {
     }
   };
 
+  // Very similar (the same actually) with ProjectCreate.jsx
   const validateForm = () => {
     const errors = {};
 
@@ -172,7 +172,12 @@ const ProjectEdit = () => {
       if (!s.contactName) errors.surveyorContactName = "Surveyor contact name is required";
       if (!s.address) errors.surveyorAddress = "Surveyor address is required";
       if (!s.phone) errors.surveyorPhone = "Surveyor phone is required";
-      if (!s.email) errors.surveyorEmail = "Surveyor email is required";
+      if (!s.email) {
+        errors.surveyorEmail = "Surveyor email is required";
+      } else {
+        const isValid = isValidEmail(s.email);
+        if (!isValid) errors.surveyorEmail = "Please enter a valid email address";
+      }
     }
 
     if (architectpmSelected === "Yes") {
@@ -181,11 +186,17 @@ const ProjectEdit = () => {
       if (!a.contactName) errors.architectPmContactName = "Architect contact name is required";
       if (!a.address) errors.architectPmAddress = "Architect address is required";
       if (!a.phone) errors.architectPmPhone = "Architect phone is required";
-      if (!a.email) errors.architectPmEmail = "Architect email is required";
+      if (!a.email) {
+        errors.architectPmEmail = "Architect email is required";
+      } else {
+        const isValid = isValidEmail(a.email);
+        if (!isValid) errors.architectPmEmail = "Please enter a valid email address";
+      }
     }
 
-    if (projectData.clientEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(projectData.clientEmail)) {
-      errors.clientEmail = "Please enter a valid email address";
+    if (projectData.clientEmail) {
+      const isValid = isValidEmail(projectData.clientEmail);
+      if (!isValid) errors.clientEmail = "Please enter a valid email address";
     }
 
     if (projectData.startDate && projectData.expectedEndDate) {
@@ -235,19 +246,32 @@ const ProjectEdit = () => {
     navigate(`/projects/${projectId}`);
   };
 
-  const MAX_ALLOWED = 10000000;
+  // Float is const MAX_ALLOWED relevant? (Not used in other places)
+
+  // const MAX_ALLOWED = 10000000;
+
+  // const handleCurrencyChange = (e) => {
+  //   const { name, value } = e.target;
+  //   const rawValue = value.replace(/[^0-9.]/g, "");
+  //   const numeric = parseFloat(rawValue);
+
+  //   if (numeric > MAX_ALLOWED) return;
+
+  //   const [integer, decimal] = rawValue.split(".");
+  //   const formattedInteger = parseInt(integer || "0", 10).toLocaleString();
+  //   const formatted =
+  //     decimal !== undefined ? `${formattedInteger}.${decimal.slice(0, 2)}` : formattedInteger;
+
+  //   setProjectData((prev) => ({
+  //     ...prev,
+  //     [name]: formatted,
+  //   }));
+  // };
 
   const handleCurrencyChange = (e) => {
     const { name, value } = e.target;
-    const rawValue = value.replace(/[^0-9.]/g, "");
-    const numeric = parseFloat(rawValue);
 
-    if (numeric > MAX_ALLOWED) return;
-
-    const [integer, decimal] = rawValue.split(".");
-    const formattedInteger = parseInt(integer || "0", 10).toLocaleString();
-    const formatted =
-      decimal !== undefined ? `${formattedInteger}.${decimal.slice(0, 2)}` : formattedInteger;
+    const formatted = formatFormCurrency(value);
 
     setProjectData((prev) => ({
       ...prev,
@@ -475,20 +499,20 @@ const ProjectEdit = () => {
 
                   <div className="mb-3">
                     <label className="form-label">Client Phone *</label>
-                  <input
-                    type="text"
-                    className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
-                    name="clientPhone"
-                    value={formatAustralianMobile(projectData.clientPhone) || ""}
-                    onChange={(e) =>
-                      setProjectData((prev) => ({
-                        ...prev,
-                        clientPhone: formatAustralianMobile(e.target.value)
-                      }))
-                    }
-                    placeholder="04XX XXX XXX"
-                    required
-                  />
+                    <input
+                      type="text"
+                      className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
+                      name="clientPhone"
+                      value={formatAustralianMobile(projectData.clientPhone) || ""}
+                      onChange={(e) =>
+                        setProjectData((prev) => ({
+                          ...prev,
+                          clientPhone: formatAustralianMobile(e.target.value),
+                        }))
+                      }
+                      placeholder="04XX XXX XXX"
+                      required
+                    />
 
                     {formErrors.clientPhone && (
                       <div className="invalid-feedback">{formErrors.clientPhone}</div>

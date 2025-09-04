@@ -6,7 +6,9 @@ import useFormStorage from "../hooks/useFormStorage";
 // import Header from '../components/Header';
 import Header from "../components/Header/index";
 import API_BASE_URL from "../api";
+import { isValidEmail } from "../utils/isValidEmail";
 
+// NOTE: where is this used?
 const UserProfile = () => {
   const navigate = useNavigate();
   const { userId, getToken } = useAuth();
@@ -152,6 +154,14 @@ const UserProfile = () => {
 
     if (userInfo.abn && userInfo.abn.toString().length !== 11) {
       setError("ABN must be exactly 11 digits");
+      setSaveLoading(false);
+      return;
+    }
+
+    // Validate email
+    const isValid = isValidEmail(userInfo.email);
+    if (!isValid) {
+      setError("Invalid email");
       setSaveLoading(false);
       return;
     }

@@ -4,6 +4,7 @@ import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useFormLock from "../../hooks/useFormLock";
+import { formatFormCurrency } from "../../utils/formatCurrency";
 
 const VariationEdit = () => {
   const { projectId, variationId } = useParams();
@@ -14,7 +15,7 @@ const VariationEdit = () => {
   const [success, setSuccess] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
   const [formLocked, setFormLocked] = useState(false);
-  
+
   const { lockForm } = useFormLock(formLocked, `/projects/${projectId}/variations/${variationId}`);
 
   // Fetch project data
@@ -117,8 +118,6 @@ const VariationEdit = () => {
     // Remove newContractPrice if it exists
     delete formattedData.newContractPrice;
 
-    console.log("Submitting data:", formattedData); // Debug what's being sent
-
     const result = await updateVariation(projectId, variationId, formattedData);
 
     if (result.success) {
@@ -128,6 +127,7 @@ const VariationEdit = () => {
       // Show success message briefly then redirect
       setTimeout(() => {
         lockForm(`/projects/${projectId}/variations/${variationId}`);
+        navigate(`/projects/${projectId}/variations/${variationId}/?displayModal=true`);
       }, 1500);
     }
   };
@@ -181,18 +181,7 @@ const VariationEdit = () => {
   const handleCostChange = (e) => {
     const { name, value } = e.target;
 
-    // Remove all non-digit and non-dot characters
-    const rawValue = value.replace(/[^0-9.]/g, "");
-
-    // Split into integer and decimal parts
-    const [integer, decimal] = rawValue.split(".");
-
-    // Format integer part with commas
-    const formattedInteger = (integer || "0").replace(/^0+(?!$)/, ""); // remove leading zeros
-    const withCommas = parseInt(formattedInteger || "0").toLocaleString();
-
-    // Recombine with decimal (up to 2 places)
-    const formatted = decimal !== undefined ? `${withCommas}.${decimal.slice(0, 2)}` : withCommas;
+    const formatted = formatFormCurrency(value);
 
     setVariationData((prev) => ({
       ...prev,
@@ -207,6 +196,7 @@ const VariationEdit = () => {
     }
   };
 
+  // NOTE: very similar (identical?) to VariatoinCreate.jsx
   return (
     <div>
       <Header />
@@ -265,7 +255,8 @@ const VariationEdit = () => {
                       value={variationData.reason || ""}
                       onChange={handleChange}
                       rows="2"
-                      required></textarea>
+                      required
+                      placeholder="Enter reason for variation"></textarea>
                     {formErrors.reason && (
                       <div className="invalid-feedback">{formErrors.reason}</div>
                     )}

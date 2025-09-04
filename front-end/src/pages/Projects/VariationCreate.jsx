@@ -5,6 +5,7 @@ import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLocation } from "react-router-dom";
 import useFormLock from "../../hooks/useFormLock";
+import { formatFormCurrency } from "../../utils/formatCurrency";
 
 const VariationCreate = () => {
   const { projectId } = useParams();
@@ -36,7 +37,8 @@ const VariationCreate = () => {
 
   useEffect(() => {
     if (location.state?.prefillData) {
-      const { cost, delay, permitVariation, variationType } = location.state.prefillData;
+      const { cost, delay, permitVariation, description, variationType } =
+        location.state.prefillData;
 
       const formattedCost = cost ? parseFloat(cost).toLocaleString() : "";
 
@@ -45,7 +47,8 @@ const VariationCreate = () => {
         cost: formattedCost,
         delay: delay || "",
         permitVariation: permitVariation || "",
-        description: `Variation - $${formattedCost}`,
+        // description: `Variation - $${formattedCost}`,
+        description: description,
         reason: "Owner requested variation",
         variationType: variationType,
       }));
@@ -112,15 +115,7 @@ const VariationCreate = () => {
   const handleCurrencyChange = (e) => {
     const { name, value } = e.target;
 
-    // Clean out non-numeric characters (except dot)
-    const rawValue = value.replace(/[^0-9.]/g, "");
-
-    // Separate integer and decimal
-    const [intPart, decPart] = rawValue.split(".");
-
-    const withCommas = parseInt(intPart || "0").toLocaleString();
-
-    const formatted = decPart !== undefined ? `${withCommas}.${decPart.slice(0, 2)}` : withCommas;
+    const formatted = formatFormCurrency(value);
 
     setVariationData((prev) => ({
       ...prev,
@@ -152,16 +147,12 @@ const VariationCreate = () => {
 
     delete formattedData.newContractPrice;
 
-    console.log("Submitting cost:", variationData.cost); // formatted string
-    console.log("Parsed cost:", cleanedCost); // numeric value
-    console.log("Final submit payload:", formattedData); // full payload
-
     const result = await addVariation(projectId, formattedData);
 
     if (result.success) {
       setFormLocked(true);
       lockForm(`/projects/${projectId}`);
-      navigate(`/projects/${projectId}/variations/${result.data.variationId}/?firstTime=true`);
+      navigate(`/projects/${projectId}/variations/${result.data.variationId}/?displayModal=true`);
     }
   };
 
@@ -172,6 +163,7 @@ const VariationCreate = () => {
   // Calculate the projected new contract price for display
   const projectedContractPrice = calculateProjectedContractPrice(variationData.cost);
 
+  // NOTE: very similar (identical?) to VariatoinEdit.jsx
   return (
     <div>
       <Header />
@@ -229,7 +221,8 @@ const VariationCreate = () => {
                       value={variationData.reason || ""}
                       onChange={handleChange}
                       rows="2"
-                      required></textarea>
+                      required
+                      placeholder="Enter reason for variation"></textarea>
                     {formErrors.reason && (
                       <div className="invalid-feedback">{formErrors.reason}</div>
                     )}
@@ -321,16 +314,20 @@ const VariationCreate = () => {
                             }));
                           }}>
                           <option
-                            selected={location.state?.prefillData.variationType === 'debit' ? true : false}
+                            selected={
+                              location.state?.prefillData.variationType === "debit" ? true : false
+                            }
                             // {location.state.prefillData ?? selected}
                             value="debit">
                             debit
                           </option>
                           <option
-                            selected={location.state?.prefillData.variationType === 'credit' ? true : false}
-                            value="credit"
-                          >
-                            credit</option>
+                            selected={
+                              location.state?.prefillData.variationType === "credit" ? true : false
+                            }
+                            value="credit">
+                            credit
+                          </option>
                         </select>
                       </div>
                       <div className="input-group">
