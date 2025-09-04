@@ -4,6 +4,7 @@ import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
 import API_BASE_URL from "../../api"; // Adjust the import path as necessary
 import { useEffect, useRef } from "react";
+import { isValidEmail } from "../../utils/isValidEmail";
 
 const StepOne = ({ setFormError }) => {
   const { profileData, updateProfile } = useProfile();
@@ -25,7 +26,6 @@ const StepOne = ({ setFormError }) => {
 
       const token = await getToken();
 
-      console.log("Uploading logo for user:", userId);
       const response = await axios.post(`${API_BASE_URL}/api/profile/${userId}/logo`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -33,10 +33,10 @@ const StepOne = ({ setFormError }) => {
         },
       });
 
-      console.log("Upload response:", response.data);
+  
       const logoURL = response.data.logo; // Assuming the response contains the logo URL
       // if (!response.ok) throw new Error(response.data.message || "Upload failed");
-      console.log("Logo uploaded successfully:", logoURL);
+
       const fullURL = `${API_BASE_URL}/${logoURL.replace(/^\/?/, "")}`;
       updateProfile({ logo: fullURL });
     } catch (err) {
@@ -46,14 +46,6 @@ const StepOne = ({ setFormError }) => {
       setUploading(false);
     }
   };
-
-  useEffect(() => {
-    console.log("Updated profileData:", profileData);
-  }, [profileData]);
-
-  useEffect(() => {
-    console.log("Updated profileData:", profileData);
-  }, [profileData]);
 
   const handleLogoRemove = () => {
     updateProfile({ logo: "", logoPath: "" });
@@ -65,20 +57,19 @@ const StepOne = ({ setFormError }) => {
 
   const validateEmailOnBlur = () => {
     setFormError("");
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(profileData.email)) setFormError("A valid email is required");
+    const isValid = isValidEmail(profileData.email);
+    !isValid && setFormError("A valid email is required");
   };
 
   const formatAustralianMobile = (input) => {
-  // Remove all non-digit characters
-  const digits = input.replace(/\D/g, "");
+    // Remove all non-digit characters
+    const digits = input.replace(/\D/g, "");
 
-  // Format: 0412 345 678
-  if (digits.length <= 4) return digits;
-  if (digits.length <= 7) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
-  return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 10)}`;
-};
-
+    // Format: 0412 345 678
+    if (digits.length <= 4) return digits;
+    if (digits.length <= 7) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+    return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 10)}`;
+  };
 
   return (
     <div>
@@ -127,13 +118,12 @@ const StepOne = ({ setFormError }) => {
         <label className="form-label">Telephone/Mobile Number *</label>
         <input
           type="text"
-          placeholder="0412 345 678"
           className="form-control light-grey-placeholder-text"
           value={profileData.phoneNumber || ""}
           onChange={(e) => {
-              const formatted = formatAustralianMobile(e.target.value);
-               updateProfile({ phoneNumber: formatted });
-     }}
+            const formatted = formatAustralianMobile(e.target.value);
+            updateProfile({ phoneNumber: formatted });
+          }}
           placeholder="04XX XXX XXX"
           required
         />

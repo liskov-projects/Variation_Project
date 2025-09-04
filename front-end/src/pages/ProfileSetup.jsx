@@ -57,7 +57,7 @@ const ProfileSetup = () => {
       setFormError(validationError);
       changeCompletedState(currentStep, false);
 
-      console.log(formError);
+      console.error(formError);
       return;
     } else {
       // helper function

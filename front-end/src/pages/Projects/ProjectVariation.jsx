@@ -8,7 +8,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import VariationPDF from "./VariationPDF"; 
 import { useProfile } from "../../contexts/ProfileContext";
 import ConfirmModal from "../../components/Variations/ConfirmModal"
-
+import { formatDisplayCurrency } from "../../utils/formatCurrency";
 
 
 const ProjectVariation = () => {
@@ -25,7 +25,7 @@ const ProjectVariation = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const { profileData } = useProfile();
 
-    const isFirstVisit = searchParams.get('firstTime') === 'true';
+    const displayModal = searchParams.get('displayModal') === 'true';
 
 
   useEffect(() => {
@@ -52,10 +52,10 @@ const ProjectVariation = () => {
       }, [showConfirmModal]);
 
   useEffect(() => {
-    if (fetchedProject && isFirstVisit) {
+    if (fetchedProject && displayModal) {
       setShowConfirmModal(true);
     }
-  }, [fetchedProject, isFirstVisit])
+  }, [fetchedProject, displayModal])
 
 
   // Find the requested variation in the current project
@@ -173,14 +173,6 @@ const ProjectVariation = () => {
       default:
         return "bg-secondary";
     }
-  };
-
-  // Format currency
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-AU", {
-      style: "currency",
-      currency: "AUD",
-    }).format(amount || 0);
   };
 
   // Calculate contract price with this variation
@@ -356,7 +348,7 @@ const ProjectVariation = () => {
                       <h6 className="mb-0 text-muted">Original Contract Price</h6>
                     </div>
                     <h4 className="mb-0 text-primary">
-                      {formatCurrency(currentProject.contractPrice || 0)}
+                      {formatDisplayCurrency(currentProject.contractPrice || 0)}
                     </h4>
                   </div>
                 </div>
@@ -367,7 +359,7 @@ const ProjectVariation = () => {
                       <h6 className="mb-0 text-muted">Current Contract Price</h6>
                     </div>
                     <h4 className="mb-0 text-success">
-                      {formatCurrency(
+                      {formatDisplayCurrency(
                         currentProject.currentContractPrice || currentProject.contractPrice || 0
                       )}
                     </h4>
@@ -387,7 +379,7 @@ const ProjectVariation = () => {
                     </div>
                     <h4
                       className={`mb-0 ${variation.status === "approved" ? "text-success" : "text-warning"}`}>
-                      {formatCurrency(contractPriceWithVariation)}
+                      {formatDisplayCurrency(contractPriceWithVariation)}
                     </h4>
                     <small className="text-muted">
                       {variation.status === "approved"
@@ -497,7 +489,7 @@ const ProjectVariation = () => {
                 <div className="card bg-light">
                   <div className="card-body text-center">
                     <h5 className="card-title">Variation Cost</h5>
-                    <p className="display-6 text-primary">{formatCurrency(variation.cost)}</p>
+                    <p className="display-6 text-primary">{formatDisplayCurrency(variation.cost)}</p>
                     <small className="text-muted">
                       {variation.status === "approved"
                         ? "This amount has been added to the contract price"

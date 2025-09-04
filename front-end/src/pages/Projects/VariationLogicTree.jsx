@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { formatFormCurrency } from "../../utils/formatCurrency";
 
 const VariationLogicTree = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const { fetchProjectById, currentProject, addVariation, loading } = useProject();
-  console.log("Current project: ", currentProject);
   const [step, setStep] = useState("userType");
   const [userType, setUserType] = useState("");
   const [ownerAnswers, setOwnerAnswers] = useState({
     variationPrice: "",
     delayDays: "",
     permitVariation: "",
+    description: "",
+    variationType: "debit",
   });
   const [formErrors, setFormErrors] = useState({});
   const [isCreating, setIsCreating] = useState(false);
@@ -42,10 +44,19 @@ const VariationLogicTree = () => {
   };
 
   const handleOwnerAnswerChange = (field, value) => {
-    setOwnerAnswers((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    if (field === "variationPrice") {
+      const formatted = formatFormCurrency(value);
+
+      setOwnerAnswers((prev) => ({
+        ...prev,
+        [field]: formatted,
+      }));
+    } else {
+      setOwnerAnswers((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    }
 
     // Clear errors when user starts typing
     if (formErrors[field]) {
@@ -82,10 +93,12 @@ const VariationLogicTree = () => {
       return;
     }
 
-    const variationPrice = parseFloat(ownerAnswers.variationPrice);
+    const variationPrice = parseFloat(ownerAnswers.variationPrice.replace(/,/g, ""));
     const delayDays = parseInt(ownerAnswers.delayDays);
     const permitVariation = ownerAnswers.permitVariation === "yes";
     const twoPercentThreshold = getTwoPercentThreshold();
+    const variationDescription = ownerAnswers.description;
+    const variationType = ownerAnswers.variationType;
 
     // Check if any condition requires full variation process
     const needsFullProcess =
@@ -99,6 +112,8 @@ const VariationLogicTree = () => {
             cost: variationPrice,
             delay: delayDays,
             permitVariation: permitVariation ? "Yes" : "No",
+            description: variationDescription,
+            variationType: variationType,
           },
         },
       });
@@ -231,12 +246,38 @@ const VariationLogicTree = () => {
                       )}
                     </div>
                     <div className="mb-3">
+                      {/* Inconsistent naming for Variation Cost/Value across app */}
                       <label className="form-label">Variation Price *</label>
+                      <div className="input-group mb-2 align-items-center">
+                        <label
+                          htmlFor="type"
+                          className="col">
+                          Type:
+                        </label>
+                        <select
+                          className="form-select col"
+                          name="type"
+                          id="type"
+                          onChange={(e) => {
+                            setOwnerAnswers((prev) => ({
+                              ...prev,
+                              variationType: e.target.value,
+                            }));
+                          }}>
+                          <option
+                            selected
+                            value="debit">
+                            debit
+                          </option>
+                          <option value="credit">credit</option>
+                        </select>
+                      </div>
                       <div className="input-group">
-                        <span className="input-group-text">$</span>
+                        <span className="input-group-text">
+                          {ownerAnswers.variationType === "credit" && <span>-</span>}$
+                        </span>
                         <input
-                          type="number"
-                          step="0.01"
+                          type="text"
                           className={`form-control ${formErrors.variationPrice ? "is-invalid" : ""}`}
                           value={ownerAnswers.variationPrice}
                           onChange={(e) =>

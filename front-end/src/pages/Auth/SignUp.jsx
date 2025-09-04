@@ -24,7 +24,6 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const handleSignIn = () => {
-    console.log("Sign up button clicked - navigating to /sign-up");
     navigate("/sign-in");
   };
 

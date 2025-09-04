@@ -328,17 +328,30 @@ projectSchema.methods.calculateCurrentContractPrice = function () {
   return this.currentContractPrice;
 };
 
-// TASK 6: Method to calculate current end date based on extensions
+// Calculate current end date based on extensions
 projectSchema.methods.calculateCurrentEndDate = function () {
-  if (this.originalEndDate && this.totalDaysExtended !== undefined) {
-    const currentDate = new Date(this.originalEndDate);
-    currentDate.setDate(currentDate.getDate() + this.totalDaysExtended);
-    this.currentEndDate = currentDate;
+  let totalDelay = 0;
 
-    // Update expectedEndDate for backward compatibility
-    this.expectedEndDate = currentDate;
+  // Sum delays of approved variations
+  if (Array.isArray(this.variations)) {
+    this.variations.forEach((variation) => {
+      if (variation.status === "approved") {
+        // Ensure delay is a number (it may be a string)
+        const delayNum = Number(variation.delay) || 0;
+        totalDelay += delayNum;
+      }
+    });
   }
-  return this.currentEndDate;
+
+  if (this.originalEndDate) {
+    const currentDate = new Date(this.originalEndDate);
+    currentDate.setDate(currentDate.getDate() + totalDelay);
+    this.currentEndDate = currentDate;
+    this.expectedEndDate = currentDate;
+    return this.currentEndDate;
+  }
+
+  return undefined;
 };
 
 // Pre-save middleware to automatically update current contract price
@@ -347,9 +360,8 @@ projectSchema.pre("save", function (next) {
     this.calculateCurrentContractPrice();
   }
 
-  if (this.isModified("originalEndDate") || this.isModified("totalDaysExtended")) {
-    this.calculateCurrentEndDate();
-  }
+
+  this.calculateCurrentEndDate();
 
   next();
 });

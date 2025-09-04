@@ -35,8 +35,7 @@ const FormProgress = ({ isCompleted, changeCompletedState }) => {
           const isActive = currentStep === step.number;
           const isClickable = checkClickableStep(step.number);
           const completed = isCompleted[index];
-
-          // console.log(step, "completed : ", isCompleted[index]);
+          
           return (
             <div
               key={step.number}
