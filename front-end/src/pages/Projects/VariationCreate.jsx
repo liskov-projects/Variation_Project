@@ -36,7 +36,7 @@ const VariationCreate = () => {
 
   useEffect(() => {
     if (location.state?.prefillData) {
-      const { cost, delay, permitVariation } = location.state.prefillData;
+      const { cost, delay, permitVariation, variationType } = location.state.prefillData;
 
       const formattedCost = cost ? parseFloat(cost).toLocaleString() : "";
 
@@ -47,6 +47,7 @@ const VariationCreate = () => {
         permitVariation: permitVariation || "",
         description: `Variation - $${formattedCost}`,
         reason: "Owner requested variation",
+        variationType: variationType,
       }));
     }
   }, [location.state]);
@@ -301,6 +302,7 @@ const VariationCreate = () => {
 
                   <div className="row mb-3">
                     <div className="col-md-6">
+                      {/* Inconsistent naming for Variation Cost/Value across app */}
                       <label className="form-label">Variation Cost *</label>
                       <div className="input-group mb-2 align-items-center">
                         <label
@@ -319,11 +321,16 @@ const VariationCreate = () => {
                             }));
                           }}>
                           <option
-                            selected
+                            selected={location.state?.prefillData.variationType === 'debit' ? true : false}
+                            // {location.state.prefillData ?? selected}
                             value="debit">
                             debit
                           </option>
-                          <option value="credit">credit</option>
+                          <option
+                            selected={location.state?.prefillData.variationType === 'credit' ? true : false}
+                            value="credit"
+                          >
+                            credit</option>
                         </select>
                       </div>
                       <div className="input-group">

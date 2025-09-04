@@ -15,6 +15,7 @@ const VariationLogicTree = () => {
     variationPrice: "",
     delayDays: "",
     permitVariation: "",
+    variationType: "debit"
   });
   const [formErrors, setFormErrors] = useState({});
   const [isCreating, setIsCreating] = useState(false);
@@ -86,6 +87,7 @@ const VariationLogicTree = () => {
     const delayDays = parseInt(ownerAnswers.delayDays);
     const permitVariation = ownerAnswers.permitVariation === "yes";
     const twoPercentThreshold = getTwoPercentThreshold();
+    const variationType = ownerAnswers.variationType;
 
     // Check if any condition requires full variation process
     const needsFullProcess =
@@ -99,6 +101,7 @@ const VariationLogicTree = () => {
             cost: variationPrice,
             delay: delayDays,
             permitVariation: permitVariation ? "Yes" : "No",
+            variationType: variationType
           },
         },
       });
@@ -231,9 +234,36 @@ const VariationLogicTree = () => {
                       )}
                     </div>
                     <div className="mb-3">
+                      {/* Inconsistent naming for Variation Cost/Value across app */}
                       <label className="form-label">Variation Price *</label>
+                      <div className="input-group mb-2 align-items-center">
+                        <label
+                          htmlFor="type"
+                          className="col">
+                          Type:
+                        </label>
+                        <select
+                          className="form-select col"
+                          name="type"
+                          id="type"
+                          onChange={(e) => {
+                            setOwnerAnswers((prev) => ({
+                              ...prev,
+                              variationType: e.target.value,
+                            }));
+                          }}>
+                          <option
+                            selected
+                            value="debit">
+                            debit
+                          </option>
+                          <option value="credit">credit</option>
+                        </select>
+                      </div>
                       <div className="input-group">
-                        <span className="input-group-text">$</span>
+                        <span className="input-group-text">
+                          {ownerAnswers.variationType === "credit" && <span>-</span>}$
+                        </span>
                         <input
                           type="number"
                           step="0.01"
