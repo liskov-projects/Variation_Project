@@ -8,7 +8,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import VariationPDF from "./VariationPDF";
 import { useProfile } from "../../contexts/ProfileContext";
 import { formatDisplayCurrency } from "../../utils/formatCurrency";
-
+import filterSearch from "../../utils/filterSearch";
 const ProjectDetails = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
@@ -19,6 +19,7 @@ const ProjectDetails = () => {
   const [hasFetched, setHasFetched] = useState(false);
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
   const { profileData } = useProfile();
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     if (projectId && !hasFetched) {
@@ -129,17 +130,21 @@ const ProjectDetails = () => {
     }
   };
 
-const formatAustralianMobile = (value) => {
-  if (!value) return "";
-  const cleaned = value.replace(/\D/g, '');
-  if (cleaned.startsWith('04')) {
-    return cleaned
-      .replace(/^(\d{4})(\d{3})(\d{0,3}).*/, '$1 $2 $3')
-      .trim();
-  }
-  return value; // fallback if not matching
-};
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-AU", {
+      style: "currency",
+      currency: "AUD",
+    }).format(amount || 0);
+  };
 
+  const formatAustralianMobile = (value) => {
+    if (!value) return "";
+    const cleaned = value.replace(/\D/g, "");
+    if (cleaned.startsWith("04")) {
+      return cleaned.replace(/^(\d{4})(\d{3})(\d{0,3}).*/, "$1 $2 $3").trim();
+    }
+    return value; // fallback if not matching
+  };
 
   if (loading && !currentProject) {
     return (
@@ -172,6 +177,12 @@ const formatAustralianMobile = (value) => {
     );
   }
 
+  function handleChange(e) {
+    setQuery(e.target.value);
+  }
+
+  const variationsToShow = filterSearch(currentProject.variations, query);
+
   return (
     <div>
       <Header />
@@ -184,9 +195,11 @@ const formatAustralianMobile = (value) => {
               <i className="bi bi-arrow-left"></i>
             </button>
             <h2 className="mb-0">{currentProject.projectName}</h2>
-            {currentProject.status && <span className={`badge ms-3 ${getStatusBadgeClass(currentProject.status)}`}>
-              {currentProject.status.charAt(0).toUpperCase() + currentProject.status.slice(1)}
-            </span>}
+            {currentProject.status && (
+              <span className={`badge ms-3 ${getStatusBadgeClass(currentProject.status)}`}>
+                {currentProject.status.charAt(0).toUpperCase() + currentProject.status.slice(1)}
+              </span>
+            )}
           </div>
           <div>
             <button
@@ -253,8 +266,10 @@ const formatAustralianMobile = (value) => {
                     <div className="col-md-8">{currentProject.clientEmail}</div>
                   </div>
                   <div className="row">
-                     <div className="col-md-4 fw-bold">Phone:</div>
-                     <div className="col-md-8">{formatAustralianMobile(currentProject.clientPhone)}</div>
+                    <div className="col-md-4 fw-bold">Phone:</div>
+                    <div className="col-md-8">
+                      {formatAustralianMobile(currentProject.clientPhone)}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -337,6 +352,17 @@ const formatAustralianMobile = (value) => {
               </button>
             </div>
           </div>
+          <div className="col-md-6 m-2">
+            <label className="form-label">
+              <b>Search for</b>
+            </label>
+            <input
+              placeholder="variation description, reason, effect..."
+              className="form-control mb-2"
+              value={query}
+              onChange={handleChange}
+            />
+          </div>
           <div className="card-body">
             {!currentProject.variations || currentProject.variations.length === 0 ? (
               <div className="text-center py-4">
@@ -367,7 +393,7 @@ const formatAustralianMobile = (value) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {currentProject.variations.map((variation) => (
+                    {variationsToShow.map((variation) => (
                       <tr
                         key={variation._id}
                         onClick={() => handleViewVariation(variation._id)}
@@ -517,7 +543,6 @@ const formatAustralianMobile = (value) => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
