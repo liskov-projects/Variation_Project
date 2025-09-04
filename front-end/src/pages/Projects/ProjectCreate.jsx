@@ -6,6 +6,8 @@ import { Project } from "../../models/ProjectModel"; // Import the Project model
 import Header from "../../components/Header/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useFormLock from "../../hooks/useFormLock";
+import { isValidEmail } from "../../utils/isValidEmail";
+import { formatFormCurrency } from "../../utils/formatCurrency";
 
 const ProjectCreate = () => {
   const navigate = useNavigate();
@@ -13,9 +15,9 @@ const ProjectCreate = () => {
   const { createProject, loading, error } = useProject();
   const [projectData, setProjectData] = useState(new Project()); // Use Project model
   const [formErrors, setFormErrors] = useState({});
-  const [architectpmSelected, setArchitectpmSelected] = useState('No');
+  const [architectpmSelected, setArchitectpmSelected] = useState("No");
   const [formLocked, setFormLocked] = useState(false);
-  
+
   const { lockForm } = useFormLock(formLocked, "/projects");
 
   useEffect(() => {
@@ -44,7 +46,7 @@ const ProjectCreate = () => {
   // Handle architect selection change
   const handleArchitectSelection = (value) => {
     setArchitectpmSelected(value);
-    
+
     // Update the project data using the Project model method
     const newProject = new Project(projectData);
     newProject.updateArchitect(value === "Yes", newProject.architect.details);
@@ -54,16 +56,20 @@ const ProjectCreate = () => {
   // Handle architect details change
   const handleArchitectChange = (e) => {
     const { name, value } = e.target;
-    
+
     // Extract the field name (remove 'architectPm' prefix)
-    const fieldName = name.replace('architectPm', '').toLowerCase();
-    const mappedFieldName = fieldName === 'companyname' ? 'companyName' : 
-                            fieldName === 'contactname' ? 'contactName' : fieldName;
+    const fieldName = name.replace("architectPm", "").toLowerCase();
+    const mappedFieldName =
+      fieldName === "companyname"
+        ? "companyName"
+        : fieldName === "contactname"
+          ? "contactName"
+          : fieldName;
 
     const newProject = new Project(projectData);
     newProject.updateArchitect(architectpmSelected === "Yes", {
       ...newProject.architect.details,
-      [mappedFieldName]: value
+      [mappedFieldName]: value,
     });
     setProjectData(newProject);
 
@@ -78,16 +84,21 @@ const ProjectCreate = () => {
   // Handle surveyor details change
   const handleSurveyorChange = (e) => {
     const { name, value } = e.target;
-    
+
     // Extract the field name (remove 'surveyor' prefix)
-    const fieldName = name.replace('surveyor', '').toLowerCase();
-    const mappedFieldName = fieldName === 'companyname' ? 'companyName' : 
-                            fieldName === 'contactname' ? 'contactName' : fieldName;
+    const fieldName = name.replace("surveyor", "").toLowerCase();
+    const mappedFieldName =
+      fieldName === "companyname"
+        ? "companyName"
+        : fieldName === "contactname"
+          ? "contactName"
+          : fieldName;
 
     const newProject = new Project(projectData);
-    newProject.updateSurveyor(true, { // Surveyor is always true by default
+    newProject.updateSurveyor(true, {
+      // Surveyor is always true by default
       ...newProject.surveyor.details,
-      [mappedFieldName]: value
+      [mappedFieldName]: value,
     });
     setProjectData(newProject);
 
@@ -99,6 +110,7 @@ const ProjectCreate = () => {
     }
   };
 
+  // Very similar (the same actually) with ProjectEdit.jsx
   const validateForm = () => {
     const errors = {};
 
@@ -133,6 +145,9 @@ const ProjectCreate = () => {
     }
     if (!projectData.surveyor.details.email) {
       errors.surveyorEmail = "Surveyor email is required";
+    } else {
+      const isValid = isValidEmail(projectData.surveyor.details.email);
+      if (!isValid) errors.surveyorEmail = "Please enter a valid email address";
     }
 
     // Validate architect fields (only if architect is selected)
@@ -151,14 +166,15 @@ const ProjectCreate = () => {
       }
       if (!projectData.architect.details.email) {
         errors.architectPmEmail = "Architect email is required";
+      } else {
+        const isValid = isValidEmail(projectData.architect.details.email);
+        if (!isValid) errors.architectPmEmail = "Please enter a valid email address";
       }
     }
 
-    if (
-      projectData.clientEmail &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(projectData.clientEmail)
-    ) {
-      errors.clientEmail = "Please enter a valid email address";
+    if (projectData.clientEmail) {
+      const isValid = isValidEmail(projectData.clientEmail);
+      if (!isValid) errors.clientEmail = "Please enter a valid email address";
     }
 
     if (projectData.startDate && projectData.expectedEndDate) {
@@ -172,8 +188,7 @@ const ProjectCreate = () => {
 
     if (
       projectData.contractPrice &&
-      (isNaN(parseFloat(projectData.contractPrice)) ||
-        parseFloat(projectData.contractPrice) < 0)
+      (isNaN(parseFloat(projectData.contractPrice)) || parseFloat(projectData.contractPrice) < 0)
     ) {
       errors.contractPrice = "Contract price must be a valid positive number";
     }
@@ -185,19 +200,7 @@ const ProjectCreate = () => {
   const handleCurrencyChange = (e) => {
     const { name, value } = e.target;
 
-    // Remove non-numeric characters except dot
-    const rawValue = value.replace(/[^0-9.]/g, "");
-
-    // Split into integer and decimal
-    const [integer, decimal] = rawValue.split(".");
-    const formattedInteger = (integer || "0").replace(/^0+(?!$)/, "");
-    const withCommas = parseInt(formattedInteger || "0").toLocaleString();
-
-    // Recombine with decimal (if any)
-    const formatted =
-      decimal !== undefined
-        ? `${withCommas}.${decimal.slice(0, 2)}`
-        : withCommas;
+    const formatted = formatFormCurrency(value);
 
     setProjectData((prev) => ({
       ...prev,
@@ -228,7 +231,7 @@ const ProjectCreate = () => {
 
     // Use the toBackendFormat method to get the correctly structured data
     const backendData = projectInstance.toBackendFormat();
-    
+
     // Remove _id if it's empty
     if (backendData._id === "") {
       delete backendData._id;
@@ -265,18 +268,14 @@ const ProjectCreate = () => {
                     <label className="form-label">Project Name *</label>
                     <input
                       type="text"
-                      className={`form-control ${
-                        formErrors.projectName ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${formErrors.projectName ? "is-invalid" : ""}`}
                       name="projectName"
                       value={projectData.projectName || ""}
                       onChange={handleChange}
                       required
                     />
                     {formErrors.projectName && (
-                      <div className="invalid-feedback">
-                        {formErrors.projectName}
-                      </div>
+                      <div className="invalid-feedback">{formErrors.projectName}</div>
                     )}
                   </div>
 
@@ -284,18 +283,14 @@ const ProjectCreate = () => {
                     <label className="form-label">Property Address *</label>
                     <input
                       type="text"
-                      className={`form-control ${
-                        formErrors.propertyAddress ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${formErrors.propertyAddress ? "is-invalid" : ""}`}
                       name="propertyAddress"
                       value={projectData.propertyAddress || ""}
                       onChange={handleChange}
                       required
                     />
                     {formErrors.propertyAddress && (
-                      <div className="invalid-feedback">
-                        {formErrors.propertyAddress}
-                      </div>
+                      <div className="invalid-feedback">{formErrors.propertyAddress}</div>
                     )}
                   </div>
 
@@ -316,9 +311,7 @@ const ProjectCreate = () => {
                       <span className="input-group-text">$</span>
                       <input
                         type="text"
-                        className={`form-control ${
-                          formErrors.contractPrice ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${formErrors.contractPrice ? "is-invalid" : ""}`}
                         name="contractPrice"
                         value={projectData.contractPrice || ""}
                         onChange={handleCurrencyChange}
@@ -326,9 +319,7 @@ const ProjectCreate = () => {
                       />
 
                       {formErrors.contractPrice && (
-                        <div className="invalid-feedback">
-                          {formErrors.contractPrice}
-                        </div>
+                        <div className="invalid-feedback">{formErrors.contractPrice}</div>
                       )}
                     </div>
                     <div className="form-text">
@@ -341,35 +332,27 @@ const ProjectCreate = () => {
                       <label className="form-label">Start Date *</label>
                       <input
                         type="date"
-                        className={`form-control ${
-                          formErrors.startDate ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${formErrors.startDate ? "is-invalid" : ""}`}
                         name="startDate"
                         value={projectData.startDate || ""}
                         onChange={handleChange}
                         required
                       />
                       {formErrors.startDate && (
-                        <div className="invalid-feedback">
-                          {formErrors.startDate}
-                        </div>
+                        <div className="invalid-feedback">{formErrors.startDate}</div>
                       )}
                     </div>
                     <div className="col-md-6">
                       <label className="form-label">Expected End Date</label>
                       <input
                         type="date"
-                        className={`form-control ${
-                          formErrors.expectedEndDate ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${formErrors.expectedEndDate ? "is-invalid" : ""}`}
                         name="expectedEndDate"
                         value={projectData.expectedEndDate || ""}
                         onChange={handleChange}
                       />
                       {formErrors.expectedEndDate && (
-                        <div className="invalid-feedback">
-                          {formErrors.expectedEndDate}
-                        </div>
+                        <div className="invalid-feedback">{formErrors.expectedEndDate}</div>
                       )}
                     </div>
                   </div>
@@ -380,8 +363,7 @@ const ProjectCreate = () => {
                       className="form-select"
                       name="status"
                       value={projectData.status || "active"}
-                      onChange={handleChange}
-                    >
+                      onChange={handleChange}>
                       <option value="active">Active</option>
                       <option value="on-hold">On Hold</option>
                       <option value="completed">Completed</option>
@@ -390,25 +372,19 @@ const ProjectCreate = () => {
                   </div>
 
                   {/* Client Information Section */}
-                  <h4 className="mb-3 mt-4 border-bottom pb-2">
-                    Client Information (Required)
-                  </h4>
+                  <h4 className="mb-3 mt-4 border-bottom pb-2">Client Information (Required)</h4>
                   <div className="mb-3">
                     <label className="form-label">Client Name *</label>
                     <input
                       type="text"
-                      className={`form-control ${
-                        formErrors.clientName ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${formErrors.clientName ? "is-invalid" : ""}`}
                       name="clientName"
                       value={projectData.clientName || ""}
                       onChange={handleChange}
                       required
                     />
                     {formErrors.clientName && (
-                      <div className="invalid-feedback">
-                        {formErrors.clientName}
-                      </div>
+                      <div className="invalid-feedback">{formErrors.clientName}</div>
                     )}
                   </div>
 
@@ -416,18 +392,14 @@ const ProjectCreate = () => {
                     <label className="form-label">Client Email *</label>
                     <input
                       type="email"
-                      className={`form-control ${
-                        formErrors.clientEmail ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${formErrors.clientEmail ? "is-invalid" : ""}`}
                       name="clientEmail"
                       value={projectData.clientEmail || ""}
                       onChange={handleChange}
                       required
                     />
                     {formErrors.clientEmail && (
-                      <div className="invalid-feedback">
-                        {formErrors.clientEmail}
-                      </div>
+                      <div className="invalid-feedback">{formErrors.clientEmail}</div>
                     )}
                   </div>
 
@@ -435,25 +407,19 @@ const ProjectCreate = () => {
                     <label className="form-label">Client Phone *</label>
                     <input
                       type="text"
-                      className={`form-control ${
-                        formErrors.clientPhone ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${formErrors.clientPhone ? "is-invalid" : ""}`}
                       name="clientPhone"
                       value={projectData.clientPhone || ""}
                       onChange={handleChange}
                       required
                     />
                     {formErrors.clientPhone && (
-                      <div className="invalid-feedback">
-                        {formErrors.clientPhone}
-                      </div>
+                      <div className="invalid-feedback">{formErrors.clientPhone}</div>
                     )}
                   </div>
 
                   {/* Surveyor section */}
-                  <h4 className="mb-3 mt-4 border-bottom pb-2">
-                    Surveyor Information (Required)
-                  </h4>
+                  <h4 className="mb-3 mt-4 border-bottom pb-2">Surveyor Information (Required)</h4>
                   <div className="mb-3">
                     <label className="form-label">Company Name *</label>
                     <input
@@ -467,9 +433,7 @@ const ProjectCreate = () => {
                       required
                     />
                     {formErrors.surveyorCompanyName && (
-                      <div className="invalid-feedback">
-                        {formErrors.surveyorCompanyName}
-                      </div>
+                      <div className="invalid-feedback">{formErrors.surveyorCompanyName}</div>
                     )}
                   </div>
                   <div className="mb-3">
@@ -485,45 +449,35 @@ const ProjectCreate = () => {
                       required
                     />
                     {formErrors.surveyorContactName && (
-                      <div className="invalid-feedback">
-                        {formErrors.surveyorContactName}
-                      </div>
+                      <div className="invalid-feedback">{formErrors.surveyorContactName}</div>
                     )}
                   </div>
                   <div className="mb-3">
                     <label className="form-label">Address *</label>
                     <input
                       type="text"
-                      className={`form-control ${
-                        formErrors.surveyorAddress ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${formErrors.surveyorAddress ? "is-invalid" : ""}`}
                       name="surveyorAddress"
                       value={projectData.surveyor.details.address || ""}
                       onChange={handleSurveyorChange}
                       required
                     />
                     {formErrors.surveyorAddress && (
-                      <div className="invalid-feedback">
-                        {formErrors.surveyorAddress}
-                      </div>
+                      <div className="invalid-feedback">{formErrors.surveyorAddress}</div>
                     )}
                   </div>
                   <div className="mb-3">
                     <label className="form-label">Phone *</label>
                     <input
                       type="text"
-                      className={`form-control ${
-                        formErrors.surveyorPhone ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${formErrors.surveyorPhone ? "is-invalid" : ""}`}
                       name="surveyorPhone"
                       value={projectData.surveyor.details.phone || ""}
                       onChange={handleSurveyorChange}
                       required
                     />
                     {formErrors.surveyorPhone && (
-                      <div className="invalid-feedback">
-                        {formErrors.surveyorPhone}
-                      </div>
+                      <div className="invalid-feedback">{formErrors.surveyorPhone}</div>
                     )}
                   </div>
 
@@ -531,18 +485,14 @@ const ProjectCreate = () => {
                     <label className="form-label">Email *</label>
                     <input
                       type="email"
-                      className={`form-control ${
-                        formErrors.surveyorEmail ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${formErrors.surveyorEmail ? "is-invalid" : ""}`}
                       name="surveyorEmail"
                       value={projectData.surveyor.details.email || ""}
                       onChange={handleSurveyorChange}
                       required
                     />
                     {formErrors.surveyorEmail && (
-                      <div className="invalid-feedback">
-                        {formErrors.surveyorEmail}
-                      </div>
+                      <div className="invalid-feedback">{formErrors.surveyorEmail}</div>
                     )}
                   </div>
 
@@ -552,40 +502,46 @@ const ProjectCreate = () => {
                   </h4>
 
                   <div className="mb-3">
-                    <label className="form-label fw-semibold">Do you have an Architect / Project Manager? *</label>
+                    <label className="form-label fw-semibold">
+                      Do you have an Architect / Project Manager? *
+                    </label>
                     <div className="d-flex gap-4 mt-2">
                       <div className="form-check">
-                        <input 
-                          className="form-check-input" 
-                          type="radio" 
-                          name="architectChoice" 
-                          id="architectYes" 
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="architectChoice"
+                          id="architectYes"
                           value="Yes"
-                          checked={architectpmSelected === "Yes"} 
+                          checked={architectpmSelected === "Yes"}
                           onChange={(e) => handleArchitectSelection(e.target.value)}
                         />
-                        <label className="form-check-label" htmlFor="architectYes">
+                        <label
+                          className="form-check-label"
+                          htmlFor="architectYes">
                           Yes
                         </label>
                       </div>
                       <div className="form-check">
-                        <input 
-                          className="form-check-input" 
-                          type="radio" 
-                          name="architectChoice" 
-                          id="architectNo" 
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="architectChoice"
+                          id="architectNo"
                           value="No"
-                          checked={architectpmSelected === "No"} 
+                          checked={architectpmSelected === "No"}
                           onChange={(e) => handleArchitectSelection(e.target.value)}
                         />
-                        <label className="form-check-label" htmlFor="architectNo">
+                        <label
+                          className="form-check-label"
+                          htmlFor="architectNo">
                           No
                         </label>
                       </div>
                     </div>
                   </div>
 
-                  {architectpmSelected === 'Yes' && (
+                  {architectpmSelected === "Yes" && (
                     <>
                       <div className="mb-3">
                         <label className="form-label">Company Name *</label>
@@ -604,7 +560,7 @@ const ProjectCreate = () => {
                           </div>
                         )}
                       </div>
-                      
+
                       <div className="mb-3">
                         <label className="form-label">Contact Name *</label>
                         <input
@@ -622,7 +578,7 @@ const ProjectCreate = () => {
                           </div>
                         )}
                       </div>
-                      
+
                       <div className="mb-3">
                         <label className="form-label">Address *</label>
                         <input
@@ -635,12 +591,10 @@ const ProjectCreate = () => {
                           onChange={handleArchitectChange}
                         />
                         {formErrors.architectPmAddress && (
-                          <div className="invalid-feedback">
-                            {formErrors.architectPmAddress}
-                          </div>
+                          <div className="invalid-feedback">{formErrors.architectPmAddress}</div>
                         )}
                       </div>
-                      
+
                       <div className="mb-3">
                         <label className="form-label">Phone *</label>
                         <input
@@ -653,9 +607,7 @@ const ProjectCreate = () => {
                           onChange={handleArchitectChange}
                         />
                         {formErrors.architectPmPhone && (
-                          <div className="invalid-feedback">
-                            {formErrors.architectPmPhone}
-                          </div>
+                          <div className="invalid-feedback">{formErrors.architectPmPhone}</div>
                         )}
                       </div>
 
@@ -671,9 +623,7 @@ const ProjectCreate = () => {
                           onChange={handleArchitectChange}
                         />
                         {formErrors.architectPmEmail && (
-                          <div className="invalid-feedback">
-                            {formErrors.architectPmEmail}
-                          </div>
+                          <div className="invalid-feedback">{formErrors.architectPmEmail}</div>
                         )}
                       </div>
                     </>
@@ -696,8 +646,7 @@ const ProjectCreate = () => {
                           <span
                             className="spinner-border spinner-border-sm me-2"
                             role="status"
-                            aria-hidden="true"
-                          ></span>
+                            aria-hidden="true"></span>
                           Creating...
                         </>
                       ) : (
