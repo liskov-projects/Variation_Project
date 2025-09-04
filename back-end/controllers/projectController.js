@@ -262,7 +262,7 @@ export const addVariation = async (req, res) => {
     // Add variation to project
     project.variations.push(variationData);
 
-    // The pre-save middleware will automatically calculate the new contract price
+    // The pre-save middleware will automatically calculate the new contract price and end date
     const updatedProject = await project.save();
 
     // Get the newly created variation
@@ -362,7 +362,7 @@ export const updateVariation = async (req, res) => {
       project.variations[variationIndex][key] = updateData[key];
     });
 
-    // The pre-save middleware will automatically recalculate the contract price
+    // The pre-save middleware will automatically recalculate the contract price and end date
     const updatedProject = await project.save();
 
     res.status(200).json(updatedProject);
