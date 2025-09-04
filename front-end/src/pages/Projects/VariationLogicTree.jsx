@@ -16,6 +16,7 @@ const VariationLogicTree = () => {
     delayDays: "",
     permitVariation: "",
     description: "",
+    variationType: "debit",
   });
   const [formErrors, setFormErrors] = useState({});
   const [isCreating, setIsCreating] = useState(false);
@@ -43,10 +44,8 @@ const VariationLogicTree = () => {
   };
 
   const handleOwnerAnswerChange = (field, value) => {
- 
-    if (field === 'variationPrice') {
-
-      const formatted = formatFormCurrency(value)  
+    if (field === "variationPrice") {
+      const formatted = formatFormCurrency(value);
 
       setOwnerAnswers((prev) => ({
         ...prev,
@@ -54,11 +53,10 @@ const VariationLogicTree = () => {
       }));
     } else {
       setOwnerAnswers((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+        ...prev,
+        [field]: value,
+      }));
     }
-
 
     // Clear errors when user starts typing
     if (formErrors[field]) {
@@ -100,6 +98,8 @@ const VariationLogicTree = () => {
     const permitVariation = ownerAnswers.permitVariation === "yes";
     const twoPercentThreshold = getTwoPercentThreshold();
     const variationDescription = ownerAnswers.description;
+    const variationType = ownerAnswers.variationType;
+
     // Check if any condition requires full variation process
     const needsFullProcess =
       variationPrice > twoPercentThreshold || delayDays > 0 || permitVariation;
@@ -113,6 +113,7 @@ const VariationLogicTree = () => {
             delay: delayDays,
             permitVariation: permitVariation ? "Yes" : "No",
             description: variationDescription,
+            variationType: variationType,
           },
         },
       });
@@ -245,9 +246,36 @@ const VariationLogicTree = () => {
                       )}
                     </div>
                     <div className="mb-3">
+                      {/* Inconsistent naming for Variation Cost/Value across app */}
                       <label className="form-label">Variation Price *</label>
+                      <div className="input-group mb-2 align-items-center">
+                        <label
+                          htmlFor="type"
+                          className="col">
+                          Type:
+                        </label>
+                        <select
+                          className="form-select col"
+                          name="type"
+                          id="type"
+                          onChange={(e) => {
+                            setOwnerAnswers((prev) => ({
+                              ...prev,
+                              variationType: e.target.value,
+                            }));
+                          }}>
+                          <option
+                            selected
+                            value="debit">
+                            debit
+                          </option>
+                          <option value="credit">credit</option>
+                        </select>
+                      </div>
                       <div className="input-group">
-                        <span className="input-group-text">$</span>
+                        <span className="input-group-text">
+                          {ownerAnswers.variationType === "credit" && <span>-</span>}$
+                        </span>
                         <input
                           type="text"
                           className={`form-control ${formErrors.variationPrice ? "is-invalid" : ""}`}

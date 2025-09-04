@@ -37,7 +37,8 @@ const VariationCreate = () => {
 
   useEffect(() => {
     if (location.state?.prefillData) {
-      const { cost, delay, permitVariation, description } = location.state.prefillData;
+      const { cost, delay, permitVariation, description, variationType } =
+        location.state.prefillData;
 
       const formattedCost = cost ? parseFloat(cost).toLocaleString() : "";
 
@@ -49,6 +50,7 @@ const VariationCreate = () => {
         // description: `Variation - $${formattedCost}`,
         description: description,
         reason: "Owner requested variation",
+        variationType: variationType,
       }));
     }
   }, [location.state]);
@@ -60,6 +62,9 @@ const VariationCreate = () => {
 
     // Fallback to 0 if cost is invalid
     if (isNaN(cleanCost)) return currentProject.currentContractPrice;
+    if (variationData.variationType === "credit") {
+      return currentProject.currentContractPrice - cleanCost;
+    }
 
     return currentProject.currentContractPrice + cleanCost;
   };
@@ -290,9 +295,46 @@ const VariationCreate = () => {
 
                   <div className="row mb-3">
                     <div className="col-md-6">
+                      {/* Inconsistent naming for Variation Cost/Value across app */}
                       <label className="form-label">Variation Cost *</label>
+                      <div className="input-group mb-2 align-items-center">
+                        <label
+                          htmlFor="type"
+                          className="col">
+                          Type:
+                        </label>
+                        <select
+                          className="form-select col"
+                          name="type"
+                          id="type"
+                          onChange={(e) => {
+                            setVariationData((prev) => ({
+                              ...prev,
+                              variationType: e.target.value,
+                            }));
+                          }}>
+                          <option
+                            selected={
+                              location.state?.prefillData.variationType === "debit" ? true : false
+                            }
+                            // {location.state.prefillData ?? selected}
+                            value="debit">
+                            debit
+                          </option>
+                          <option
+                            selected={
+                              location.state?.prefillData.variationType === "credit" ? true : false
+                            }
+                            value="credit">
+                            credit
+                          </option>
+                        </select>
+                      </div>
                       <div className="input-group">
-                        <span className="input-group-text">$</span>
+                        <span className="input-group-text">
+                          {variationData.variationType === "credit" && <span>-</span>}$
+                        </span>
+
                         <input
                           type="text"
                           className={`form-control ${formErrors.cost ? "is-invalid" : ""}`}
