@@ -24,6 +24,12 @@ services:
       - /app/node_modules
     depends_on:
       - backend
+      #NEW: to make sure we don't run tests before frontend is up
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   backend:
     build:
       context: ../back-end
@@ -46,6 +52,12 @@ services:
       - /app/node_modules
     # depends_on:
     #   - prob MongoDB
+    #NEW: to make sure we don't run tests before backen is up
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   cypress: 
     image: cypress/included:latest
     working_dir: /app
