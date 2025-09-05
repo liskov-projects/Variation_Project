@@ -50,7 +50,7 @@ services:
     image: cypress/included:latest
     working_dir: /app
     volumes:
-      - ../front-end:/app
+      - ./:/app
       - /app/node_modules
     environment:
       CYPRESS_baseUrl: http://frontend:3000
@@ -58,4 +58,4 @@ services:
     depends_on:
       - frontend
       - backend
-    command: npx cepress run
+    command: npx cypress run
