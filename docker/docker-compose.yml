@@ -64,10 +64,20 @@ services:
     volumes:
       - ./:/app
       - /app/node_modules
+      # persists dependencies for frontend and backend
+      - /app/front-end/node_modules
+      - /app/back-end/node_modules
+      # persist Cypress outputs outside the container for debugging
+      - ./cypress-results:/app/cypress/results
+      - ./cypress-screenshots:/app/cypress/screenshots
+      - ./cypress-videos:/app/cypress/videos
     environment:
       CYPRESS_baseUrl: http://frontend:3000
       CYPRESS_API_BASE_URL: http://backend:5001
+      REACT_APP_CLERK_PUBLISHABLE_KEY: ${REACT_APP_CLERK_PUBLISHABLE_KEY}
     depends_on:
-      - frontend
-      - backend
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
     command: npx cypress run
