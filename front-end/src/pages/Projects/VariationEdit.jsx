@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
+import Footer from "../../components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useFormLock from "../../hooks/useFormLock";
 import { formatFormCurrency } from "../../utils/formatCurrency";
@@ -154,6 +155,7 @@ const VariationEdit = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
+        <Footer/>
       </div>
     );
   }
@@ -424,6 +426,7 @@ const VariationEdit = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

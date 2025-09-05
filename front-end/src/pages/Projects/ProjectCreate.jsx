@@ -8,6 +8,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import useFormLock from "../../hooks/useFormLock";
 import { isValidEmail } from "../../utils/isValidEmail";
 import { formatFormCurrency } from "../../utils/formatCurrency";
+import Footer from "../../components/Footer";
 
 const ProjectCreate = () => {
   const navigate = useNavigate();
@@ -660,6 +661,7 @@ const ProjectCreate = () => {
           </div>
         </div>
       </div>
+       <Footer/>
     </div>
   );
 };
