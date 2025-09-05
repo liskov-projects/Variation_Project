@@ -46,3 +46,16 @@ services:
       - /app/node_modules
     # depends_on:
     #   - prob MongoDB
+  cypress: 
+    image: cypress/included:latest
+    working_dir: /app
+    volumes:
+      - ../front-end:/app
+      - /app/node_modules
+    environment:
+      CYPRESS_baseUrl: http://frontend:3000
+      CYPRESS_API_BASE_URL: http://backend:5001
+    depends_on:
+      - frontend
+      - backend
+    command: npx cepress run
