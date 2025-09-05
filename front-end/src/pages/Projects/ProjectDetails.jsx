@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
+import Footer from "../../components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { PDFDownloadLink } from "@react-pdf/renderer";
@@ -543,6 +544,7 @@ const ProjectDetails = () => {
           </div>
         </div>
       )}
+      <Footer/>
     </div>
   );
 };

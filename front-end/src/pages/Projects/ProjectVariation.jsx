@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
+import Footer from "../../components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { PDFDownloadLink } from "@react-pdf/renderer";
@@ -232,6 +233,7 @@ const ProjectVariation = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
+        <Footer/>
       </div>
     );
   }
@@ -248,6 +250,7 @@ const ProjectVariation = () => {
             Back to Project
           </button>
         </div>
+        {/* <Footer/> */}
       </div>
     );
   }
@@ -264,6 +267,7 @@ const ProjectVariation = () => {
             Back to Project
           </button>
         </div>
+        <Footer/>
       </div>
     );
   }
@@ -678,6 +682,7 @@ const ProjectVariation = () => {
             />}
 
         </div>
+        <Footer/>
       </div>
     );
   };

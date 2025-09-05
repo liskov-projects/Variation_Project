@@ -4,7 +4,7 @@ import { useProfile } from "../contexts/ProfileContext";
 import { useProject } from "../contexts/ProjectContext";
 // import Header from '../components/Header';
 import Header from "../components/Header/index";
-
+import Footer from "../components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
@@ -38,6 +38,7 @@ const Dashboard = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -196,6 +197,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

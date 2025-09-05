@@ -4,6 +4,7 @@ import { useProfile } from "../contexts/ProfileContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 // import Header from '../components/Header';
 import Header from "../components/Header/index";
+import Footer from "../components/Footer";
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const Welcome = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
+        <Footer/>
       </div>
     );
   }
@@ -71,6 +73,7 @@ const Welcome = () => {
           </button>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

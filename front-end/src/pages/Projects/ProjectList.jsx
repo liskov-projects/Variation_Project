@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
+import Footer from "../../components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import filterSearch from "../../utils/filterSearch";
@@ -88,6 +89,7 @@ const ProjectList = () => {
   //             <span className="visually-hidden">Loading...</span>
   //           </div>
   //         </div>
+  //         <Footer/>
   //       </div>
   //     );
   // }
@@ -251,6 +253,7 @@ const ProjectList = () => {
           </div>
         </div>
       )}
+      <Footer/>
     </div>
   );
 };

@@ -4,6 +4,7 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import API_BASE_URL from "../api";
 import { formatDisplayCurrency } from "../utils/formatCurrency";
+import Footer from "../components/Footer";
 
 const SignaturePage = () => {
   const [searchParams] = useSearchParams();
@@ -91,6 +92,7 @@ const SignaturePage = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
+        <Footer/>
       </div>
     );
   }
@@ -374,6 +376,7 @@ const SignaturePage = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

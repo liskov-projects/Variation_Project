@@ -6,6 +6,7 @@ import StepTwo from "../components/ProfileSteps/StepTwo";
 import StepReview from "../components/ProfileSteps/StepReview";
 import FormProgress from "../components/FormProgress";
 import Header from "../components/Header/index";
+import Footer from "../components/Footer";
 import validateStep from "../utils/stepsValidator";
 import useFormLock from "../hooks/useFormLock";
 
@@ -151,6 +152,7 @@ const ProfileSetup = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

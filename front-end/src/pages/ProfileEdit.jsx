@@ -8,6 +8,7 @@ import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
 import API_BASE_URL from "../api"; // adjust if needed
 import { isValidEmail } from "../utils/isValidEmail";
+import Footer from "../components/Footer";
 
 const ProfileEdit = () => {
   const navigate = useNavigate();
@@ -339,6 +340,7 @@ const ProfileEdit = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

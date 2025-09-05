@@ -7,6 +7,7 @@ import useFormStorage from "../hooks/useFormStorage";
 import Header from "../components/Header/index";
 import API_BASE_URL from "../api";
 import { isValidEmail } from "../utils/isValidEmail";
+import Footer from "../components/Footer";
 
 // NOTE: where is this used?
 const UserProfile = () => {
@@ -243,6 +244,7 @@ const UserProfile = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
+        <Footer/>
       </div>
     );
   }
@@ -445,6 +447,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };
