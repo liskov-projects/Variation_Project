@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Project } from "../../models/ProjectModel";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
+import Footer from "../../components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useFormLock from "../../hooks/useFormLock";
 import { isValidEmail } from "../../utils/isValidEmail";
@@ -295,6 +296,7 @@ const ProjectEdit = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
+        <Footer/>
       </div>
     );
   }
@@ -756,6 +758,7 @@ const ProjectEdit = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };
