@@ -6,6 +6,7 @@ import profileRoutes from "./routes/profileRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import connectDB from "./config/dbStarter.js";
 
+
 // Load environment variables
 config();
 
@@ -18,6 +19,9 @@ app.use(
       process.env.NODE_ENV === "production"
         ? "https://variation-front-end.onrender.com"
         : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
