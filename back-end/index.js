@@ -49,7 +49,8 @@ app.use((err, req, res, next) => {
 app.use("/uploads", express.static("uploads"));
 
 // Start server
-const PORT = 5001;
+// const PORT = 5002;
+const PORT = process.env.BACKEND_PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
