@@ -249,7 +249,7 @@ const formatAustralianMobile = (value) => {
               </div>
               <div className="col-md-6">
                 <h5>Client Information</h5>
-                <div className="ms-3">
+                <div className="ms-3 mb-3">
                   <div className="row mb-2">
                     <div className="col-md-4 fw-bold">Name:</div>
                     <div className="col-md-8">{currentProject.clientName}</div>
@@ -265,28 +265,51 @@ const formatAustralianMobile = (value) => {
                 </div>
               </div>
 
+              {/* Surveyor and architect(Conditional) info */}
               <div className="col-md-6">
-                <h5>Architect Information</h5>
-                <div className="ms-3">
+                <h5>Surveyor Information</h5>
+                <div className="ms-3 mb-3">
                   <div className="row mb-2">
                     <div className="col-md-4 fw-bold">Name:</div>
-                    <div className="col-md-8">{currentProject.architectName}</div>
+                    <div className="col-md-8">{currentProject.surveyor?.details.contactName}</div>
                   </div>
                   <div className="row mb-2">
                     <div className="col-md-4 fw-bold">Email:</div>
-                    <div className="col-md-8">{currentProject.clientEmail}</div>
+                    <div className="col-md-8">{currentProject.surveyor?.details.email}</div>
                   </div>
                   <div className="row">
                      <div className="col-md-4 fw-bold">Phone:</div>
-                     <div className="col-md-8">{formatAustralianMobile(currentProject.clientPhone)}</div>
+                     <div className="col-md-8">{formatAustralianMobile(currentProject.surveyor?.details.phone)}</div>
                   </div>
                 </div>
               </div>
 
-            </div>
+              {currentProject.architect?.hasArchitect? (
+                <div className="col-md-6">
+                  <h5>Architect Information</h5>
+                  <div className="ms-3 mb-3">
+                    <div className="row mb-2">
+                      <div className="col-md-4 fw-bold">Name:</div>
+                      <div className="col-md-8">{currentProject.architect?.details.contactName}</div>
+                    </div>
+                    <div className="row mb-2">
+                      <div className="col-md-4 fw-bold">Email:</div>
+                      <div className="col-md-8">{currentProject.architect?.details.email}</div>
+                    </div>
+                    <div className="row">
+                      <div className="col-md-4 fw-bold">Phone:</div>
+                      <div className="col-md-8">{formatAustralianMobile(currentProject.architect?.details.phone)}</div>
+                    </div>
+                  </div>
+                </div>) : (<div className="col-md-6">
+                  </div>
+                )}
+              </div>
 
             {/* Contract Price Summary */}
             <div className="border-top pt-3">
+              <div className="col-md-6"></div>
+              
               <h5>Contract Price Summary</h5>
               <div className="ms-3">
                 <div className="row">
@@ -316,16 +339,43 @@ const formatAustralianMobile = (value) => {
                     {currentProject.variations && currentProject.variations.length > 0 && (
                       <>
                         <div className="row mb-2">
-                          <div className="col-md-6 fw-bold">Total Variations:</div>
-                          <div className="col-md-6">{currentProject.variations.length}</div>
+                          <div className="col-md-6 fw-bold">Approved Variations:</div>
+                          <div className="col-md-6">
+                            <span className="text-info">
+                              {currentProject.variations.filter(variation => variation.status === 'approved').length}
+                            </span>
+                            </div>
                         </div>
                         <div className="row mb-2">
-                          <div className="col-md-6 fw-bold">Total Variation Cost:</div>
+                          <div className="col-md-6 fw-bold">Approved Variation Cost:</div>
                           <div className="col-md-6">
                             <span className="text-info">
                               {formatCurrency(
                                 currentProject.variations.reduce((total, variation) => {
                                   if (variation.status === "approved") {
+                                    return total + (variation.cost || 0);
+                                  }
+                                  return total;
+                                }, 0)
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="row mb-2">
+                          <div className="col-md-6 fw-bold">Pending Variations:</div>
+                          <div className="col-md-6">
+                            <span className="text-info">
+                              {currentProject.variations.filter(variation => variation.status === 'submitted').length}
+                            </span>
+                            </div>
+                        </div>
+                        <div className="row mb-2">
+                          <div className="col-md-6 fw-bold">Expected Variation Cost:</div>
+                          <div className="col-md-6">
+                            <span className="text-info">
+                              {formatCurrency(
+                                currentProject.variations.reduce((total, variation) => {
+                                  if (variation.status === "submitted") {
                                     return total + (variation.cost || 0);
                                   }
                                   return total;
