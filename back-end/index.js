@@ -31,7 +31,11 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Connect to MongoDB
 connectDB();
 
-// Routes
+// healthcheck route to ensure container is OK
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+})
+// main Routes
 app.use("/api/profile", profileRoutes);
 app.use("/api/projects", projectRoutes);
 
