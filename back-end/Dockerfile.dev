@@ -8,8 +8,8 @@ COPY package.json ./
 RUN npm install
 
 COPY . . 
-# REVIEW:
-EXPOSE ${BACKEND_PORT}
+
+EXPOSE 5002
 
 CMD ["npm", "run", "dev"]
 
