@@ -7,7 +7,7 @@ import {
   deleteLogo
 } from '../controllers/profileController.js';
 import clerkMiddleware from '../middleware/auth.js';
-import upload from '../middleware/uploadLogoMiddleWare.js';
+import upload from '../middleware/uploadLogoMiddleware.js';
 
 const router = express.Router();
 router.use((req, res, next) => {

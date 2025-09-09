@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
+import Footer from "../../components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLocation } from "react-router-dom";
 import useFormLock from "../../hooks/useFormLock";
@@ -450,6 +451,7 @@ const VariationCreate = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };
