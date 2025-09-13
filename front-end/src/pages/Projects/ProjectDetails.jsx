@@ -321,8 +321,8 @@ const ProjectDetails = () => {
                     <div className="row">
                       <div className="col-md-6">
                         <div className="row mb-2">
-                          <div className="col-md-6 fw-bold">Original Contract Price:</div>
-                          <div className="col-md-6">
+                          <div className="col-md-6 mt-3 fw-bold">Original Contract Price:</div>
+                          <div className="col-md-6 mt-3">
                             <span className="text-primary fs-5">
                               {formatCurrency(currentProject.contractPrice || 0)}
                             </span>
@@ -345,8 +345,8 @@ const ProjectDetails = () => {
                         {currentProject.variations && currentProject.variations.length > 0 && (
                           <>
                             <div className="row mb-2">
-                              <div className="col-md-6 fw-bold">Approved Variations:</div>
-                              <div className="col-md-6">
+                              <div className="col-md-6 mt-3 fw-bold">Approved Variations:</div>
+                              <div className="col-md-6 mt-3">
                                 <span className="text-info">
                                   {currentProject.variations.filter(variation => variation.status === 'approved').length}
                                 </span>
