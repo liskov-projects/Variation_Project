@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, replace } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
+import Footer from "../../components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useLocation } from "react-router-dom";
 import useFormLock from "../../hooks/useFormLock";
+import { formatFormCurrency } from "../../utils/formatCurrency";
 
 const VariationCreate = () => {
   const { projectId } = useParams();
@@ -15,7 +17,7 @@ const VariationCreate = () => {
   const [variationData, setVariationData] = useState(createEmptyVariation());
   const [formErrors, setFormErrors] = useState({});
   const [formLocked, setFormLocked] = useState(false);
-  
+
   const { lockForm } = useFormLock(formLocked, `/projects/${projectId}`);
 
   useEffect(() => {
@@ -36,7 +38,8 @@ const VariationCreate = () => {
 
   useEffect(() => {
     if (location.state?.prefillData) {
-      const { cost, delay, permitVariation } = location.state.prefillData;
+      const { cost, delay, permitVariation, description, variationType } =
+        location.state.prefillData;
 
       const formattedCost = cost ? parseFloat(cost).toLocaleString() : "";
 
@@ -45,8 +48,10 @@ const VariationCreate = () => {
         cost: formattedCost,
         delay: delay || "",
         permitVariation: permitVariation || "",
-        description: `Variation - $${formattedCost}`,
+        // description: `Variation - $${formattedCost}`,
+        description: description,
         reason: "Owner requested variation",
+        variationType: variationType,
       }));
     }
   }, [location.state]);
@@ -58,6 +63,9 @@ const VariationCreate = () => {
 
     // Fallback to 0 if cost is invalid
     if (isNaN(cleanCost)) return currentProject.currentContractPrice;
+    if (variationData.variationType === "credit") {
+      return currentProject.currentContractPrice - cleanCost;
+    }
 
     return currentProject.currentContractPrice + cleanCost;
   };
@@ -108,15 +116,7 @@ const VariationCreate = () => {
   const handleCurrencyChange = (e) => {
     const { name, value } = e.target;
 
-    // Clean out non-numeric characters (except dot)
-    const rawValue = value.replace(/[^0-9.]/g, "");
-
-    // Separate integer and decimal
-    const [intPart, decPart] = rawValue.split(".");
-
-    const withCommas = parseInt(intPart || "0").toLocaleString();
-
-    const formatted = decPart !== undefined ? `${withCommas}.${decPart.slice(0, 2)}` : withCommas;
+    const formatted = formatFormCurrency(value);
 
     setVariationData((prev) => ({
       ...prev,
@@ -148,19 +148,14 @@ const VariationCreate = () => {
 
     delete formattedData.newContractPrice;
 
-    console.log("Submitting cost:", variationData.cost); // formatted string
-    console.log("Parsed cost:", cleanedCost); // numeric value
-    console.log("Final submit payload:", formattedData); // full payload
-
     const result = await addVariation(projectId, formattedData);
 
-                if (result.success) {
-                  navigate(`/projects/${projectId}/variations/${result.data.variationId}/?firstTime=true`, { replace: true });
-                  setFormLocked(true);
-                  lockForm(`/projects/${projectId}`);
-                }
-              };
-
+    if (result.success) {
+      setFormLocked(true);
+      lockForm(`/projects/${projectId}`);
+      navigate(`/projects/${projectId}/variations/${result.data.variationId}/?displayModal=true`);
+    }
+  };
 
   const handleCancel = () => {
     navigate(`/projects/${projectId}`);
@@ -169,6 +164,7 @@ const VariationCreate = () => {
   // Calculate the projected new contract price for display
   const projectedContractPrice = calculateProjectedContractPrice(variationData.cost);
 
+  // NOTE: very similar (identical?) to VariatoinEdit.jsx
   return (
     <div>
       <Header />
@@ -226,7 +222,8 @@ const VariationCreate = () => {
                       value={variationData.reason || ""}
                       onChange={handleChange}
                       rows="2"
-                      required></textarea>
+                      required
+                      placeholder="Enter reason for variation"></textarea>
                     {formErrors.reason && (
                       <div className="invalid-feedback">{formErrors.reason}</div>
                     )}
@@ -299,9 +296,46 @@ const VariationCreate = () => {
 
                   <div className="row mb-3">
                     <div className="col-md-6">
+                      {/* Inconsistent naming for Variation Cost/Value across app */}
                       <label className="form-label">Variation Cost *</label>
+                      <div className="input-group mb-2 align-items-center">
+                        <label
+                          htmlFor="type"
+                          className="col">
+                          Type:
+                        </label>
+                        <select
+                          className="form-select col"
+                          name="type"
+                          id="type"
+                          onChange={(e) => {
+                            setVariationData((prev) => ({
+                              ...prev,
+                              variationType: e.target.value,
+                            }));
+                          }}>
+                          <option
+                            selected={
+                              location.state?.prefillData.variationType === "debit" ? true : false
+                            }
+                            // {location.state.prefillData ?? selected}
+                            value="debit">
+                            debit
+                          </option>
+                          <option
+                            selected={
+                              location.state?.prefillData.variationType === "credit" ? true : false
+                            }
+                            value="credit">
+                            credit
+                          </option>
+                        </select>
+                      </div>
                       <div className="input-group">
-                        <span className="input-group-text">$</span>
+                        <span className="input-group-text">
+                          {variationData.variationType === "credit" && <span>-</span>}$
+                        </span>
+
                         <input
                           type="text"
                           className={`form-control ${formErrors.cost ? "is-invalid" : ""}`}
@@ -396,7 +430,7 @@ const VariationCreate = () => {
                     <button
                       type="submit"
                       className="btn btn-primary"
-                      style={{color: "white"}}
+                      style={{ color: "white" }}
                       disabled={loading}>
                       {loading ? (
                         <>
@@ -417,6 +451,7 @@ const VariationCreate = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

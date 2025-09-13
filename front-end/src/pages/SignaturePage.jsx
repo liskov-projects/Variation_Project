@@ -3,6 +3,8 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import API_BASE_URL from "../api";
+import { formatDisplayCurrency } from "../utils/formatCurrency";
+import Footer from "../components/Footer";
 
 const SignaturePage = () => {
   const [searchParams] = useSearchParams();
@@ -90,6 +92,7 @@ const SignaturePage = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
+        <Footer/>
       </div>
     );
   }
@@ -123,14 +126,6 @@ const SignaturePage = () => {
       </div>
     );
   }
-
-  // Format currency
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-AU", {
-      style: "currency",
-      currency: "AUD",
-    }).format(amount || 0);
-  };
 
   // Format date
   const formatDate = (dateString) => {
@@ -180,7 +175,7 @@ const SignaturePage = () => {
                       <h6 className="mb-0 text-muted">Original Contract Price</h6>
                     </div>
                     <h4 className="mb-0 text-primary">
-                      {formatCurrency(project.contractPrice || 0)}
+                      {formatDisplayCurrency(project.contractPrice || 0)}
                     </h4>
                   </div>
                 </div>
@@ -190,7 +185,7 @@ const SignaturePage = () => {
                       <i className="bi bi-check-circle text-success me-2"></i>
                       <h6 className="mb-0 text-muted">Current Contract Price</h6>
                     </div>
-                    <h4 className="mb-0 text-success">{formatCurrency(currentContractPrice)}</h4>
+                    <h4 className="mb-0 text-success">{formatDisplayCurrency(currentContractPrice)}</h4>
                     <small className="text-muted">Including all approved variations</small>
                   </div>
                 </div>
@@ -201,7 +196,7 @@ const SignaturePage = () => {
                       <h6 className="mb-0 text-muted">New Contract Price</h6>
                     </div>
                     <h4 className="mb-0 text-warning">
-                      {formatCurrency(contractPriceWithVariation)}
+                      {formatDisplayCurrency(contractPriceWithVariation)}
                     </h4>
                     <small className="text-muted">If this variation is approved</small>
                   </div>
@@ -258,7 +253,7 @@ const SignaturePage = () => {
                   <div className="card bg-light">
                     <div className="card-body text-center">
                       <h5 className="card-title">Variation Cost</h5>
-                      <p className="display-6 text-primary">{formatCurrency(variation.cost)}</p>
+                      <p className="display-6 text-primary">{formatDisplayCurrency(variation.cost)}</p>
                       <small className="text-muted">
                         This amount will be added to your contract price if approved
                       </small>
@@ -286,7 +281,7 @@ const SignaturePage = () => {
                 <p className="mb-0">
                   By signing below, you acknowledge that you have reviewed the variation details
                   above and approve the additional cost of{" "}
-                  <strong>{formatCurrency(variation.cost)}</strong>
+                  <strong>{formatDisplayCurrency(variation.cost)}</strong>
                   to be added to your project contract.
                 </p>
               </div>
@@ -327,10 +322,10 @@ const SignaturePage = () => {
                       <strong>I acknowledge and agree that:</strong>
                       <ul className="mt-2 mb-0">
                         <li>I have reviewed all variation details above</li>
-                        <li>I approve the additional cost of {formatCurrency(variation.cost)}</li>
+                        <li>I approve the additional cost of {formatDisplayCurrency(variation.cost)}</li>
                         <li>
                           I understand this will increase the total contract price to{" "}
-                          {formatCurrency(contractPriceWithVariation)}
+                          {formatDisplayCurrency(contractPriceWithVariation)}
                         </li>
                         <li>This electronic signature is legally binding</li>
                       </ul>
@@ -381,6 +376,7 @@ const SignaturePage = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState,useRef } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "../contexts/ProfileContext";
 // import Header from '../components/Header';
@@ -7,8 +7,8 @@ import Header from "../components/Header/index";
 import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
 import API_BASE_URL from "../api"; // adjust if needed
-
-
+import { isValidEmail } from "../utils/isValidEmail";
+import Footer from "../components/Footer";
 
 const ProfileEdit = () => {
   const navigate = useNavigate();
@@ -18,7 +18,6 @@ const ProfileEdit = () => {
   const { getToken, userId } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
-
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -38,6 +37,10 @@ const ProfileEdit = () => {
       return;
     }
 
+    // Validate email
+    const isValid = isValidEmail(profileData.email);
+    !isValid && alert("Invalid email");
+
     const result = await saveProfile(true);
     if (result.success) {
       setSuccess(true);
@@ -49,47 +52,45 @@ const ProfileEdit = () => {
   };
 
   const handleLogoUpload = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-  setUploading(true);
-  setUploadError("");
+    setUploading(true);
+    setUploadError("");
 
-  try {
-    const formData = new FormData();
-    formData.append("logo", file);
+    try {
+      const formData = new FormData();
+      formData.append("logo", file);
 
-    const token = await getToken();
+      const token = await getToken();
 
-    const response = await axios.post(`${API_BASE_URL}/api/profile/${userId}/logo`, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
+      const response = await axios.post(`${API_BASE_URL}/api/profile/${userId}/logo`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-    const logoPath = response.data.logo;
-    console.log("Logo uploaded successfully:", logoPath);
-    const fullURL = `${API_BASE_URL}/${logoPath.replace(/^\/?/, "")}`;
-    updateProfile({ logo: fullURL, logoPath });
-  } catch (err) {
-    setUploadError(err?.response?.data?.message || err.message || "Upload failed");
-  } finally {
-    setUploading(false);
-  }
-};
+      const logoPath = response.data.logo;
+
+      const fullURL = `${API_BASE_URL}/${logoPath.replace(/^\/?/, "")}`;
+      updateProfile({ logo: fullURL, logoPath });
+    } catch (err) {
+      setUploadError(err?.response?.data?.message || err.message || "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleLogoRemove = () => {
-  updateProfile({ logo: "", logoPath: "" });
+    updateProfile({ logo: "", logoPath: "" });
 
-  if (fileInputRef.current) {
-    fileInputRef.current.value = null;
-  }
-};
+    if (fileInputRef.current) {
+      fileInputRef.current.value = null;
+    }
+  };
 
-
-
-    const formatAustralianMobile = (input) => {
+  const formatAustralianMobile = (input) => {
     // Remove all non-digit characters
     const digits = input.replace(/\D/g, "");
 
@@ -98,7 +99,6 @@ const ProfileEdit = () => {
     if (digits.length <= 7) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
     return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 10)}`;
   };
-
 
   return (
     <div>
@@ -158,23 +158,23 @@ const ProfileEdit = () => {
                       onChange={(e) => {
                         const formatted = formatAustralianMobile(e.target.value);
                         updateProfile({ phoneNumber: formatted });
-                  }}
+                      }}
                       placeholder="04XX XXX XXX"
                       required
                     />
                   </div>
-                  
+
                   {/* Logo Upload */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">Logo</h4>
                   <div className="mb-3">
                     <label className="form-label">Upload Logo</label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                    ref={fileInputRef}
-                  />
+                    <input
+                      type="file"
+                      className="form-control"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      ref={fileInputRef}
+                    />
                     {uploading && <small className="text-muted">Uploading...</small>}
                     {uploadError && <div className="text-danger">{uploadError}</div>}
                     {profileData.logo && (
@@ -182,7 +182,11 @@ const ProfileEdit = () => {
                         <img
                           src={profileData.logo}
                           alt="Logo preview"
-                          style={{ maxWidth: "150px", maxHeight: "100px", border: "1px solid #ccc" }}
+                          style={{
+                            maxWidth: "150px",
+                            maxHeight: "100px",
+                            border: "1px solid #ccc",
+                          }}
                         />
                         <div>
                           <button
@@ -195,7 +199,6 @@ const ProfileEdit = () => {
                       </div>
                     )}
                   </div>
-
 
                   {/* Company Section */}
                   <h4 className="mb-3 mt-4 border-bottom pb-2">Company Details</h4>
@@ -337,6 +340,7 @@ const ProfileEdit = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

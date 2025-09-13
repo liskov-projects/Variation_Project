@@ -4,6 +4,7 @@ import { useProfile } from "../contexts/ProfileContext";
 // import Header from '../components/Header';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "../components/Header/index";
+import Footer from "../components/Footer";
 
 const ProfileComplete = () => {
   const navigate = useNavigate();
@@ -64,6 +65,7 @@ const ProfileComplete = () => {
           </button>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

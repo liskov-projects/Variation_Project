@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
+import Footer from "../../components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import filterSearch from "../../utils/filterSearch";
 
 const ProjectList = () => {
   const navigate = useNavigate();
@@ -12,7 +14,7 @@ const ProjectList = () => {
   const [projectToDelete, setProjectToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
-
+  const [query, setQuery] = useState("");
   useEffect(() => {
     if (!hasFetched) {
       fetchProjects().then(() => setHasFetched(true));
@@ -87,9 +89,16 @@ const ProjectList = () => {
   //             <span className="visually-hidden">Loading...</span>
   //           </div>
   //         </div>
+  //         <Footer/>
   //       </div>
   //     );
   // }
+
+  function handleChange(e) {
+    setQuery(e.target.value);
+  }
+
+  const projectsToShow = filterSearch(projects, query);
 
   return (
     <div>
@@ -104,7 +113,17 @@ const ProjectList = () => {
             Create New Project
           </button>
         </div>
-
+        <div className="col-md-6">
+          <label className="form-label">
+            <b>Search for</b>
+          </label>
+          <input
+            placeholder="project name, address, description, client..."
+            className="form-control mb-2"
+            value={query}
+            onChange={handleChange}
+          />
+        </div>
         {error && <div className="alert alert-danger">{error}</div>}
 
         {projects.length === 0 ? (
@@ -126,8 +145,9 @@ const ProjectList = () => {
             </div>
           </div>
         ) : (
+          // Maybe a separate component?
           <div className="row">
-            {projects.map((project) => (
+            {projectsToShow.map((project) => (
               <div
                 key={project._id}
                 className="col-md-6 col-lg-4 mb-4">
@@ -141,9 +161,11 @@ const ProjectList = () => {
                       style={{ maxWidth: "200px" }}>
                       {project.projectName}
                     </h5>
-                    {project.status && <span className={`badge ${getStatusBadgeClass(project.status)}`}>
-                      {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-                    </span>}
+                    {project.status && (
+                      <span className={`badge ${getStatusBadgeClass(project.status)}`}>
+                        {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                      </span>
+                    )}
                   </div>
                   <div className="card-body">
                     <p className="mb-2">
@@ -231,6 +253,7 @@ const ProjectList = () => {
           </div>
         </div>
       )}
+      <Footer/>
     </div>
   );
 };

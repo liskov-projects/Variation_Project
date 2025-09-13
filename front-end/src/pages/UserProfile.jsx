@@ -6,7 +6,10 @@ import useFormStorage from "../hooks/useFormStorage";
 // import Header from '../components/Header';
 import Header from "../components/Header/index";
 import API_BASE_URL from "../api";
+import { isValidEmail } from "../utils/isValidEmail";
+import Footer from "../components/Footer";
 
+// NOTE: where is this used?
 const UserProfile = () => {
   const navigate = useNavigate();
   const { userId, getToken } = useAuth();
@@ -156,6 +159,14 @@ const UserProfile = () => {
       return;
     }
 
+    // Validate email
+    const isValid = isValidEmail(userInfo.email);
+    if (!isValid) {
+      setError("Invalid email");
+      setSaveLoading(false);
+      return;
+    }
+
     try {
       const token = await getToken();
 
@@ -233,6 +244,7 @@ const UserProfile = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
+        <Footer/>
       </div>
     );
   }
@@ -435,6 +447,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

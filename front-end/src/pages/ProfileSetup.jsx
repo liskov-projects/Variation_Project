@@ -6,6 +6,7 @@ import StepTwo from "../components/ProfileSteps/StepTwo";
 import StepReview from "../components/ProfileSteps/StepReview";
 import FormProgress from "../components/FormProgress";
 import Header from "../components/Header/index";
+import Footer from "../components/Footer";
 import validateStep from "../utils/stepsValidator";
 import useFormLock from "../hooks/useFormLock";
 
@@ -57,7 +58,7 @@ const ProfileSetup = () => {
       setFormError(validationError);
       changeCompletedState(currentStep, false);
 
-      console.log(formError);
+      console.error(formError);
       return;
     } else {
       // helper function
@@ -151,6 +152,7 @@ const ProfileSetup = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

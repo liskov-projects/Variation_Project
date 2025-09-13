@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useProject } from "../../contexts/ProjectContext";
 import Header from "../../components/Header/index";
+import Footer from "../../components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import VariationPDF from "./VariationPDF"; 
 import { useProfile } from "../../contexts/ProfileContext";
 import ConfirmModal from "../../components/Variations/ConfirmModal"
-
+import { formatDisplayCurrency } from "../../utils/formatCurrency";
 
 
 const ProjectVariation = () => {
@@ -25,7 +26,7 @@ const ProjectVariation = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const { profileData } = useProfile();
 
-    const isFirstVisit = searchParams.get('firstTime') === 'true';
+    const displayModal = searchParams.get('displayModal') === 'true';
 
 
   useEffect(() => {
@@ -52,10 +53,10 @@ const ProjectVariation = () => {
       }, [showConfirmModal]);
 
   useEffect(() => {
-    if (fetchedProject && isFirstVisit) {
+    if (fetchedProject && displayModal) {
       setShowConfirmModal(true);
     }
-  }, [fetchedProject, isFirstVisit])
+  }, [fetchedProject, displayModal])
 
 
   // Find the requested variation in the current project
@@ -175,14 +176,6 @@ const ProjectVariation = () => {
     }
   };
 
-  // Format currency
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-AU", {
-      style: "currency",
-      currency: "AUD",
-    }).format(amount || 0);
-  };
-
   // Calculate contract price with this variation
   const calculateContractPrice = () => {
     if (!currentProject) return 0;
@@ -201,6 +194,34 @@ const ProjectVariation = () => {
     return currentProject.currentContractPrice || currentProject.contractPrice || 0;
   };
 
+  const setApprovalRecipients = () => {
+    const permitRequired = variation.permitVariation === "Yes";
+    const surveyorName = currentProject.surveyor.details.contactName;
+    const surveyorEmail = currentProject.surveyor.details.email;
+
+    // If project has an architect send to architect instead of owner/client
+    if (currentProject.architect.hasArchitect === true) {
+      const architectName = currentProject.architect.details.contactName;
+      const architectEmail = currentProject.architect.details.email;
+      return {
+        name: architectName, 
+        email: architectEmail, 
+        type: 'Architect/Project Manager', 
+        permitRequired,
+        surveyorDetails: { name: surveyorName, email: surveyorEmail }
+      }
+    } else {
+      return {
+        name: fetchedProject.clientName, 
+        email: fetchedProject.clientEmail, 
+        type: 'Owner', 
+        permitRequired,
+        surveyorDetails: { name: surveyorName, email: surveyorEmail }
+      }
+    }
+
+  }
+
   if (loading) {
     return (
       <div>
@@ -212,6 +233,7 @@ const ProjectVariation = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
+        <Footer/>
       </div>
     );
   }
@@ -228,6 +250,7 @@ const ProjectVariation = () => {
             Back to Project
           </button>
         </div>
+        {/* <Footer/> */}
       </div>
     );
   }
@@ -244,6 +267,7 @@ const ProjectVariation = () => {
             Back to Project
           </button>
         </div>
+        <Footer/>
       </div>
     );
   }
@@ -328,7 +352,7 @@ const ProjectVariation = () => {
                       <h6 className="mb-0 text-muted">Original Contract Price</h6>
                     </div>
                     <h4 className="mb-0 text-primary">
-                      {formatCurrency(currentProject.contractPrice || 0)}
+                      {formatDisplayCurrency(currentProject.contractPrice || 0)}
                     </h4>
                   </div>
                 </div>
@@ -339,7 +363,7 @@ const ProjectVariation = () => {
                       <h6 className="mb-0 text-muted">Current Contract Price</h6>
                     </div>
                     <h4 className="mb-0 text-success">
-                      {formatCurrency(
+                      {formatDisplayCurrency(
                         currentProject.currentContractPrice || currentProject.contractPrice || 0
                       )}
                     </h4>
@@ -359,7 +383,7 @@ const ProjectVariation = () => {
                     </div>
                     <h4
                       className={`mb-0 ${variation.status === "approved" ? "text-success" : "text-warning"}`}>
-                      {formatCurrency(contractPriceWithVariation)}
+                      {formatDisplayCurrency(contractPriceWithVariation)}
                     </h4>
                     <small className="text-muted">
                       {variation.status === "approved"
@@ -391,7 +415,9 @@ const ProjectVariation = () => {
                 ) : (
                   <>
                     <i className="bi bi-envelope me-2"></i>
-                    Send Variation for Approval
+                    {currentProject.architect.hasArchitect === true 
+                    ? `Send To Architect ${variation.permitVariation === "Yes" ? `And Surveyor` : ""} For Approval` 
+                    : `Send To Owner ${variation.permitVariation === "Yes" ? `And Surveyor` : ""} For Approval`}
                   </>
                 )}
               </button>
@@ -467,7 +493,7 @@ const ProjectVariation = () => {
                 <div className="card bg-light">
                   <div className="card-body text-center">
                     <h5 className="card-title">Variation Cost</h5>
-                    <p className="display-6 text-primary">{formatCurrency(variation.cost)}</p>
+                    <p className="display-6 text-primary">{formatDisplayCurrency(variation.cost)}</p>
                     <small className="text-muted">
                       {variation.status === "approved"
                         ? "This amount has been added to the contract price"
@@ -652,10 +678,11 @@ const ProjectVariation = () => {
               setShowConfirmModal={setShowConfirmModal} 
               handleSendVariationForSignature={handleSendVariationForSignature}
               isSubmitting={isSubmitting}
-              recipientDetails={{name: fetchedProject.clientName, email: fetchedProject.clientEmail}}
+              recipientDetails={setApprovalRecipients()}
             />}
 
         </div>
+        <Footer/>
       </div>
     );
   };
