@@ -496,7 +496,7 @@ export const sendForSignature = async (req, res) => {
     const signatureUrl =
       process.env.NODE_ENV === "production"
         ? `https://variation-front-end.onrender.com/signature?token=${signatureToken}`
-        : `http://localhost:3000/signature?token=${signatureToken}`;
+        : `http://localhost:3002/signature?token=${signatureToken}`;
 
     // Determine email recipient and customize message
     let recipientEmail = recipient.email;

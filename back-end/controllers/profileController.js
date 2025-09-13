@@ -282,7 +282,7 @@ export const uploadLogo = [
       const logoBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
 
       // Update profile with logo
-      // profile.profileData.logo = logoBase64;
+      profile.profileData.logo = logoBase64;
       const updatedProfile = await profile.save();
 
       res.status(200).json({

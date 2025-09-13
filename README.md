@@ -105,14 +105,14 @@ npm install
 
    ```
    MONGO_URI=your_mongodb_connection_string
-   PORT=5001
+   PORT=5002
    ```
 
    - Create a `.env` file in the `front-end` directory with:
 
    ```
    REACT_APP_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-   REACT_APP_API_URL=http://localhost:5001
+   REACT_APP_API_URL=http://localhost:5002
    ```
 
 5. Start the backend server
