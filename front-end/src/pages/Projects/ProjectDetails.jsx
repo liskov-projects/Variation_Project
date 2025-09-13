@@ -231,7 +231,7 @@ const ProjectDetails = () => {
             <h4 className="mb-0">Project Details</h4>
           </div>
           <div className="card-body">
-            <div className="row mb-3">
+            <div className="row ms-3">
               <div className="col-md-6">
                 <h5>Project Information</h5>
                 <div className="ms-3 mb-3">
@@ -249,15 +249,13 @@ const ProjectDetails = () => {
                   </div>
                   <div className="row">
                     <div className="col-md-4 fw-bold">Description:</div>
-                    <div className="col-md-8">
-                      {currentProject.description || "No description provided"}
-                    </div>
+                    <div className="col-md-8">{currentProject.description || "No description provided"}</div>
                   </div>
                 </div>
               </div>
               <div className="col-md-6">
                 <h5>Client Information</h5>
-                <div className="ms-3">
+                <div className="ms-3 mb-3">
                   <div className="row mb-2">
                     <div className="col-md-4 fw-bold">Name:</div>
                     <div className="col-md-8">{currentProject.clientName}</div>
@@ -274,62 +272,130 @@ const ProjectDetails = () => {
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Contract Price Summary */}
-            <div className="border-top pt-3">
-              <h5>Contract Price Summary</h5>
-              <div className="ms-3">
-                <div className="row">
-                  <div className="col-md-6">
-                    <div className="row mb-2">
-                      <div className="col-md-6 fw-bold">Original Contract Price:</div>
-                      <div className="col-md-6">
-                        <span className="text-primary fs-5">
-                          {formatDisplayCurrency(currentProject.contractPrice || 0)}
-                        </span>
-                      </div>
-                    </div>
-                    {currentProject.variations && currentProject.variations.length > 0 && (
-                      <div className="row mb-2">
-                        <div className="col-md-6 fw-bold">Current Contract Price:</div>
-                        <div className="col-md-6">
-                          <span className="text-success fs-5">
-                            {formatDisplayCurrency(
-                              currentProject.currentContractPrice || currentProject.contractPrice
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    )}
+              {/* Surveyor and architect(Conditional) info */}
+              <div className="col-md-6">
+                <h5>Surveyor Information</h5>
+                <div className="ms-3 mb-3">
+                  <div className="row mb-2">
+                    <div className="col-md-4 fw-bold">Name:</div>
+                    <div className="col-md-8">{currentProject.surveyor.details.contactName}</div>
                   </div>
-                  <div className="col-md-6">
-                    {currentProject.variations && currentProject.variations.length > 0 && (
-                      <>
-                        <div className="row mb-2">
-                          <div className="col-md-6 fw-bold">Total Variations:</div>
-                          <div className="col-md-6">{currentProject.variations.length}</div>
-                        </div>
-                        <div className="row mb-2">
-                          <div className="col-md-6 fw-bold">Total Variation Cost:</div>
-                          <div className="col-md-6">
-                            <span className="text-info">
-                              {formatDisplayCurrency(
-                                currentProject.variations.reduce((total, variation) => {
-                                  if (variation.status === "approved") {
-                                    return total + (variation.cost || 0);
-                                  }
-                                  return total;
-                                }, 0)
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                      </>
-                    )}
+                  <div className="row mb-2">
+                    <div className="col-md-4 fw-bold">Email:</div>
+                    <div className="col-md-8">{currentProject.surveyor.details.email}</div>
+                  </div>
+                  <div className="row">
+                     <div className="col-md-4 fw-bold">Phone:</div>
+                     <div className="col-md-8">{formatAustralianMobile(currentProject.surveyor?.details.phone)}</div>
                   </div>
                 </div>
               </div>
+
+
+             {currentProject.architect?.hasArchitect? (
+                <div className="col-md-6">
+                  <h5>Architect Information</h5>
+                  <div className="ms-3 mb-3">
+                    <div className="row mb-2">
+                      <div className="col-md-4 fw-bold">Name:</div>
+                      <div className="col-md-8">{currentProject.architect.details.contactName}</div>
+                    </div>
+                    <div className="row mb-2">
+                      <div className="col-md-4 fw-bold">Email:</div>
+                      <div className="col-md-8">{currentProject.architect.details.email}</div>
+                    </div>
+                    <div className="row">
+                      <div className="col-md-4 fw-bold">Phone:</div>
+                      <div className="col-md-8">{formatAustralianMobile(currentProject.architect.details.phone)}</div>
+                    </div>
+                  </div>
+                </div>) : (<></>)}
+              </div>
+
+              {/* Contract Price Summary */}
+              <div className="border-top pt-3">
+              <div className="row ms-3">
+                <h5>Contract Price Summary</h5>
+                  <div className="ms-3">
+                    <div className="row">
+                      <div className="col-md-6">
+                        <div className="row mb-2">
+                          <div className="col-md-6 mt-3 fw-bold">Original Contract Price:</div>
+                          <div className="col-md-6 mt-3">
+                            <span className="text-primary fs-5">
+                              {formatCurrency(currentProject.contractPrice || 0)}
+                            </span>
+                          </div>
+                        </div>
+                        {currentProject.variations && currentProject.variations.length > 0 && (
+                          <div className="row mb-2">
+                            <div className="col-md-6 fw-bold">Current Contract Price:</div>
+                            <div className="col-md-6">
+                              <span className="text-success fs-5">
+                                {formatCurrency(
+                                  currentProject.currentContractPrice || currentProject.contractPrice
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="col-md-6">
+                        {currentProject.variations && currentProject.variations.length > 0 && (
+                          <>
+                            <div className="row mb-2">
+                              <div className="col-md-6 mt-3 fw-bold">Approved Variations:</div>
+                              <div className="col-md-6 mt-3">
+                                <span className="text-info">
+                                  {currentProject.variations.filter(variation => variation.status === 'approved').length}
+                                </span>
+                                </div>
+                            </div>
+                            <div className="row mb-2">
+                              <div className="col-md-6 fw-bold">Approved Variation Cost:</div>
+                              <div className="col-md-6">
+                                <span className="text-info">
+                                  {formatCurrency(
+                                    currentProject.variations.reduce((total, variation) => {
+                                      if (variation.status === "approved") {
+                                        return total + (variation.cost || 0);
+                                      }
+                                      return total;
+                                    }, 0)
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="row mb-2">
+                              <div className="col-md-6 fw-bold">Pending Variations:</div>
+                              <div className="col-md-6">
+                                <span className="text-info">
+                                  {currentProject.variations.filter(variation => variation.status === 'submitted').length}
+                                </span>
+                                </div>
+                            </div>
+                            <div className="row mb-2">
+                              <div className="col-md-6 fw-bold">Expected Variation Cost:</div>
+                              <div className="col-md-6">
+                                <span className="text-info">
+                                  {formatCurrency(
+                                    currentProject.variations.reduce((total, variation) => {
+                                      if (variation.status === "submitted") {
+                                        return total + (variation.cost || 0);
+                                      }
+                                      return total;
+                                    }, 0)
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                    </div>
+                  </div>
+                </div>
+              </div>              
             </div>
           </div>
         </div>
