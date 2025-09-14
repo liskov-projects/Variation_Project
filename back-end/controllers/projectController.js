@@ -1,9 +1,37 @@
 import nodemailer from "nodemailer";
 import Project from "../models/projectModel.js";
 import { config } from "dotenv";
-import { ConnectionCheckOutFailedEvent } from "mongodb";
+// Removed: import { ConnectionCheckOutFailedEvent } from "mongodb";
 
 config();
+
+/** =========================
+ *  Mailer (Google SMTP Relay)
+ *  - Works on localhost + Render
+ *  - Uses App Password on noreply@liskov.dev
+ *  Env needed:
+ *    MAIL_FROM_NAME="Variation Bot"
+ *    MAIL_FROM_ADDR="noreply@liskov.dev"
+ *    MAIL_AUTH_USER="noreply@liskov.dev"
+ *    NOREPLY_APP_PASSWORD=abcdefghijklmnop
+ *  ========================= */
+function buildMailer() {
+  return nodemailer.createTransport({
+    host: "smtp-relay.gmail.com",
+    port: 587,
+    secure: false, // STARTTLS
+    auth: {
+      user: process.env.MAIL_AUTH_USER || "noreply@liskov.dev",
+      pass: process.env.NOREPLY_APP_PASSWORD,
+    },
+  });
+}
+
+function mailFrom() {
+  const name = process.env.MAIL_FROM_NAME || "Variation Bot";
+  const addr = process.env.MAIL_FROM_ADDR || (process.env.MAIL_AUTH_USER || "noreply@liskov.dev");
+  return `"${name}" <${addr}>`;
+}
 
 // @desc    Get all projects for a user
 // @route   GET /api/projects
@@ -101,19 +129,6 @@ export const createProject = async (req, res) => {
         message: "Architect details are required when architect is engaged",
       });
     }
-
-    // Surveyor validation - must answer the question
-    // if (req.body.surveyor?.hasSurveyor === undefined) {
-    //   return res.status(400).json({
-    //     message: 'Surveyor status must be specified (yes/no)'
-    //   });
-    // }
-
-    // if (req.body.surveyor?.hasSurveyor && !req.body.surveyor.details?.contactName) {
-    //   return res.status(400).json({
-    //     message: 'Surveyor details are required when surveyor is engaged'
-    //   });
-    // }
 
     // Create the project
     const newProject = new Project(req.body);
@@ -268,7 +283,8 @@ export const addVariation = async (req, res) => {
     // Get the newly created variation
     const newVariation = updatedProject.variations[updatedProject.variations.length - 1];
 
-    res.status(201).json({updatedProject: updateProject, variationId: newVariation._id});
+    // fix: return the updated document, not a function reference
+    res.status(201).json({ updatedProject, variationId: newVariation._id });
   } catch (error) {
     console.error("Error adding variation:", error);
 
@@ -471,14 +487,8 @@ export const sendForSignature = async (req, res) => {
     const requiresSurveyor = project.requiresSurveyorSignoff(variation);
     const surveyorInfo = requiresSurveyor ? project.getSurveyorForSignoff() : null;
 
-    // Email configuration
-    const transporter = nodemailer.createTransporter({
-      service: "gmail",
-      auth: {
-        user: process.env.VARIATION_EMAIL,
-        pass: process.env.VARIATION_PASSWORD,
-      },
-    });
+    // Email configuration (SMTP Relay)
+    const transporter = buildMailer();
 
     // Calculate contract prices
     const currentContractPrice = project.currentContractPrice || project.contractPrice || 0;
@@ -521,7 +531,7 @@ export const sendForSignature = async (req, res) => {
 
     // Main email to recipient (architect or owner)
     const mailOptions = {
-      from: process.env.VARIATION_EMAIL,
+      from: mailFrom(),
       to: recipientEmail,
       subject: `Signature Request for ${variation.variationType === "credit" ? "Credit" : ""} Variation - ${project.projectName}`,
       html: `
@@ -561,7 +571,7 @@ export const sendForSignature = async (req, res) => {
     // Send notification to surveyor if required
     if (requiresSurveyor && surveyorInfo) {
       const surveyorMailOptions = {
-        from: process.env.VARIATION_EMAIL,
+        from: mailFrom(),
         to: surveyorInfo.email,
         subject: `Surveyor Sign-off Required - Permit Variation - ${project.projectName}`,
         html: `
@@ -704,13 +714,7 @@ export const signVariation = async (req, res) => {
 
     // Send confirmation emails
     try {
-      const transporter = nodemailer.createTransporter({
-        service: "gmail",
-        auth: {
-          user: process.env.VARIATION_EMAIL,
-          pass: process.env.VARIATION_PASSWORD,
-        },
-      });
+      const transporter = buildMailer();
 
       const formatCurrency = (amount) => `$${Math.abs(amount).toLocaleString()}`;
       const variationCostDisplay =
@@ -720,7 +724,7 @@ export const signVariation = async (req, res) => {
 
       // Email to the person who signed
       const signerMailOptions = {
-        from: process.env.VARIATION_EMAIL,
+        from: mailFrom(),
         to: recipient.email,
         subject: `Variation Approved - ${project.projectName}`,
         html: `
@@ -741,7 +745,7 @@ export const signVariation = async (req, res) => {
       // If architect signed, also notify the client
       if (recipient.type === "architect") {
         const clientMailOptions = {
-          from: process.env.VARIATION_EMAIL,
+          from: mailFrom(),
           to: project.clientEmail,
           subject: `Variation Approved by Architect - ${project.projectName}`,
           html: `

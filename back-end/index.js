@@ -6,7 +6,6 @@ import profileRoutes from "./routes/profileRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import connectDB from "./config/dbStarter.js";
 
-
 // Load environment variables
 config();
 
@@ -25,10 +24,26 @@ app.use(
   })
 );
 
-app.use(express.json({ limit: '10mb' })); // For logo uploads
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// If your frontend sends cookies (withCredentials: true), keep credentials: true.
+// If not, you can set it to false. Leaving it true is fine as long as origin is explicit.
+const corsOptions = {
+  origin(origin, cb) {
+    // Allow same-origin or tools like curl/postman (no Origin header)
+    if (!origin) return cb(null, true);
+    return cb(null, allowedOrigins.includes(origin));
+  },
+  credentials: true, // required if browser sends cookies or you use withCredentials: true
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"], // add others if you use custom headers
+};
 
-// Connect to MongoDB
+app.use(cors(corsOptions));
+// Explicitly handle preflight quickly
+app.options("*", cors(corsOptions));
+
+app.use(express.json({ limit: "10mb" })); // For JSON payloads (not FormData)
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
 connectDB();
 
 // Routes
