@@ -1,22 +1,20 @@
-
 # path for .env/.env.local is read relative to docker-compose
 services:
   frontend:
-    build: 
-    # fonlder we're building the image from
+    build:
+      # fonlder we're building the image from
       context: ../front-end
-    # the Dockerfile to run for the build | not needed unless using a custom Dockerfile
-      dockerfile: Dockerfile.dev 
+      # the Dockerfile to run for the build | not needed unless using a custom Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
-      - "3002:3000"
-      #  will change for prod
+      - "3002:3002" #  will change for prod
     env_file:
       - .env
     environment:
-    # this is needed since we're using CRA
+      # this is needed since we're using CRA
       HOST: 0.0.0.0
       # if unspecified will be pushed out by the .env.local
-      PORT: 3000
+      PORT: 3002
       REACT_APP_API_URL: ${REACT_APP_API_URL}
       REACT_APP_CLERK_PUBLISHABLE_KEY: ${REACT_APP_CLERK_PUBLISHABLE_KEY}
     volumes:
@@ -28,10 +26,10 @@ services:
     build:
       context: ../back-end
       dockerfile: Dockerfile.dev
-    ports: 
-      - "5002:5001"
+    ports:
+      - "5002:5002"
     env_file:
-    #  will change for prod
+      #  will change for prod
       - .env
     environment:
       MONGO_URI: ${MONGO_URI}
@@ -40,6 +38,7 @@ services:
       # prob change later? check .env.local
       VARIATION_EMAIL: ${VARIATION_EMAIL}
       VARIATION_PASSWORD: ${VARIATION_PASSWORD}
+      BACKEND_PORT: ${BACKEND_PORT}
       #
     volumes:
       - ../back-end:/app
