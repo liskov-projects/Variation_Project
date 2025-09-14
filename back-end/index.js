@@ -11,39 +11,32 @@ config();
 
 const app = express();
 
-// Middleware
-app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? "https://variation-front-end.onrender.com"
-        : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+// Define allowed origins once
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? ["https://variation-front-end.onrender.com"]
+    : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"];
 
-// If your frontend sends cookies (withCredentials: true), keep credentials: true.
-// If not, you can set it to false. Leaving it true is fine as long as origin is explicit.
+// CORS options
 const corsOptions = {
   origin(origin, cb) {
     // Allow same-origin or tools like curl/postman (no Origin header)
     if (!origin) return cb(null, true);
     return cb(null, allowedOrigins.includes(origin));
   },
-  credentials: true, // required if browser sends cookies or you use withCredentials: true
+  credentials: true, // if your frontend sends cookies or uses withCredentials
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"], // add others if you use custom headers
+  allowedHeaders: ["Content-Type", "Authorization"], // add more if needed
 };
 
+// Middleware
 app.use(cors(corsOptions));
-// Explicitly handle preflight quickly
-app.options("*", cors(corsOptions));
+app.options("*", cors(corsOptions)); // Handle preflight
 
-app.use(express.json({ limit: "10mb" })); // For JSON payloads (not FormData)
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
+// Connect to MongoDB
 connectDB();
 
 // Routes

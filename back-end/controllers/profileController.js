@@ -239,65 +239,44 @@ export const updateProfile = async (req, res) => {
 // TASK 5: Upload logo
 // @desc    Upload profile logo
 // @route   POST /api/profile/:userId/logo
-export const uploadLogo = [
-  // upload.single('logo'),
-  async (req, res) => {
-    try {
-      const { userId } = req.params;
+// controllers/profileController.js
+export const uploadLogo = async (req, res) => {
+  try {
+    const { userId } = req.params;
 
-      // Check if the request user ID matches the parameter
-      if (req.auth.userId !== userId) {
-        return res.status(403).json({
-          message: "Unauthorized: You can only upload logo to your own profile",
-        });
-      }
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded (expected field 'logo')." });
+    }
 
-      if (!req.file) {
-        return res.status(400).json({
-          message: "No logo file provided",
-        });
-      }
+    const profile = await Profile.findOne({ userId });
 
-      // Find profile, profile may not exist yet
+    // With diskStorage, Multer gives you a filename/path
+    const logoPath = `uploads/${req.file.filename}`;
 
-      // const profile = await Profile.findOne({ userId });
-      // if (!profile) {
-      //   return res.status(404).json({
-      //     message: 'Profile not found'
-      //   });
-      // }
-
-      const profile = await Profile.findOne({ userId });
-      const logoPath = `uploads/${req.file.filename}`;
-      if (!profile) {
-        //  Profile doesn't exist, return 200 with message instead of 404
-        return res.status(200).json({
-          message: "Profile not found. Logo uploaded.",
-          logo: logoPath,
-          profile: null,
-        });
-      }
-
-      // Convert to base64
-      const logoBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-
-      // Update profile with logo
-      profile.profileData.logo = logoBase64;
-      const updatedProfile = await profile.save();
-
-      res.status(200).json({
-        message: "Logo uploaded successfully",
-        profile: updatedProfile,
-      });
-    } catch (error) {
-      console.error("Error uploading logo:", error);
-      res.status(500).json({
-        message: "Server error",
-        error: error.message,
+    if (!profile) {
+      return res.status(200).json({
+        message: "Profile not found. Logo uploaded.",
+        logo: logoPath,
+        profile: null,
       });
     }
-  },
-];
+
+    profile.profileData = profile.profileData || {};
+    profile.profileData.logo = logoPath;
+
+    const updatedProfile = await profile.save();
+
+    return res.status(200).json({
+      message: "Logo uploaded.",
+      logo: logoPath,
+      profile: updatedProfile,
+    });
+  } catch (err) {
+    console.error("Error uploading logo:", err);
+    return res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
 
 // @desc    Delete profile logo
 // @route   DELETE /api/profile/:userId/logo
