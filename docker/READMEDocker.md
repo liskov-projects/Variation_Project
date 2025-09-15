@@ -67,3 +67,10 @@ the command above will remove all Docker containers, images, volumes and network
 ```
     docker-compose down -v --rmi all --remove-orphans
 ```
+
+- if we want to run a single file we can do it from the container, especially if we use .env
+```
+    cd docker
+    node ../back-end/mailTest.js
+```
+if we do it from the back-end .env remain undefined

@@ -6,27 +6,35 @@ import profileRoutes from "./routes/profileRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import connectDB from "./config/dbStarter.js";
 
-
 // Load environment variables
 config();
 
 const app = express();
 
-// Middleware
-app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? "https://variation-front-end.onrender.com"
-        : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+// Define allowed origins once
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? ["https://variation-front-end.onrender.com"]
+    : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"];
 
-app.use(express.json({ limit: '10mb' })); // For logo uploads
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// CORS options
+const corsOptions = {
+  origin(origin, cb) {
+    // Allow same-origin or tools like curl/postman (no Origin header)
+    if (!origin) return cb(null, true);
+    return cb(null, allowedOrigins.includes(origin));
+  },
+  credentials: true, // if your frontend sends cookies or uses withCredentials
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"], // add more if needed
+};
+
+// Middleware
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // Handle preflight
+
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Connect to MongoDB
 connectDB();
