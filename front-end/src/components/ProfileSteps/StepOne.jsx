@@ -33,12 +33,10 @@ const StepOne = ({ setFormError }) => {
         },
       });
 
-  
-      const logoURL = response.data.logo; // Assuming the response contains the logo URL
-      // if (!response.ok) throw new Error(response.data.message || "Upload failed");
+      const logoBase64 = response.data.logo;
+      const logoPath = response.data.logoPath;
 
-      const fullURL = `${API_BASE_URL}/${logoURL.replace(/^\/?/, "")}`;
-      updateProfile({ logo: fullURL });
+      updateProfile({ logo: logoBase64, logoPath });
     } catch (err) {
       console.error(err);
       setError(err.message);
