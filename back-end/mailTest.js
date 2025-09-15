@@ -20,7 +20,8 @@ async function testEmail(){
         }
         await transporter.sendMail({
             from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDR}>`,
-            to: "verrafalenko@gmail.com",
+        //    change to test
+            to: "yourEmail.gmail.com",
             subject: "Test email config",
             html: "<p>Email config is working<p>"
         });
