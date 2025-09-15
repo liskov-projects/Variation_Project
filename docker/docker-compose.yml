@@ -28,6 +28,8 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - app-network
   backend:
     build:
       context: ../back-end
@@ -57,9 +59,19 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - app-network
   cypress:
-    image: cypress/included:latest
-    working_dir: /app
+    build:
+      context: .. # as we have an auxiliary script in the docker repo we have to epand the build context
+      dockerfile: ./cypress/Dockerfile.dev
+    env_file:
+      #  will change for prod
+      - .env
+    environment:
+      CYPRESS_baseUrl: http://frontend:3002
+      CYPRESS_API_BASE_URL: http://backend:5002
+      REACT_APP_CLERK_PUBLISHABLE_KEY: ${REACT_APP_CLERK_PUBLISHABLE_KEY}
     volumes:
       - ..:/app
       - /app/node_modules
@@ -70,10 +82,6 @@ services:
       - ./cypress-results:/app/cypress/results
       - ./cypress-screenshots:/app/cypress/screenshots
       - ./cypress-videos:/app/cypress/videos
-    environment:
-      CYPRESS_baseUrl: http://frontend:3002
-      CYPRESS_API_BASE_URL: http://backend:5001
-      REACT_APP_CLERK_PUBLISHABLE_KEY: ${REACT_APP_CLERK_PUBLISHABLE_KEY}
     ports:
       - "6080:6080" # noVNC in browser
       - "5900:5900" # VNC client
@@ -82,4 +90,10 @@ services:
         condition: service_healthy
       backend:
         condition: service_healthy
-    command: npx cypress run --config-file ./cypress.config.js
+    # command: npx cypress run --config-file ./cypress.config.js
+    # command: /app/docker/cypress/start.sh LIVE IN DOCKERFILE.DEV now
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge

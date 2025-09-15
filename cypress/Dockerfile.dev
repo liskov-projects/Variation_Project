@@ -1,0 +1,21 @@
+FROM cypress/included:15.1.0
+
+# Install X11, fluxbox, VNC server
+RUN apt-get update && apt-get install -y \
+    xvfb \
+    x11vnc \
+    fluxbox \
+    novnc \
+    websockify \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY ./cypress ./cypress
+COPY ./cypress.config.js ./
+COPY ./docker/cypress/start.sh ./start.sh
+# esures the script is executable in the container
+RUN chmod +x ./start.sh
+# starts the gui when the container runs
+CMD ["./start.sh"]
+
+
