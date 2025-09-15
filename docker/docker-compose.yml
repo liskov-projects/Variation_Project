@@ -9,6 +9,7 @@ services:
     ports:
       - "3002:3002" #  will change for prod
     env_file:
+      # makes sure we load all the necessary vars int othe container
       - .env
     environment:
       # this is needed since we're using CRA
@@ -39,7 +40,11 @@ services:
       VARIATION_EMAIL: ${VARIATION_EMAIL}
       VARIATION_PASSWORD: ${VARIATION_PASSWORD}
       BACKEND_PORT: ${BACKEND_PORT}
-      #
+      # reads mail identity
+      NOREPLY_APP_PASSWORD: ${NOREPLY_APP_PASSWORD}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME}
+      MAIL_FROM_ADDR: ${MAIL_FROM_ADDR}
+      MAIL_AUTH_USER: ${MAIL_AUTH_USER}
     volumes:
       - ../back-end:/app
       - /app/node_modules
