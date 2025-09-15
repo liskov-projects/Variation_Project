@@ -13,7 +13,7 @@ export const ProfileProvider = ({ children }) => {
   const [profileData, setProfileData] = useState({
     fullName: "",
     address: "",
-    email: "",
+    // NOTE: this is not inside profile data email: "",
     phoneNumber: "",
     businessType: "Individual", // New unified field
     logo: "",
@@ -50,12 +50,14 @@ export const ProfileProvider = ({ children }) => {
         });
 
         if (response.data && response.data.profileData) {
-          setProfileData(response.data.profileData);
+          // setProfileData(response.data.profileData); this doesn't include email
           setIsProfileComplete(response.data.profileSetupComplete || false);
 
+          // setProfileData used 2 times 
           const serverData = response.data.profileData;
           setProfileData({
             ...serverData,
+            email: response.data.email, // adds email from the ROOT of the data recieved
             logo: serverData.logo || null,
           });
         }

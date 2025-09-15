@@ -239,44 +239,65 @@ export const updateProfile = async (req, res) => {
 // TASK 5: Upload logo
 // @desc    Upload profile logo
 // @route   POST /api/profile/:userId/logo
-// controllers/profileController.js
 export const uploadLogo = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded (expected field 'logo')." });
+    // checks user ID is correct
+    if (req.auth.userId !== userId) {
+      return res.status(403).json({
+        message: "Unauthorized",
+      });
     }
 
+    if (!req.file) {
+      return res.status(400).json({
+        message: "No logo file provided",
+      });
+    }
+
+    // finds profile, it may not exist yet
     const profile = await Profile.findOne({ userId });
-
-    // With diskStorage, Multer gives you a filename/path
     const logoPath = `uploads/${req.file.filename}`;
-
+    
     if (!profile) {
+      // reads file from disk and convert to base64 even if profile doesn't exist
+      const fs = await import('fs');
+      const fileBuffer = fs.readFileSync(req.file.path);
+      const logoBase64 = `data:${req.file.mimetype};base64,${fileBuffer.toString("base64")}`;
+      
+      // profile doesn't exist, return 200 with message instead of 404
       return res.status(200).json({
         message: "Profile not found. Logo uploaded.",
-        logo: logoPath,
+        logo: logoBase64,
+        logoPath: logoPath,
         profile: null,
       });
     }
 
-    profile.profileData = profile.profileData || {};
-    profile.profileData.logo = logoPath;
+    // reads logo from disk and converts to base64
+    const fs = await import('fs');
+    const fileBuffer = fs.readFileSync(req.file.path);
+    const logoBase64 = `data:${req.file.mimetype};base64,${fileBuffer.toString("base64")}`;
 
+    // Update profile with logo
+    profile.profileData.logo = logoBase64;
     const updatedProfile = await profile.save();
 
-    return res.status(200).json({
-      message: "Logo uploaded.",
-      logo: logoPath,
+    res.status(200).json({
+      message: "Logo uploaded successfully",
+      logo: logoBase64, // returns the base64 logo directly
+      logoPath: logoPath, // and returns the file path for reference
       profile: updatedProfile,
     });
-  } catch (err) {
-    console.error("Error uploading logo:", err);
-    return res.status(500).json({ message: "Server error", error: err.message });
+  } catch (error) {
+    console.error("Error uploading logo:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
   }
 };
-
 
 // @desc    Delete profile logo
 // @route   DELETE /api/profile/:userId/logo

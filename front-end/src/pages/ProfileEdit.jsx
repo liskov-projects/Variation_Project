@@ -71,10 +71,10 @@ const ProfileEdit = () => {
         },
       });
 
-      const logoPath = response.data.logo;
+      const logoBase64 = response.data.logo;
+      const logoPath = response.data.logoPath;
 
-      const fullURL = `${API_BASE_URL}/${logoPath.replace(/^\/?/, "")}`;
-      updateProfile({ logo: fullURL, logoPath });
+      updateProfile({ logo: logoBase64, logoPath });
     } catch (err) {
       setUploadError(err?.response?.data?.message || err.message || "Upload failed");
     } finally {
