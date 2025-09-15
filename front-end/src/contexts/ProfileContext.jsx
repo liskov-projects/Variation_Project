@@ -57,6 +57,7 @@ export const ProfileProvider = ({ children }) => {
           const serverData = response.data.profileData;
           setProfileData({
             ...serverData,
+            email: response.data.email, // adds email from the ROOT of the data recieved
             logo: serverData.logo || null,
           });
         }
