@@ -18,7 +18,7 @@ const profileSchema = new mongoose.Schema(
       required: [true, "User ID is required"],
       unique: true,
     },
-    email: {
+    email: { // email is at the ROOT
       type: String,
       required: [true, "Email is required"],
       match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
