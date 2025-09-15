@@ -50,9 +50,10 @@ export const ProfileProvider = ({ children }) => {
         });
 
         if (response.data && response.data.profileData) {
-          setProfileData(response.data.profileData); // this doesn't include email
+          // setProfileData(response.data.profileData); this doesn't include email
           setIsProfileComplete(response.data.profileSetupComplete || false);
 
+          // setProfileData used 2 times 
           const serverData = response.data.profileData;
           setProfileData({
             ...serverData,
