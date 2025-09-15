@@ -252,9 +252,12 @@ export const ProjectProvider = ({ children }) => {
         }
       );
       return { success: true, data: response.data };
-    } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || err.message || "Failed to send the variation for approval";
+   } catch (err) {
+    const status = err.response?.status;
+    const backendMsg = err.response?.data?.message || err.message;
+    // provides visual feedback for 
+      const errorMessage = status === 400 ? "Updated variation has been sent" : backendMsg || "Failed to send the variation for approval";
+        // err.response?.data?.message || err.message || 
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
