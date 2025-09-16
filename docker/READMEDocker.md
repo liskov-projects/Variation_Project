@@ -36,6 +36,12 @@ This should be enough to work.
     docker-compose -p variations start
 ```
 
+- In case you need to do the seeding here's the command. As we want to allow for potential clients, the end part with name and email are optional
+
+```
+    docker exec -it variations-backend-1 node /app/seeding/fullSeed.js <name> <email>
+```
+
 ## Note about node_modules
 
 - if you are not careful with what node_modules you get inside your container you are sure to get errors;
@@ -69,8 +75,10 @@ the command above will remove all Docker containers, images, volumes and network
 ```
 
 - if we want to run a single file we can do it from the container, especially if we use .env
+
 ```
     cd docker
     node ../back-end/mailTest.js
 ```
+
 if we do it from the back-end .env remain undefined
