@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/liskov-projects/Variation_Project#readme",
   "devDependencies": {
-    "prettier": "^3.5.3"
+    "prettier": "^3.6.2"
   }
 }

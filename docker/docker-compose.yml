@@ -45,6 +45,9 @@ services:
       MAIL_FROM_NAME: ${MAIL_FROM_NAME}
       MAIL_FROM_ADDR: ${MAIL_FROM_ADDR}
       MAIL_AUTH_USER: ${MAIL_AUTH_USER}
+      #seeding vars
+      PROFILE_EMAIL: ${PROFILE_EMAIL}
+      PROFILE_NAME: ${PROFILE_NAME} 
     volumes:
       - ../back-end:/app
       - /app/node_modules
