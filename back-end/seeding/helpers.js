@@ -2,7 +2,8 @@
 export const generateEmail = (name) => {
   const domains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com"];
   const domain = domains[Math.floor(Math.random() * domains.length)];
-  return `${name.toLowerCase().replace(/\s+/g, ".")}@${domain}`;
+  const fullEmail = `${name.toLowerCase().replace(/\s+/g, ".")}@${domain}`;
+  return fullEmail;
 };
 
 //  NEEDED (used in motherSeed.js setupProfileToSeed)
@@ -74,10 +75,10 @@ export const generateState = () => {
   return state;
 };
 export const generatePostcode = () => {
-  return (postcode = Math.floor(Math.random() * 9000) + 1000);
+  return Math.floor(Math.random() * 9000) + 1000;
 };
 export const generateBuildingNumber = () => {
-  return (buildingNumber = Math.floor(Math.random() * 999) + 1);
+  return Math.floor(Math.random() * 999) + 1;
 };
 export const generateName = () => {
   const firstNames = [
@@ -104,8 +105,8 @@ export const generateName = () => {
     "Rodriguez",
     "Martinez",
   ];
-  let generatedName;
-  return (generatedName = `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`);
+
+  return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
 };
 export const generateProjectType = () => {
   const projectTypes = [
@@ -115,14 +116,13 @@ export const generateProjectType = () => {
     "Extension",
     "New Construction",
   ];
-  let projectType;
-  return (projectType = projectTypes[Math.floor(Math.random() * states.length)]);
+
+  return projectTypes[Math.floor(Math.random() * states.length)];
 };
 export const generateStatus = () => {
   const statuses = ["active", "on-hold", "completed", "cancelled"];
 
-  let projectStatus;
-  return (projectStatus = projectStatuses[Math.floor(Math.random() * statuses.length)]);
+  return statuses[Math.floor(Math.random() * statuses.length)];
 };
 export const generateAddress = () => {
   const fullAddress = `${generateBuildingNumber()} ${generateStreet()} ${generateCity()} ${generateState()} ${generatePostcode()}`;
@@ -131,16 +131,23 @@ export const generateAddress = () => {
 
 export const generateRole = (roleName) => {
   const name = generateName();
-  return {
+  const role = {
     hasRole: true,
     details: {
       companyName: `${name} ${roleName}`,
       contactName: name,
       address: generateAddress(),
       phone: generatePhone(),
-      email: generateEmail(),
+      email: generateEmail(name),
     },
   };
+  return handleError("generateRole", role);
+};
+
+const handleError = (funcName, returnVal) => {
+  if (returnVal === undefined || null)
+    console.error(`Running ${funcName}, returning ${returnVal} and failing`);
+  return returnVal;
 };
 ///////
 
