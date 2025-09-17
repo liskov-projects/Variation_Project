@@ -1,12 +1,20 @@
-import mongoose from "mongoose";
 import { config } from "dotenv";
 import Profile from "../../models/profileModel.js";
 import Project from "../../models/projectModel.js";
-import { generatePhone, generateStatus, generateRole } from "../helpers.js";
+import {
+  generateName,
+  generatePhone,
+  generateStatus,
+  generateRole,
+  generateProjectType,
+  generateEmail,
+  generateAddress,
+  randint,
+} from "../helpers.js";
 
 config();
 
-export const seedProjects = async (count = 5, clearExisting = false) => {
+export const seedProjects = async (count = 5, clearExisting = false, userId) => {
   try {
     console.log(`🌱 Generating ${count} random projects...`);
 
@@ -38,7 +46,7 @@ export const seedProjects = async (count = 5, clearExisting = false) => {
         userId: profile.userId,
         projectName: `${generateProjectType()} - ${client}`,
         clientName: client,
-        clientEmail: generateEmail(),
+        clientEmail: generateEmail(client),
         clientPhone: generatePhone(),
         propertyAddress: generateAddress(),
         startDate,
@@ -65,50 +73,50 @@ export const seedProjects = async (count = 5, clearExisting = false) => {
 };
 
 // REVIEW: CLI runner for projects
-const runProjectSeeding = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("✅ Connected to MongoDB");
+// const runProjectSeeding = async () => {
+//   try {
+//     await mongoose.connect(process.env.MONGO_URI);
+//     console.log("✅ Connected to MongoDB");
 
-    const command = process.argv[2];
-    const count = parseInt(process.argv[3]) || 5;
+//     const command = process.argv[2];
+//     const count = parseInt(process.argv[3]) || 5;
 
-    switch (command) {
-      case "seed":
-        await seedProjects(false);
-        break;
-      case "seed:clear":
-        await seedProjects(true);
-        break;
-      case "generate":
-        await generateRandomProjects(count, false);
-        break;
-      case "generate:clear":
-        await generateRandomProjects(count, true);
-        break;
-      default:
-        console.log("Available commands:");
-        console.log("  seed              - Seed sample projects");
-        console.log("  seed:clear        - Clear existing and seed sample projects");
-        console.log("  variations        - Add sample variations to existing projects");
-        console.log("  generate [count]  - Generate random projects (default: 5)");
-        console.log("  generate:clear [count] - Clear existing and generate random projects");
-        break;
-    }
-    await mongoose.disconnect();
-    console.log("Disconnected from MongoDB");
-    process.exit(0);
-  } catch (error) {
-    console.error("Project seeding error:", error);
-    await mongoose.disconnect();
-    process.exit(1);
-  }
-};
+//     switch (command) {
+//       case "seed":
+//         await seedProjects(false);
+//         break;
+//       case "seed:clear":
+//         await seedProjects(true);
+//         break;
+//       case "generate":
+//         await generateRandomProjects(count, false);
+//         break;
+//       case "generate:clear":
+//         await generateRandomProjects(count, true);
+//         break;
+//       default:
+//         console.log("Available commands:");
+//         console.log("  seed              - Seed sample projects");
+//         console.log("  seed:clear        - Clear existing and seed sample projects");
+//         console.log("  variations        - Add sample variations to existing projects");
+//         console.log("  generate [count]  - Generate random projects (default: 5)");
+//         console.log("  generate:clear [count] - Clear existing and generate random projects");
+//         break;
+//     }
+//     await mongoose.disconnect();
+//     console.log("Disconnected from MongoDB");
+//     process.exit(0);
+//   } catch (error) {
+//     console.error("Project seeding error:", error);
+//     await mongoose.disconnect();
+//     process.exit(1);
+//   }
+// };
 
 // Run if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  runProjectSeeding();
-}
+// if (import.meta.url === `file://${process.argv[1]}`) {
+//   runProjectSeeding();
+// }
 
 // //  unsure if we want this - kept in case
 // export const seedProjects = async (clearExisting = false) => {

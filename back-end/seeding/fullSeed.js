@@ -12,23 +12,23 @@ const runFullSeed = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("✅ Connected to MongoDB");
 
-    // 1️⃣ Create profile
-    const profileData = setupProfileToSeed();
+    // Create profile
+    const profileData = await setupProfileToSeed();
     const profile = new Profile(profileData);
     await profile.save();
     console.log(`✅ Profile seeded: ${profile.profileData.fullName}`);
 
-    // 2️⃣ Seed projects for this user
-    await seedProjects(5, false); // adjust count if needed
+    // Seed projects for this user
+    await seedProjects(5, false, profileData.userId); // adjust count if needed
 
-    // 3️⃣ Seed variations for these projects
+    // Seed variations for these projects
     await seedVariationsToProjects();
 
     await mongoose.disconnect();
     console.log("🎉 All seeding done!");
     process.exit(0);
   } catch (error) {
-    console.error("❌ Error in mother seed:", error);
+    console.error("❌ Error in fullSeed:", error);
     await mongoose.disconnect();
     process.exit(1);
   }

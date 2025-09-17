@@ -39,7 +39,7 @@ This should be enough to work.
 - In case you need to do the seeding here's the command. As we want to allow for potential clients, the end part with name and email are optional
 
 ```
-    docker exec -it variations-backend-1 node /app/seeding/fullSeed.js <name> <email>
+    docker exec -it variations-backend-1 node /app/seeding/fullSeed.js <"name lastName"> <email>
 ```
 
 ## Note about node_modules

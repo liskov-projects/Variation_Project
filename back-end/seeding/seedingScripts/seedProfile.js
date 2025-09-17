@@ -1,5 +1,4 @@
 import { config } from "dotenv";
-import Profile from "../../models/profileModel.js";
 import {
   generateUserId,
   generateBuildingNumber,
@@ -23,8 +22,9 @@ const profileEmail = process.env.PROFILE_EMAIL;
 // const clientEmail = process.env.CLIENT_EMAIL;
 
 // should be used like so: node motherSeed.js name email
-const clientName = process.argv[3];
-const clientEmail = process.argv[4];
+//  will override .env
+const clientName = process.argv[2]; //  'node'argv[0] '/app/seeding/fullSeed.js' argv[1]
+const clientEmail = process.argv[3];
 
 export const setupProfileToSeed = async (
   username = clientName || profileName,
@@ -45,6 +45,9 @@ export const setupProfileToSeed = async (
     },
     profileSetupComplete: Math.random() > 0.2, // 80% complete
   };
+
+  // extracted to make condition more clear
+  const { businessType, fullName } = createdProfile.profileData;
 
   // adds business type specific fields
   if (businessType === "Individual") {
@@ -73,7 +76,7 @@ export const setupProfileToSeed = async (
       });
     }
   }
-  await Profile.create(createdProfile);
+  console.log("CREATED PROFILE", createdProfile);
   return createdProfile;
 };
 

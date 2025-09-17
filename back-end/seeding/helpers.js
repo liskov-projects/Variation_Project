@@ -3,14 +3,15 @@ export const generateEmail = (name) => {
   const domains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com"];
   const domain = domains[Math.floor(Math.random() * domains.length)];
   const fullEmail = `${name.toLowerCase().replace(/\s+/g, ".")}@${domain}`;
-  return fullEmail;
+  return handleError("generateEmail", fullEmail);
 };
 
 //  NEEDED (used in motherSeed.js setupProfileToSeed)
 // random user IDs for testing
 export const generateUserId = (prefix = "user") => {
   const randomNum = Math.floor(Math.random() * 10000);
-  return `${prefix}_${randomNum}`;
+  const fullId = `${prefix}_${randomNum}`;
+  return handleError("generateUserId", fullId);
 };
 // random phone number
 export const generatePhone = () => {
@@ -19,27 +20,31 @@ export const generatePhone = () => {
   const number = Math.floor(Math.random() * 10000000)
     .toString()
     .padStart(8, "0");
-  return `${areaCode}${number}`;
+  const fullPhone = `${areaCode}${number}`;
+  return handleError("generatePhone", fullPhone);
 };
 
 // random ABN
 export const generateABN = () => {
-  return Math.floor(Math.random() * 100000000000)
+  const ABN = Math.floor(Math.random() * 100000000000)
     .toString()
     .padStart(11, "0");
+  return handleError("generateABN", ABN);
 };
 
 // random ACN
 export const generateACN = () => {
-  return Math.floor(Math.random() * 1000000000)
+  const ACN = Math.floor(Math.random() * 1000000000)
     .toString()
     .padStart(9, "0");
+  return handleError("generateACN", ACN);
 };
 
 export const generateBusinessType = () => {
   const businessTypes = ["Individual", "Company", "Partnership"];
   const businessType = businessTypes[Math.floor(Math.random() * businessTypes.length)];
-  return businessType;
+  return handleError("generateBusinessType", businessType);
+  // return businessType;
 };
 export const generateStreet = () => {
   const streets = [
@@ -53,7 +58,7 @@ export const generateStreet = () => {
     "Spruce Ln",
   ];
   const street = streets[Math.floor(Math.random() * streets.length)];
-  return street;
+  return handleError("generateStreet", street);
 };
 export const generateCity = () => {
   const cities = [
@@ -67,18 +72,24 @@ export const generateCity = () => {
     "Canberra",
   ];
   const city = cities[Math.floor(Math.random() * cities.length)];
-  return city;
+  return handleError("generateCity", city);
 };
 export const generateState = () => {
   const states = ["VIC", "NSW", "QLD", "WA", "SA", "TAS", "NT", "ACT"];
   const state = states[Math.floor(Math.random() * states.length)];
-  return state;
+  return handleError("generateState", state);
 };
 export const generatePostcode = () => {
-  return Math.floor(Math.random() * 9000) + 1000;
+  const postcode = Math.floor(Math.random() * 9000) + 1000;
+  return handleError("generatePostcode", postcode);
 };
 export const generateBuildingNumber = () => {
-  return Math.floor(Math.random() * 999) + 1;
+  const buildingNumber = Math.floor(Math.random() * 999) + 1;
+  return handleError("generateBuildingNumber", buildingNumber);
+};
+export const generateAddress = () => {
+  const fullAddress = `${generateBuildingNumber()} ${generateStreet()} ${generateCity()} ${generateState()} ${generatePostcode()}`;
+  return handleError("generateAddress", fullAddress);
 };
 export const generateName = () => {
   const firstNames = [
@@ -106,7 +117,8 @@ export const generateName = () => {
     "Martinez",
   ];
 
-  return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+  const fullName = `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+  return handleError("generateName", fullName);
 };
 export const generateProjectType = () => {
   const projectTypes = [
@@ -117,16 +129,13 @@ export const generateProjectType = () => {
     "New Construction",
   ];
 
-  return projectTypes[Math.floor(Math.random() * states.length)];
+  const type = projectTypes[Math.floor(Math.random() * projectTypes.length)];
+  return handleError("generateProjectType", type);
 };
 export const generateStatus = () => {
   const statuses = ["active", "on-hold", "completed", "cancelled"];
-
-  return statuses[Math.floor(Math.random() * statuses.length)];
-};
-export const generateAddress = () => {
-  const fullAddress = `${generateBuildingNumber()} ${generateStreet()} ${generateCity()} ${generateState()} ${generatePostcode()}`;
-  return fullAddress;
+  const generatedStatus = statuses[Math.floor(Math.random() * statuses.length)];
+  return handleError("generateStatus", generatedStatus);
 };
 
 export const generateRole = (roleName) => {
@@ -145,9 +154,15 @@ export const generateRole = (roleName) => {
 };
 
 const handleError = (funcName, returnVal) => {
-  if (returnVal === undefined || null)
-    console.error(`Running ${funcName}, returning ${returnVal} and failing`);
+  if (returnVal === undefined || returnVal === null) {
+    throw new Error(`‼️ ${funcName} returned undefined or null`);
+  }
   return returnVal;
+};
+
+// NOTE: use in some of the above
+export const randint = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 ///////
 
