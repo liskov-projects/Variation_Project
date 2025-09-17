@@ -1,3 +1,4 @@
+// import mongoose from "mongoose";
 import { config } from "dotenv";
 import Profile from "../../models/profileModel.js";
 import Project from "../../models/projectModel.js";
@@ -14,7 +15,23 @@ import {
 
 config();
 
-export const seedProjects = async (count = 5, clearExisting = false, userId) => {
+// const profileName = process.env.PROFILE_NAME;
+// const profileEmail = process.env.PROFILE_EMAIL;
+const profileId = process.env.PROFILE_ID;
+// const clientName = process.env.CLIENT_NAME;
+// const clientEmail = process.env.CLIENT_EMAIL;
+
+// should be used like so: node motherSeed.js name email
+//  will override .env
+// const clientName = process.argv[2]; //  'node'argv[0] '/app/seeding/fullSeed.js' argv[1]
+// const clientEmail = process.argv[3];
+const clientId = process.argv[2];
+
+export const seedProjects = async (
+  count = 5,
+  clearExisting = false,
+  id = clientId || profileId
+) => {
   try {
     console.log(`🌱 Generating ${count} random projects...`);
 
@@ -24,7 +41,7 @@ export const seedProjects = async (count = 5, clearExisting = false, userId) => 
       console.log("✅ Existing projects cleared");
     }
 
-    const profiles = userId ? [{ userId }] : await Profile.find({});
+    const profiles = id ? [{ userId: id }] : await Profile.find({});
     if (!profiles.length) {
       console.log("⚠️ No profiles found. Seed profiles first.");
       return { success: false, message: "No profiles found" };
@@ -72,6 +89,25 @@ export const seedProjects = async (count = 5, clearExisting = false, userId) => 
   }
 };
 
+//  for seeding existing profiles
+// const run = async () => {
+//   try {
+//     await mongoose.connect(process.env.MONGO_URI);
+//     console.log("✅ Connected to MongoDB");
+
+//     // Pass count, clearExisting, or userId if needed
+//     await seedProjects(5, false);
+
+//     await mongoose.disconnect();
+//     console.log("✅ Done seeding projects");
+//     process.exit(0);
+//   } catch (error) {
+//     console.error("❌ Error:", error);
+//     await mongoose.disconnect();
+//     process.exit(1);
+//   }
+// };
+// run();
 // REVIEW: CLI runner for projects
 // const runProjectSeeding = async () => {
 //   try {

@@ -17,7 +17,7 @@ config();
 
 const profileName = process.env.PROFILE_NAME;
 const profileEmail = process.env.PROFILE_EMAIL;
-
+const profileId = process.env.PROFILE_ID;
 // const clientName = process.env.CLIENT_NAME;
 // const clientEmail = process.env.CLIENT_EMAIL;
 
@@ -25,16 +25,19 @@ const profileEmail = process.env.PROFILE_EMAIL;
 //  will override .env
 const clientName = process.argv[2]; //  'node'argv[0] '/app/seeding/fullSeed.js' argv[1]
 const clientEmail = process.argv[3];
+const clientId = process.argv[4];
 
 export const setupProfileToSeed = async (
   username = clientName || profileName,
-  email = clientEmail || profileEmail
+  email = clientEmail || profileEmail,
+  id = clientId || profileId
 ) => {
   console.log(`✳️ Setting up profile for ${username}`);
 
   const createdProfile = {
     // NOTE: do we actually need this or mongo handles it?
-    userId: generateUserId(),
+    // userId: generateUserId(),
+    userId: id,
     email: email,
     profileData: {
       fullName: username,
