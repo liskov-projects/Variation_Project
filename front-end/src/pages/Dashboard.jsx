@@ -27,6 +27,8 @@ const Dashboard = () => {
   //   }
   // }, []);
 
+  console.log(profileData);
+
   if (loading) {
     return (
       <div>
@@ -68,6 +70,46 @@ const Dashboard = () => {
               </p>
             </div>
             {profileData.logo !== "" && <img className="rounded bg-dark-subtle" src={profileData.logo} alt="Builder's Logo" width="150px" height="150px"/>}
+          </div>
+        </div>
+
+        <div className="card mt-4 mb-4">
+          <div className="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 className="mb-0">Your Profile Summary</h5>
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={() => navigate("/profile-edit")}>
+              Edit Profile
+            </button>
+          </div>
+          <div className="card-body">
+            <div className="row mb-3">
+              <div className="col-md-3 fw-bold">Builder Name:</div>
+              <div className="col-md-9">{profileData.fullName}</div>
+            </div>
+            <div className="row mb-3">
+              <div className="col-md-3 fw-bold">Email:</div>
+              <div className="col-md-9">{profileData.email}</div>
+            </div>
+            <div className="row mb-3">
+              <div className="col-md-3 fw-bold">Business Type:</div>
+              <div className="col-md-9">
+                {profileData.businessType}
+              </div>
+            </div>
+            {profileData.businessType === "Partnership" && 
+            <div className="row mb-3">
+              <div className="col-md-3 fw-bold">Number Of Partners:</div>
+              <div className="col-md-9">
+                {profileData.partners.length}
+              </div>
+            </div>
+            }
+
+            <div className="row mb-3">
+              <div className="col-md-3 fw-bold">Builder Reg #:</div>
+              <div className="col-md-9">{profileData.brn}</div>
+            </div>
           </div>
         </div>
 
@@ -156,46 +198,7 @@ const Dashboard = () => {
         </div> */}
 
         {/* Quick Profile Summary */}
-        <div className="card mt-4">
-          <div className="card-header bg-light d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Your Profile Summary</h5>
-            <button
-              className="btn btn-sm btn-outline-primary"
-              onClick={() => navigate("/profile-edit")}>
-              Edit Profile
-            </button>
-          </div>
-          <div className="card-body">
-            <div className="row mb-3">
-              <div className="col-md-3 fw-bold">Builder Name:</div>
-              <div className="col-md-9">{profileData.fullName}</div>
-            </div>
-            <div className="row mb-3">
-              <div className="col-md-3 fw-bold">Email:</div>
-              <div className="col-md-9">{profileData.email}</div>
-            </div>
-            <div className="row mb-3">
-              <div className="col-md-3 fw-bold">Company:</div>
-              <div className="col-md-9">
-                {profileData.businessType === "Company"
-                  ? `Yes (${profileData.companyDetails.companyName})`
-                  : "No"}
-              </div>
-            </div>
-            <div className="row mb-3">
-              <div className="col-md-3 fw-bold">Partnership:</div>
-              <div className="col-md-9">
-                {profileData.businessType === "Partnership"
-                  ? `Yes (${profileData.numberOfPartners} partners)`
-                  : "No"}
-              </div>
-            </div>
-            <div className="row mb-3">
-              <div className="col-md-3 fw-bold">Builder Reg #:</div>
-              <div className="col-md-9">{profileData.brn}</div>
-            </div>
-          </div>
-        </div>
+        
       </div>
       <Footer/>
     </div>
