@@ -25,6 +25,18 @@ const PartnershipInfo = () => {
         <small className="text-muted">Must be exactly 11 digits</small>
       </div>
 
+      <div className="mb-3">
+        <label className="form-label">Builder Registration # *</label>
+        <input
+          type="number"
+          placeholder='1234567'
+          className="form-control light-grey-placeholder-text no-carets"
+          value={profileData.brn || ""}
+          onChange={(e) => updateProfile({ brn: e.target.value })}
+          required
+        />
+      </div>
+
       {profileData.businessType === "Partnership" && (
         <div className="mb-3">
           <label className="form-label">Number of Partners *</label>

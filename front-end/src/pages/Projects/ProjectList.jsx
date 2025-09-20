@@ -101,9 +101,9 @@ const ProjectList = () => {
   const projectsToShow = filterSearch(projects, query);
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: "column", alignItems: 'stretch', height: '100vh'}}>
       <Header />
-      <div className="container py-4">
+      <div className="container py-4" style={{ flexGrow: "1" }}>
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2>My Projects</h2>
           <button
