@@ -299,13 +299,18 @@ const VariationEdit = () => {
                       <label className="form-label">
                         Delay to Project Timeline? (Enter the delay in days) *
                       </label>
-                      <input
-                        type="number"
-                        step="1"
-                        className={`form-control ${formErrors.delay ? "is-invalid" : ""}`}
-                        name="delay"
-                        value={variationData.delay || ""}
-                        onChange={handleChange}
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          className={`form-control ${formErrors.delay ? "is-invalid" : ""}`}
+                          name="delay"
+                          value={variationData.delay ?? ""}
+                          onChange={(e) => {
+                              const digitsOnly = e.target.value.replace(/\D/g, "");
+                              setVariationData(prev => ({ ...prev, [e.target.name]: digitsOnly }));
+                        }}
+
                         required
                       />
                       {formErrors.delay && (

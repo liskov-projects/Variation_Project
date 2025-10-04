@@ -280,14 +280,20 @@ const VariationCreate = () => {
                                     <option value="More than 4 weeks">More than 4 weeks</option>
                                   </select> */}
                       <input
-                        type="number"
-                        step="1"
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                         className={`form-control ${formErrors.delay ? "is-invalid" : ""}`}
                         name="delay"
-                        value={variationData.delay || ""}
-                        onChange={handleChange}
+                        value={variationData.delay ?? ""}
+                        onChange={(e) => {
+                            const digitsOnly = e.target.value.replace(/\D/g, "");
+                            setVariationData(prev => ({ ...prev, [e.target.name]: digitsOnly }));
+                        }}
+
                         required
                       />
+
                       {formErrors.delay && (
                         <div className="invalid-feedback">{formErrors.delay}</div>
                       )}
