@@ -47,6 +47,7 @@ const ProfileEdit = () => {
       // Clear success message after 3 seconds
       setTimeout(() => {
         setSuccess(false);
+        navigate("/dashboard"); 
       }, 3000);
     }
   };
