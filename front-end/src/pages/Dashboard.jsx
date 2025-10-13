@@ -67,7 +67,24 @@ const Dashboard = () => {
                 project or manage your existing ones.
               </p>
             </div>
-            {profileData.logo !== "" && <img className="rounded bg-dark-subtle" src={profileData.logo} alt="Builder's Logo" width="150px" height="150px"/>}
+            {profileData.logo ? (
+                <img
+                  className="rounded bg-dark-subtle"
+                  src={profileData.logo}
+                  alt="Builder's Logo"
+                  width="100"
+                  height="100"
+                />
+              ) : (
+                <div
+                  className="d-flex flex-column align-items-center justify-content-center rounded bg-light border border-secondary-subtle text-secondary"
+                  style={{ width: 100, height: 100 }}
+                >
+                  <i className="bi bi-building" style={{ fontSize: "2rem" }}></i>
+                  <small className="mt-1">No Logo</small>
+                </div>
+              )}
+
           </div>
         </div>
 
